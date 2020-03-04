@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.samples.petclinic.web;
 
 import java.util.Map;
@@ -21,14 +22,15 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Owner;
-import org.springframework.samples.petclinic.service.AuthoritiesService;
+import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.VetService;
-import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * @author Juergen Hoeller
@@ -39,35 +41,58 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class UserController {
 
-	private static final String VIEWS_OWNER_CREATE_FORM = "users/createOwnerForm";
+	private static final String	VIEWS_OWNER_CREATE_FORM	= "users/createOwnerForm";
 
-	private final OwnerService ownerService;
+	private static final String	VIEWS_VET_CREATE_FORM	= "users/createVetForm";
+
+	private final OwnerService	ownerService;
+
+	private final VetService	vetService;
+
 
 	@Autowired
-	public UserController(OwnerService clinicService) {
+	public UserController(final OwnerService clinicService, final VetService vetService) {
 		this.ownerService = clinicService;
+		this.vetService = vetService;
 	}
 
 	@InitBinder
-	public void setAllowedFields(WebDataBinder dataBinder) {
+	public void setAllowedFields(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
 	}
 
-	@GetMapping(value = "/users/new")
-	public String initCreationForm(Map<String, Object> model) {
+	@GetMapping(value = "/users/new-owner")
+	public String initCreationFormOwner(final Map<String, Object> model) {
 		Owner owner = new Owner();
 		model.put("owner", owner);
-		return VIEWS_OWNER_CREATE_FORM;
+		return UserController.VIEWS_OWNER_CREATE_FORM;
 	}
 
-	@PostMapping(value = "/users/new")
-	public String processCreationForm(@Valid Owner owner, BindingResult result) {
+	@PostMapping(value = "/users/new-owner")
+	public String processCreationFormOwner(@Valid final Owner owner, final BindingResult result) {
 		if (result.hasErrors()) {
-			return VIEWS_OWNER_CREATE_FORM;
-		}
-		else {
+			return UserController.VIEWS_OWNER_CREATE_FORM;
+		} else {
 			//creating owner, user, and authority
 			this.ownerService.saveOwner(owner);
+			return "redirect:/";
+		}
+	}
+
+	@GetMapping(value = "/users/new-vet")
+	public String initCreationFormVet(final Map<String, Object> model) {
+		Vet vet = new Vet();
+		model.put("vet", vet);
+		return UserController.VIEWS_VET_CREATE_FORM;
+	}
+
+	@PostMapping(value = "/users/new-vet")
+	public String processCreationFormVet(@Valid final Vet vet, final BindingResult result) {
+		if (result.hasErrors()) {
+			return UserController.VIEWS_VET_CREATE_FORM;
+		} else {
+			//creating owner, user, and authority
+			this.vetService.saveVet(vet);
 			return "redirect:/";
 		}
 	}
