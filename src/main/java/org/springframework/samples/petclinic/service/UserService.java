@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.samples.petclinic.service;
 
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.repository.UserRepository;
+import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,14 +37,31 @@ public class UserService {
 
 	private UserRepository userRepository;
 
+
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(final UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
 	@Transactional
-	public void saveUser(User user) throws DataAccessException {
-		user.setEnabled(true);
-		userRepository.save(user);
+	public User findUserWithSameName(final String username, final int id) {
+		return this.userRepository.findUserWithSameName(username, id);
+	}
+
+	public void saveUser(final User user) throws DataAccessException, DuplicatedUserException {
+		User usuario = this.findUserWithSameName(user.getUsername(), user.getId());
+		if (usuario != null) {
+			throw new DuplicatedUserException();
+
+		} else {
+			user.setEnabled(true);
+			this.userRepository.save(user);
+		}
+
+	}
+
+	@Transactional
+	public Collection<String> findAllUsernames() {
+		return this.userRepository.findAllUsernames();
 	}
 }

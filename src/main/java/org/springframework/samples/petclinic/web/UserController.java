@@ -22,12 +22,22 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Specialty;
+import org.springframework.samples.petclinic.model.Vet;
+import org.springframework.samples.petclinic.service.OwnerService;
+import org.springframework.samples.petclinic.service.VetService;
+import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
+
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.BeauticianService;
-import org.springframework.samples.petclinic.service.OwnerService;
+
 import org.springframework.samples.petclinic.service.PetService;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,16 +54,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UserController {
 
-	private static final String	VIEWS_OWNER_CREATE_FORM			= "users/createOwnerForm";
 
-	private static final String	VIEWS_BEAUTICIAN_CREATE_FORM	= "users/createBeauticianForm";
+	private static final String	VIEWS_OWNER_CREATE_FORM	= "users/createOwnerForm";
+
+	private static final String	VIEWS_VET_CREATE_FORM	= "users/createVetForm";
+  
+  private static final String	VIEWS_BEAUTICIAN_CREATE_FORM	= "users/createBeauticianForm";
 
 	private final OwnerService	ownerService;
 
+	private final VetService	vetService;
+
 
 	@Autowired
-	public UserController(final OwnerService clinicService) {
+	public UserController(final OwnerService clinicService, final VetService vetService, final BeauticianService beauticianService) {
+
 		this.ownerService = clinicService;
+		this.vetService = vetService;
+    this.beauticianService = beauticianService;
 	}
 
 
@@ -68,6 +86,51 @@ public class UserController {
 	public void setAllowedFields(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
 	}
+
+	@GetMapping(value = "/users/new-owner")
+	public String initCreationFormOwner(final Map<String, Object> model) {
+		Owner owner = new Owner();
+		model.put("owner", owner);
+		return UserController.VIEWS_OWNER_CREATE_FORM;
+	}
+
+	@PostMapping(value = "/users/new-owner")
+	public String processCreationFormOwner(@Valid final Owner owner, final BindingResult result, final ModelMap model) {
+		if (result.hasErrors()) {
+			model.put("owner", owner);
+			return UserController.VIEWS_OWNER_CREATE_FORM;
+		} else {
+			try {
+				this.ownerService.saveOwner(owner);
+			} catch (DuplicatedUserException ex) {
+				result.rejectValue("user.username", "duplicate", "already exists");
+				return UserController.VIEWS_OWNER_CREATE_FORM;
+
+			}
+			return "redirect:/";
+		}
+	}
+
+	@GetMapping(value = "/users/new-vet")
+	public String initCreationFormVet(final Map<String, Object> model) {
+		Vet vet = new Vet();
+		model.put("vet", vet);
+		return UserController.VIEWS_VET_CREATE_FORM;
+	}
+
+	@PostMapping(value = "/users/new-vet")
+	public String processCreationFormVet(@Valid final Vet vet, final BindingResult result, final ModelMap model) {
+		if (result.hasErrors()) {
+			model.put("vet", vet);
+			return UserController.VIEWS_VET_CREATE_FORM;
+		} else {
+			try {
+				//creating owner, user, and authority
+				this.vetService.saveVet(vet);
+			} catch (DuplicatedUserException ex) {
+				result.rejectValue("user.username", "duplicate", "already exists");
+				return UserController.VIEWS_VET_CREATE_FORM;
+			}
 
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {
@@ -88,8 +151,14 @@ public class UserController {
 		} else {
 			this.beauticianService.saveBeautician(beautician);
 
+
 			return "redirect:/";
 		}
+	}
+
+	@ModelAttribute("specialties")
+	public Collection<Specialty> populateSpecialties() {
+		return this.vetService.findSpecialties();
 	}
 
 }
