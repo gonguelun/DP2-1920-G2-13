@@ -73,4 +73,10 @@ public class VetService {
 	public Collection<Specialty> findSpecialties() throws DataAccessException {
 		return this.vetRepository.findSpecialties();
 	}
+
+	@Transactional
+	public Integer countVets() {
+		// TODO Auto-generated method stub
+		return (int) this.vetRepository.count();
+	}
 }

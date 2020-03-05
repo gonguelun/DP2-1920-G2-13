@@ -17,10 +17,10 @@
 package org.springframework.samples.petclinic.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -49,21 +49,21 @@ public class Vet extends Person {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
-	private Set<Specialty>	specialties;
+	private Collection<Specialty>	specialties;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "username", referencedColumnName = "username")
-	private User			user;
+	private User					user;
 
 
-	protected Set<Specialty> getSpecialtiesInternal() {
+	public Collection<Specialty> getSpecialtiesInternal() {
 		if (this.specialties == null) {
 			this.specialties = new HashSet<>();
 		}
 		return this.specialties;
 	}
 
-	protected void setSpecialtiesInternal(final Set<Specialty> specialties) {
+	public void setSpecialtiesInternal(final Collection<Specialty> specialties) {
 		this.specialties = specialties;
 	}
 

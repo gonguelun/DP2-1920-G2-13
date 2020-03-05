@@ -17,11 +17,6 @@
                <div class="control-group">
                     <petclinic:selectField name="specialties" label="Specialty " names="${specialties}" size="3"/>
             </div>
-            <select multiple name="specialties">
-            	<c:forEach var="opcion" items="{specialties}">
-            		<option va>
-            	</c:forEach>
-            </select>
             <petclinic:inputField label="Username" name="user.username"/>
             <petclinic:inputField label="Password" name="user.password"/>
         </div>

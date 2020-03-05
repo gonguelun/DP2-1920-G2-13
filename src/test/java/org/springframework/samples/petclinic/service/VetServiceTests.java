@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,33 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.samples.petclinic.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.model.Owner;
-import org.springframework.samples.petclinic.model.Pet;
-import org.springframework.samples.petclinic.model.PetType;
-import org.springframework.samples.petclinic.model.Vet;
-import org.springframework.samples.petclinic.model.Visit;
+import org.springframework.samples.petclinic.model.Specialty;
 import org.springframework.samples.petclinic.model.User;
-import org.springframework.samples.petclinic.model.Authorities;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
+import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -76,18 +67,53 @@ import org.springframework.transaction.annotation.Transactional;
 class VetServiceTests {
 
 	@Autowired
-	protected VetService vetService;	
+	protected VetService vetService;
+
 
 	@Test
 	void shouldFindVets() {
 		Collection<Vet> vets = this.vetService.findVets();
 
 		Vet vet = EntityUtils.getById(vets, Vet.class, 3);
-		assertThat(vet.getLastName()).isEqualTo("Douglas");
-		assertThat(vet.getNrOfSpecialties()).isEqualTo(2);
-		assertThat(vet.getSpecialties().get(0).getName()).isEqualTo("dentistry");
-		assertThat(vet.getSpecialties().get(1).getName()).isEqualTo("surgery");
+		Assertions.assertThat(vet.getLastName()).isEqualTo("Douglas");
+		Assertions.assertThat(vet.getNrOfSpecialties()).isEqualTo(2);
+		Assertions.assertThat(vet.getSpecialties().get(0).getName()).isEqualTo("dentistry");
+		Assertions.assertThat(vet.getSpecialties().get(1).getName()).isEqualTo("surgery");
 	}
 
+	@Test
+	void bringSpecialties() {
+		Collection<Specialty> specialties = this.vetService.findSpecialties();
+		specialties = specialties.stream().collect(Collectors.toList());
+		Assertions.assertThat(specialties.size() == 3);
+	}
 
+	@Test
+	@Transactional
+	public void testSavingVet() {
+		Integer countBefore = this.vetService.countVets();
+		countBefore++;
+
+		Vet vet = new Vet();
+		vet.setFirstName("Sam");
+		vet.setLastName("Schultz");
+
+		Set<Specialty> specialties = new HashSet<>();
+		Specialty specialty1 = new Specialty();
+		specialty1.setName("espe1");
+		specialties.add(specialty1);
+		Specialty specialty2 = new Specialty();
+		specialty2.setName("espe2");
+		specialties.add(specialty2);
+
+		User user = new User();
+		user.setUsername("Sam");
+		user.setPassword("supersecretpassword");
+		user.setEnabled(true);
+		vet.setUser(user);
+
+		this.vetService.saveVet(vet);
+		Integer countAfter = this.vetService.countVets();
+		Assertions.assertThat(vet.getSpecialties().size() == 2);
+	}
 }
