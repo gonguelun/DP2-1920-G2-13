@@ -27,7 +27,9 @@ import org.springframework.samples.petclinic.model.Specialty;
 import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.VetService;
+import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,12 +74,18 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/users/new-owner")
-	public String processCreationFormOwner(@Valid final Owner owner, final BindingResult result) {
+	public String processCreationFormOwner(@Valid final Owner owner, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
+			model.put("owner", owner);
 			return UserController.VIEWS_OWNER_CREATE_FORM;
 		} else {
-			//creating owner, user, and authority
-			this.ownerService.saveOwner(owner);
+			try {
+				this.ownerService.saveOwner(owner);
+			} catch (DuplicatedUserException ex) {
+				result.rejectValue("user.username", "duplicate", "already exists");
+				return UserController.VIEWS_OWNER_CREATE_FORM;
+
+			}
 			return "redirect:/";
 		}
 	}
@@ -90,12 +98,18 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/users/new-vet")
-	public String processCreationFormVet(@Valid final Vet vet, final BindingResult result) {
+	public String processCreationFormVet(@Valid final Vet vet, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
+			model.put("vet", vet);
 			return UserController.VIEWS_VET_CREATE_FORM;
 		} else {
-			//creating owner, user, and authority
-			this.vetService.saveVet(vet);
+			try {
+				//creating owner, user, and authority
+				this.vetService.saveVet(vet);
+			} catch (DuplicatedUserException ex) {
+				result.rejectValue("user.username", "duplicate", "already exists");
+				return UserController.VIEWS_VET_CREATE_FORM;
+			}
 			return "redirect:/";
 		}
 	}

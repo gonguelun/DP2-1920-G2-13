@@ -26,8 +26,10 @@ import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.UserService;
+import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -99,12 +101,20 @@ public class OwnerController {
 	}
 
 	@PostMapping(value = "/owners/{ownerId}/edit")
-	public String processUpdateOwnerForm(@Valid final Owner owner, final BindingResult result, @PathVariable("ownerId") final int ownerId) {
+	public String processUpdateOwnerForm(@Valid final Owner owner, final BindingResult result, @PathVariable("ownerId") final int ownerId, final ModelMap model) {
 		if (result.hasErrors()) {
+			model.put("owner", owner);
 			return OwnerController.VIEWS_OWNER_UPDATE_FORM;
 		} else {
-			owner.setId(ownerId);
-			this.ownerService.saveOwner(owner);
+
+			try {
+				owner.setId(ownerId);
+				this.ownerService.saveOwner(owner);
+			} catch (DuplicatedUserException ex) {
+				result.rejectValue("user.username", "duplicate", "already exists");
+				return OwnerController.VIEWS_OWNER_UPDATE_FORM;
+			}
+
 			return "redirect:/owners/{ownerId}";
 		}
 	}

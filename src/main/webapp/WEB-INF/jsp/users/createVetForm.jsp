@@ -14,14 +14,9 @@
         <div class="form-group has-feedback">
             <petclinic:inputField label="First Name" name="firstName"/>
             <petclinic:inputField label="Last Name" name="lastName"/>
-          <!--   <div class="control-group">
+          	<div class="control-group">
                     <petclinic:selectField name="specialties" label="Specialty " names="${specialties}" size="4"/>
-            </div> -->
-            <select multiple name="specialties">
-            	<c:forEach var="item" items="${specialties}">
-            		<option value="${item}">${item}</option>
-            	</c:forEach>
-            </select>
+            </div> 
             <petclinic:inputField label="Username" name="user.username"/>
             <petclinic:inputField label="Password" name="user.password"/>
         </div>

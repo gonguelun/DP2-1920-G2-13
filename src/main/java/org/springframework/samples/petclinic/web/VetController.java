@@ -29,8 +29,10 @@ import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.service.VetService;
+import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,13 +105,40 @@ public class VetController {
 		return VetController.VIEWS_VET_UPDATE_FORM;
 	}
 
+	/*
+	 * @PostMapping(value = "/users/new-beautician")
+	 * public String processCreationForm(@Valid final Beautician beautician, final BindingResult result, final ModelMap model) {
+	 * if (result.hasErrors()) {
+	 * model.put("beautician", beautician);
+	 * return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
+	 * } else {
+	 *
+	 * try {
+	 * this.beauticianService.saveBeautician(beautician);
+	 *
+	 * } catch (DuplicatedUserException ex) {
+	 * result.rejectValue("user.username", "duplicate", "already exists");
+	 * return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
+	 * }
+	 * return "redirect:/";
+	 * }
+	 * }
+	 */
+
 	@PostMapping(value = "/vets/{vetId}/edit")
-	public String processUpdateVetForm(@Valid final Vet vet, final BindingResult result, @PathVariable("vetId") final int vetId) {
+	public String processUpdateVetForm(@Valid final Vet vet, final BindingResult result, @PathVariable("vetId") final int vetId, final ModelMap model) {
 		if (result.hasErrors()) {
+			model.put("vet", vet);
 			return VetController.VIEWS_VET_UPDATE_FORM;
 		} else {
-			vet.setId(vetId);
-			this.vetService.saveVet(vet);
+			try {
+				vet.setId(vetId);
+				this.vetService.saveVet(vet);
+			} catch (DuplicatedUserException ex) {
+				result.rejectValue("user.username", "duplicate", "already exists");
+				return VetController.VIEWS_VET_UPDATE_FORM;
+			}
+
 			return "redirect:/vets/{vetId}";
 		}
 	}

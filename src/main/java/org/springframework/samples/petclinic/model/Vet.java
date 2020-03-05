@@ -16,11 +16,7 @@
 
 package org.springframework.samples.petclinic.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -30,10 +26,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlElement;
 
-import org.springframework.beans.support.MutableSortDefinition;
-import org.springframework.beans.support.PropertyComparator;
+import lombok.Data;
 
 /**
  * Simple JavaBean domain object representing a veterinarian.
@@ -45,49 +39,23 @@ import org.springframework.beans.support.PropertyComparator;
  */
 @Entity
 @Table(name = "vets")
+@Data
 public class Vet extends Person {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
-	private Collection<Specialty>	specialties;
+	private Set<Specialty>	specialties;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "username", referencedColumnName = "username")
-	private User					user;
+	private User			user;
 
-
-	public Collection<Specialty> getSpecialtiesInternal() {
-		if (this.specialties == null) {
-			this.specialties = new HashSet<>();
-		}
-		return this.specialties;
-	}
-
-	public void setSpecialtiesInternal(final Collection<Specialty> specialties) {
-		this.specialties = specialties;
-	}
-
-	@XmlElement
-	public List<Specialty> getSpecialties() {
-		List<Specialty> sortedSpecs = new ArrayList<>(this.getSpecialtiesInternal());
-		PropertyComparator.sort(sortedSpecs, new MutableSortDefinition("name", true, true));
-		return Collections.unmodifiableList(sortedSpecs);
-	}
 
 	public int getNrOfSpecialties() {
-		return this.getSpecialtiesInternal().size();
+		return this.getSpecialties().size();
 	}
 
 	public void addSpecialty(final Specialty specialty) {
-		this.getSpecialtiesInternal().add(specialty);
-	}
-
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(final User user) {
-		this.user = user;
+		this.getSpecialties().add(specialty);
 	}
 
 }
