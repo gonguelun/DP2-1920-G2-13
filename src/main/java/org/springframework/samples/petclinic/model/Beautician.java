@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 import lombok.Data;
@@ -14,8 +14,8 @@ import lombok.Data;
 @Entity
 public class Beautician extends Person {
 
-	@OneToMany
-	private Collection<PetType>	specializations; // TODO: Poner typeSpecializations
+	@ManyToMany
+	private Collection<PetType>	specializations;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	private User				user;
