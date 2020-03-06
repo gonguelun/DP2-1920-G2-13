@@ -35,8 +35,8 @@ public class BeauticianService {
 
 	@Transactional
 	public void saveBeautician(final Beautician beautician) throws DataAccessException {
-		this.beauticianRepository.save(beautician);
 		this.userService.saveUser(beautician.getUser());
+		this.beauticianRepository.save(beautician);
 		this.authoritiesService.saveAuthorities(beautician.getUser().getUsername(), "beautician");
 	}
 

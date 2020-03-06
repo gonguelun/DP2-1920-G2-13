@@ -12,7 +12,7 @@ public interface UserRepository extends CrudRepository<User, String> {
 	@Query("SELECT us.username FROM User us")
 	Collection<String> findAllUsernames();
 
-	@Query("SELECT us FROM User us where (us.username = ?1 and us.id != ?2)")
-	User findUserWithSameName(String username, int id);
+	@Query("SELECT us FROM User us where us.username = ?1")
+	User findUserWithSameName(String username);
 
 }
