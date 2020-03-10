@@ -37,6 +37,16 @@
     <br/>
     <br/>
     
+    <table>
+    	<tr>
+    		<th>Name</th>
+    		<th>Description</th>
+    		<th>Duration</th>
+    		<th>Speciality</th>
+    	</tr>
+    	
+    </table>
+    
     
     
 </petclinic:layout>

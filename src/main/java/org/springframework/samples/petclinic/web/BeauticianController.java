@@ -2,14 +2,17 @@
 package org.springframework.samples.petclinic.web;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Beautician;
+import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.BeauticianService;
+import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -41,6 +44,9 @@ public class BeauticianController {
 
 	@Autowired
 	private UserService			userService;
+
+	@Autowired
+	private BeautyCenterService	beautyService;
 
 
 	@InitBinder
@@ -102,6 +108,12 @@ public class BeauticianController {
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {
 		return this.petService.findPetTypes();
+	}
+
+	@ModelAttribute("beautyCenter")
+	public List<BeautyCenter> loadBeautyCenterWithBeautician(@PathVariable("beauticianId") final int beauticianId) {
+		Beautician beautician = this.beautyService.findBeauticianById(beauticianId);
+		return beautician.getBeautyCenter();
 	}
 
 }
