@@ -83,6 +83,14 @@ public class BeauticianController {
 		return mav;
 	}
 
+	@GetMapping("/principal/{beauticianUsername}")
+	public String showBeauticianByUsername(@PathVariable("beauticianUsername") final String beauticianUsername) {
+
+		int beauticianId = this.beauticianService.findBeauticianByUsername(beauticianUsername).getId();
+
+		return "redirect:/beauticians/" + beauticianId;
+	}
+
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {
 		return this.petService.findPetTypes();

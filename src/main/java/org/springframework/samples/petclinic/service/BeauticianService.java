@@ -62,4 +62,8 @@ public class BeauticianService {
 		return this.petRepository.findPetTypes();
 	}
 
+	public Beautician findBeauticianByUsername(final String beauticianUsername) throws DataAccessException {
+		return this.beauticianRepository.findByUsername(beauticianUsername);
+	}
+
 }
