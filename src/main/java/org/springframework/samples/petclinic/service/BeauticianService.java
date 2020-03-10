@@ -1,6 +1,7 @@
 
 package org.springframework.samples.petclinic.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.samples.petclinic.repository.BeauticianRepository;
 import org.springframework.samples.petclinic.repository.PetRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Service
 public class BeauticianService {
@@ -27,6 +29,14 @@ public class BeauticianService {
 	@Autowired
 	private AuthoritiesService		authoritiesService;
 
+	@Autowired
+	private PetService				petService;
+
+
+	@ModelAttribute("types")
+	public Collection<PetType> populatePetTypes() {
+		return this.petService.findPetTypes();
+	}
 
 	@Transactional(readOnly = true)
 	public Beautician findBeauticianById(final int id) throws DataAccessException {

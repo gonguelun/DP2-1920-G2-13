@@ -151,7 +151,7 @@ public class VetController {
 	 * @return a ModelMap with the model attributes for the view
 	 */
 	@GetMapping("/vets/{vetId}")
-	public ModelAndView showOwner(@PathVariable("vetId") final int vetId) {
+	public ModelAndView showVet(@PathVariable("vetId") final int vetId) {
 		ModelAndView mav = new ModelAndView("vets/vetDetails");
 		mav.addObject(this.vetService.findVetById(vetId));
 		return mav;
