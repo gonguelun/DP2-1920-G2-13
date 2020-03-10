@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.repository.OwnerRepository;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,12 +59,9 @@ public class OwnerService {
 	}
 
 	@Transactional
-	public void saveOwner(final Owner owner) throws DataAccessException, DuplicatedUserException {
-		//creating owner
-		this.ownerRepository.save(owner);
-		//creating user
+	public void saveOwner(final Owner owner) throws DataAccessException {
 		this.userService.saveUser(owner.getUser());
-		//creating authorities
+		this.ownerRepository.save(owner);
 		this.authoritiesService.saveAuthorities(owner.getUser().getUsername(), "owner");
 	}
 

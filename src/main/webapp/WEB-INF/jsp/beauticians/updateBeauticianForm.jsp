@@ -8,7 +8,7 @@
 
 <petclinic:layout pageName="beauticians">
     <h2>
-        <c:if test="${beautician['new']}">New </c:if> Beautician
+        Update Beautician
     </h2>
     <form:form modelAttribute="beautician" class="form-horizontal" id="add-beautician-form">
         <div class="form-group has-feedback">
@@ -21,15 +21,8 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <c:choose>
-                    <c:when test="${beautician['new']}">
-                        <button class="btn btn-default" type="submit">Add Beautician</button>
-                    </c:when>
-                    <c:otherwise>
-                        <button class="btn btn-default" type="submit">Update Beautician</button>
-                    </c:otherwise>
-                </c:choose>
+            <div class="col-sm-offset-2 col-sm-10">        
+                <button class="btn btn-default" type="submit">Update Beautician</button>
             </div>
         </div>
     </form:form>

@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.repository.UserRepository;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,16 +43,14 @@ public class UserService {
 	}
 
 	@Transactional
-	public User findUserWithSameName(final String username, final int id) {
-		return this.userRepository.findUserWithSameName(username, id);
+	public User findUserWithSameName(final String username) {
+		return this.userRepository.findUserWithSameName(username);
 	}
 
-	public void saveUser(final User user) throws DataAccessException, DuplicatedUserException {
-		User usuario = this.findUserWithSameName(user.getUsername(), user.getId());
-		if (usuario != null) {
-			throw new DuplicatedUserException();
-
-		} else {
+	@Transactional
+	public void saveUser(final User user) throws DataAccessException {
+		User usuario = this.findUserWithSameName(user.getUsername());
+		if (usuario == null) {
 			user.setEnabled(true);
 			this.userRepository.save(user);
 		}

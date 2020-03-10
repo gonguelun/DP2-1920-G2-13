@@ -22,20 +22,17 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.samples.petclinic.model.Owner;
-import org.springframework.samples.petclinic.model.Specialty;
-import org.springframework.samples.petclinic.model.Vet;
-import org.springframework.samples.petclinic.service.OwnerService;
-import org.springframework.samples.petclinic.service.VetService;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
-
 import org.springframework.samples.petclinic.model.Beautician;
+import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.PetType;
+import org.springframework.samples.petclinic.model.Specialty;
+import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.service.BeauticianService;
-
+import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.PetService;
-
+import org.springframework.samples.petclinic.service.UserService;
+import org.springframework.samples.petclinic.service.VetService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -54,12 +51,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UserController {
 
+	private static final String	VIEWS_OWNER_CREATE_FORM			= "users/createOwnerForm";
 
-	private static final String	VIEWS_OWNER_CREATE_FORM	= "users/createOwnerForm";
+	private static final String	VIEWS_VET_CREATE_FORM			= "users/createVetForm";
 
-	private static final String	VIEWS_VET_CREATE_FORM	= "users/createVetForm";
-  
-  private static final String	VIEWS_BEAUTICIAN_CREATE_FORM	= "users/createBeauticianForm";
+	private static final String	VIEWS_BEAUTICIAN_CREATE_FORM	= "users/createBeauticianForm";
 
 	private final OwnerService	ownerService;
 
@@ -71,12 +67,15 @@ public class UserController {
 
 		this.ownerService = clinicService;
 		this.vetService = vetService;
-    this.beauticianService = beauticianService;
+		this.beauticianService = beauticianService;
 	}
 
 
 	@Autowired
 	private BeauticianService	beauticianService;
+
+	@Autowired
+	private UserService			userService;
 
 	@Autowired
 	private PetService			petService;
@@ -100,14 +99,17 @@ public class UserController {
 			model.put("owner", owner);
 			return UserController.VIEWS_OWNER_CREATE_FORM;
 		} else {
-			try {
-				this.ownerService.saveOwner(owner);
-			} catch (DuplicatedUserException ex) {
+			User usuario = this.userService.findUserWithSameName(owner.getUser().getUsername());
+			if (usuario != null) {
 				result.rejectValue("user.username", "duplicate", "already exists");
+				model.put("owner", owner);
 				return UserController.VIEWS_OWNER_CREATE_FORM;
 
+			} else {
+				this.ownerService.saveOwner(owner);
+				;
+				return "redirect:/";
 			}
-			return "redirect:/";
 		}
 	}
 
@@ -124,13 +126,18 @@ public class UserController {
 			model.put("vet", vet);
 			return UserController.VIEWS_VET_CREATE_FORM;
 		} else {
-			try {
-				//creating owner, user, and authority
-				this.vetService.saveVet(vet);
-			} catch (DuplicatedUserException ex) {
+			User usuario = this.userService.findUserWithSameName(vet.getUser().getUsername());
+			if (usuario != null) {
 				result.rejectValue("user.username", "duplicate", "already exists");
+				model.put("vet", vet);
 				return UserController.VIEWS_VET_CREATE_FORM;
+
+			} else {
+				this.vetService.saveVet(vet);
+				return "redirect:/";
 			}
+		}
+	}
 
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {
@@ -145,14 +152,23 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/users/new-beautician")
-	public String processCreationForm(@Valid final Beautician beautician, final BindingResult result) {
+	public String processCreationForm(@Valid final Beautician beautician, final BindingResult result, final ModelMap model) {
+
 		if (result.hasErrors()) {
+			model.put("beautician", beautician);
 			return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
+
 		} else {
-			this.beauticianService.saveBeautician(beautician);
+			User usuario = this.userService.findUserWithSameName(beautician.getUser().getUsername());
+			if (usuario != null) {
+				result.rejectValue("user.username", "duplicate", "already exists");
+				model.put("beautician", beautician);
+				return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
 
-
-			return "redirect:/";
+			} else {
+				this.beauticianService.saveBeautician(beautician);
+				return "redirect:/";
+			}
 		}
 	}
 
