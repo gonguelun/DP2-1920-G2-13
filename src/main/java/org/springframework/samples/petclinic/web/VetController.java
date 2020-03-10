@@ -23,13 +23,15 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Specialty;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.model.Vets;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.service.VetService;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -56,11 +58,13 @@ public class VetController {
 
 	private final VetService	vetService;
 
+	private final UserService	userService;
+
 
 	@Autowired
 	public VetController(final VetService vetService, final PetService petService, final UserService userService, final AuthoritiesService authoritiesService) {
 		this.vetService = vetService;
-
+		this.userService = userService;
 	}
 
 	@InitBinder
@@ -100,9 +104,17 @@ public class VetController {
 
 	@GetMapping(value = "/vets/{vetId}/edit")
 	public String initUpdateVetForm(@PathVariable("vetId") final int vetId, final Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
 		Vet vet = this.vetService.findVetById(vetId);
-		model.addAttribute(vet);
-		return VetController.VIEWS_VET_UPDATE_FORM;
+		if (currentPrincipalName.equals(vet.getUser().getUsername())) {
+
+			model.addAttribute(vet);
+			return VetController.VIEWS_VET_UPDATE_FORM;
+
+		} else {
+			return "redirect:/oups";
+		}
 	}
 
 	/*
@@ -131,15 +143,20 @@ public class VetController {
 			model.put("vet", vet);
 			return VetController.VIEWS_VET_UPDATE_FORM;
 		} else {
-			try {
-				vet.setId(vetId);
+
+			vet.setId(vetId);
+			Vet vetGuardado = this.vetService.findVetById(vetId);
+			User usuario = this.userService.findUserWithSameName(vet.getUser().getUsername());
+			if (vet.getUser().getUsername().equals(vetGuardado.getUser().getUsername()) || usuario == null) {
+				vet.getUser().setId(vetGuardado.getUser().getId());
 				this.vetService.saveVet(vet);
-			} catch (DuplicatedUserException ex) {
+				return "redirect:/vets";
+
+			} else {
 				result.rejectValue("user.username", "duplicate", "already exists");
+				model.put("vet", vet);
 				return VetController.VIEWS_VET_UPDATE_FORM;
 			}
-
-			return "redirect:/vets/{vetId}";
 		}
 	}
 

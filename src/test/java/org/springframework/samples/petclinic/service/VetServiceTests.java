@@ -26,11 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Specialty;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.model.Vet;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,7 +89,7 @@ class VetServiceTests {
 
 	@Test
 	@Transactional
-	public void testSavingVet() throws DataAccessException, DuplicatedUserException {
+	public void testSavingVet() {
 		Integer countBefore = this.vetService.countVets();
 		countBefore++;
 

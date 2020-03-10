@@ -87,7 +87,7 @@ class OwnerServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldInsertOwner() throws DataAccessException, DuplicatedUserException {
+	public void shouldInsertOwner() {
 		Collection<Owner> owners = this.ownerService.findOwnerByLastName("Schultz");
 		int found = owners.size();
 

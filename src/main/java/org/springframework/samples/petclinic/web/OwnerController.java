@@ -23,9 +23,12 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -50,10 +53,13 @@ public class OwnerController {
 
 	private final OwnerService	ownerService;
 
+	private final UserService	userService;
+
 
 	@Autowired
 	public OwnerController(final OwnerService ownerService, final UserService userService, final AuthoritiesService authoritiesService) {
 		this.ownerService = ownerService;
+		this.userService = userService;
 	}
 
 	@InitBinder
@@ -94,9 +100,15 @@ public class OwnerController {
 
 	@GetMapping(value = "/owners/{ownerId}/edit")
 	public String initUpdateOwnerForm(@PathVariable("ownerId") final int ownerId, final Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
 		Owner owner = this.ownerService.findOwnerById(ownerId);
-		model.addAttribute(owner);
-		return OwnerController.VIEWS_OWNER_UPDATE_FORM;
+		if (currentPrincipalName.equals(owner.getUser().getUsername())) {
+			model.addAttribute(owner);
+			return OwnerController.VIEWS_OWNER_UPDATE_FORM;
+		} else {
+			return "redirect:/oups";
+		}
 	}
 
 	@PostMapping(value = "/owners/{ownerId}/edit")
@@ -105,16 +117,20 @@ public class OwnerController {
 			model.put("owner", owner);
 			return OwnerController.VIEWS_OWNER_UPDATE_FORM;
 		} else {
+			owner.setId(ownerId);
+			Owner ownerGuardado = this.ownerService.findOwnerById(ownerId);
+			User usuario = this.userService.findUserWithSameName(owner.getUser().getUsername());
 
-			try {
-				owner.setId(ownerId);
+			if (owner.getUser().getUsername().equals(ownerGuardado.getUser().getUsername()) || usuario == null) {
+				owner.getUser().setId(ownerGuardado.getUser().getId());
 				this.ownerService.saveOwner(owner);
-			} catch (DuplicatedUserException ex) {
+				return "redirect:/owners/{ownerId}";
+
+			} else {
 				result.rejectValue("user.username", "duplicate", "already exists");
+				model.put("owner", owner);
 				return OwnerController.VIEWS_OWNER_UPDATE_FORM;
 			}
-
-			return "redirect:/owners/{ownerId}";
 		}
 	}
 
