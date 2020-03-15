@@ -51,7 +51,7 @@
 					<petclinic:menuItem active="${name eq 'beauticians'}" url="/beauticians/principal/${principal.username}"
 						title="beauticians">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-						<span>Beauticians</span>
+						<span>Beautician</span>
 					</petclinic:menuItem>
 				</sec:authorize>
 
