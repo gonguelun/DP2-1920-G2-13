@@ -26,7 +26,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.User;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedUserException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,7 +111,7 @@ class OwnerServiceTests {
 
 	@Test
 	@Transactional
-	void shouldUpdateOwner() throws DataAccessException, DuplicatedUserException {
+	void shouldUpdateOwner() throws DataAccessException {
 		Owner owner = this.ownerService.findOwnerById(1);
 		String oldLastName = owner.getLastName();
 		String newLastName = oldLastName + "X";

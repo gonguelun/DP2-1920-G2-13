@@ -10,6 +10,7 @@ import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.BeauticianService;
+import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -41,6 +42,9 @@ public class BeauticianController {
 
 	@Autowired
 	private UserService			userService;
+
+	@Autowired
+	private BeautyCenterService	beautyService;
 
 
 	@InitBinder
