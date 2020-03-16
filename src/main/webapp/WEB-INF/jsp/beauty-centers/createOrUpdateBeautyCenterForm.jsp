@@ -7,6 +7,9 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
 <petclinic:layout pageName="beautyCenter">
+
+<jsp:body>
+
     <h2>
         Beauty Center
     </h2>
@@ -14,7 +17,9 @@
         <div class="form-group has-feedback">
             <petclinic:inputField label="Name" name="name"/>
             <petclinic:inputField label="Description" name="description"/>
-            <petclinic:inputField label="Duration" name="duration"/>
+            <div class="control-group">
+                    <petclinic:selectField name="petType" label="Type " names="${types}" size="5"/>
+                </div>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
@@ -26,5 +31,6 @@
             </div>
         </div>
     </form:form>
+ </jsp:body>
 </petclinic:layout>
 

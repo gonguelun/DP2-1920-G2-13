@@ -1,13 +1,10 @@
 
 package org.springframework.samples.petclinic.model;
 
-import java.time.LocalDate;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-
-import org.springframework.format.annotation.DateTimeFormat;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
 
@@ -17,13 +14,10 @@ public class BeautyCenter extends NamedEntity {
 
 	private String		description;
 
-	@DateTimeFormat(pattern = "H:MM:SS")
-	private LocalDate	duration;
-
 	@ManyToOne
+	@NotEmpty
 	private PetType		petType;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Beautician	beautician;
-
 }

@@ -29,11 +29,6 @@
                 <td>
                     <c:out value="${beautyCenter.duration}"/>
                 </td>
-                <td>
-                    <c:forEach var="pet" items="${beautyCenter.petType}">
-                        <c:out value="${pet.name} "/>
-                    </c:forEach>
-                </td>
             </tr>
         </c:forEach>
         </tbody>

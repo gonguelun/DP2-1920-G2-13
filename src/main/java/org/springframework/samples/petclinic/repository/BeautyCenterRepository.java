@@ -1,6 +1,7 @@
 
 package org.springframework.samples.petclinic.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
@@ -13,5 +14,8 @@ public interface BeautyCenterRepository extends CrudRepository<BeautyCenter, Int
 
 	@Query("SELECT b.specializations FROM Beautician b WHERE b.id = ?1")
 	List<PetType> findPetTypesByBeauticianId(int beauticianId) throws DataAccessException;
+
+	@Query("SELECT b FROM BeautyCenter b WHERE b.beautician.id = ?1 ")
+	Collection<BeautyCenter> findAllBeautyCenterByBeauticianId(int beauticianId);
 
 }

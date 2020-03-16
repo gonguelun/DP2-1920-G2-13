@@ -5,7 +5,9 @@ import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import lombok.Data;
@@ -15,9 +17,12 @@ import lombok.Data;
 public class Beautician extends Person {
 
 	@ManyToMany
-	private Collection<PetType>	specializations;
+	private Collection<PetType>			specializations;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	private User				user;
+	private User						user;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "beautician", fetch = FetchType.EAGER)
+	private Collection<BeautyCenter>	beautyCenters;
 
 }

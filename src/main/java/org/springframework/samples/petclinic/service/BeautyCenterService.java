@@ -53,4 +53,9 @@ public class BeautyCenterService {
 		return this.beautyRepository.findById(beautyCenterId).get();
 	}
 
+	@Transactional
+	public Collection<BeautyCenter> findAllBeautyCenterByBeauticianId(final int beauticianId) {
+		return this.beautyRepository.findAllBeautyCenterByBeauticianId(beauticianId);
+	}
+
 }
