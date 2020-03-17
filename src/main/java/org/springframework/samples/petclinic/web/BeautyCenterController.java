@@ -1,7 +1,6 @@
 
 package org.springframework.samples.petclinic.web;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -9,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
-import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.PetService;
@@ -20,7 +18,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -62,7 +59,7 @@ public class BeautyCenterController {
 			Beautician beautician = this.beautyService.findBeauticianById(beauticianId);
 			beautyCenter.setBeautician(beautician);
 			this.beautyService.save(beautyCenter);
-			return "redirect:/";
+			return "redirect:/beauticians/{beauticianId}";
 		}
 	}
 
@@ -72,9 +69,28 @@ public class BeautyCenterController {
 		return "beautyCenterList";
 	}
 
-	@ModelAttribute("types")
-	public Collection<PetType> populatePetTypes() {
-		return this.petService.findPetTypes();
+	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
+	public String initUpdateOwnerForm(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) {
+		BeautyCenter beautyCenter = this.beautyService.findById(beautyCenterId);
+		Beautician beautician = this.beautyService.findBeauticianById(beautyCenter.getBeautician().getId());
+		beautyCenter.setBeautician(beautician);
+		model.put("beautyCenter", beautyCenter);
+		return "beauty-centers/createOrUpdateBeautyCenterForm";
+	}
+
+	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
+	public String processUpdateBeauticianForm(@Valid final BeautyCenter beautyCenter, @PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId, final BindingResult result, final ModelMap model) {
+		if (result.hasErrors()) {
+			model.put("beautyCenter", beautyCenter);
+			return "beauty-centers/createOrUpdateBeautyCenterForm";
+		} else {
+			Beautician bea = this.beautyService.findBeauticianById(beauticianId);
+			beautyCenter.setBeautician(bea);
+			beautyCenter.setId(beautyCenterId);
+			this.beautyService.update(beautyCenter, beautyCenterId);
+			return "redirect:/beauticians/{beauticianId}";
+		}
+
 	}
 
 }

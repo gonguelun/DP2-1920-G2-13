@@ -3,6 +3,8 @@ package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Beautician;
@@ -56,6 +58,13 @@ public class BeautyCenterService {
 	@Transactional
 	public Collection<BeautyCenter> findAllBeautyCenterByBeauticianId(final int beauticianId) {
 		return this.beautyRepository.findAllBeautyCenterByBeauticianId(beauticianId);
+	}
+
+	public void update(@Valid final BeautyCenter beauticianCenter, final int beauticianId) {
+		String name = beauticianCenter.getName();
+		String description = beauticianCenter.getDescription();
+		PetType petType = beauticianCenter.getPetType();
+		this.beautyRepository.update(name, description, petType, beauticianId);
 	}
 
 }

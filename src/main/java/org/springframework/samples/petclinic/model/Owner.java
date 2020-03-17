@@ -28,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
 
@@ -64,6 +65,7 @@ public class Owner extends Person {
 	private Set<Pet>	pets;
 
 	//
+	@Valid
 	@OneToOne(cascade = CascadeType.ALL)
 	private User		user;
 	//
@@ -129,7 +131,7 @@ public class Owner extends Person {
 
 	/**
 	 * Return the Pet with the given name, or null if none found for this Owner.
-	 * 
+	 *
 	 * @param name
 	 *            to test
 	 * @return true if pet name is already in use
@@ -152,7 +154,7 @@ public class Owner extends Person {
 
 	/**
 	 * Return the Pet with the given name, or null if none found for this Owner.
-	 * 
+	 *
 	 * @param name
 	 *            to test
 	 * @return true if pet name is already in use
