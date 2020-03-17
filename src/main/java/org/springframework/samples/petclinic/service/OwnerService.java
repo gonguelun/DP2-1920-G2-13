@@ -20,7 +20,9 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.repository.BeautyCenterRepository;
 import org.springframework.samples.petclinic.repository.OwnerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class OwnerService {
 
 	private OwnerRepository		ownerRepository;
+	
+	private BeautyCenterRepository		beautyCenterRepository;
 
 	@Autowired
 	private UserService			userService;
@@ -44,8 +48,9 @@ public class OwnerService {
 
 
 	@Autowired
-	public OwnerService(final OwnerRepository ownerRepository) {
+	public OwnerService(final OwnerRepository ownerRepository,final BeautyCenterRepository beautyCenterRepository) {
 		this.ownerRepository = ownerRepository;
+		this.beautyCenterRepository=beautyCenterRepository;
 	}
 
 	@Transactional(readOnly = true)
@@ -63,6 +68,10 @@ public class OwnerService {
 		this.userService.saveUser(owner.getUser());
 		this.ownerRepository.save(owner);
 		this.authoritiesService.saveAuthorities(owner.getUser().getUsername(), "owner");
+	}
+	@Transactional
+	public Collection<BeautyCenter> findAllBeautyCentersByPetType(int petTypeId) {
+		return beautyCenterRepository.findAllBeautyCentersByPetType(petTypeId);
 	}
 
 }
