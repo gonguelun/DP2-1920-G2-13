@@ -17,5 +17,8 @@ public interface BeautyCenterRepository extends CrudRepository<BeautyCenter, Int
 
 	@Query("SELECT b FROM BeautyCenter b WHERE b.beautician.id = ?1 ")
 	Collection<BeautyCenter> findAllBeautyCenterByBeauticianId(int beauticianId);
+	
+	@Query("SELECT b FROM BeautyCenter b WHERE b.id=?1")
+	BeautyCenter findBeautyCenterByBeautyCenterId(int beautyCenterId);
 
 }
