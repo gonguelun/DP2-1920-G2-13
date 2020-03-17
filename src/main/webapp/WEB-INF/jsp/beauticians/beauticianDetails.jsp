@@ -6,7 +6,7 @@
 
 <petclinic:layout pageName="beauticians">
 
-    <h2>Owner Information</h2>
+    <h2>Beautician Information</h2>
 
 
     <table class="table table-striped">
@@ -34,15 +34,17 @@
     </spring:url>
     <a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Beautician</a>
     
-     <spring:url value="/beauticians/{beauticianId}/beauty-centers/new" var="beautyCenterUrl">
+     <spring:url value="/beauticians/{beauticianId}/beauty-centers/new" var="addBeautyCenterUrl">
         <spring:param name="beauticianId" value="${beautician.id}"/>
      </spring:url>
+
      <a href="${fn:escapeXml(beautyCenterUrl)}" class="btn btn-default">Add Beauty Center</a>
      
      <spring:url value="/beauticians/{beauticianId}/products/new" var="productNewUrl">
      	<spring:param name="beauticianId" value="${beautician.id}"/>
      </spring:url>
      <a href="${fn:escapeXml(productNewUrl)}" class="btn btn-default">Create Product</a>
+
     <br/>
     <br/>
     
@@ -54,6 +56,7 @@
             <th style="width: 150px;">Name</th>
             <th style="width: 200px;">Description</th>
             <th>Pet Type</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -68,6 +71,16 @@
                 <td>
                     <c:out value="${beautyCenters.petType}"/>
                 </td>
+
+                
+                
+                <td><spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit" var="updateBeautyCenterUrl">
+				        <spring:param name="beauticianId" value="${beautician.id}"/>
+				        <spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
+				    </spring:url>
+				    <a href="${fn:escapeXml(updateBeautyCenterUrl)}" >Modify ${beautyCenters.name} Beauty Center</a>
+				<td>
+
                 <td>
                 	<spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete" var="beautyUrl">
                 		<spring:param name="beauticianId" value ="${beautyCenters.beautician.id}" />

@@ -161,7 +161,7 @@ public class UserController {
 		} else {
 			User usuario = this.userService.findUserWithSameName(beautician.getUser().getUsername());
 			if (usuario != null) {
-				result.rejectValue("user.username", "duplicate", "already exists");
+				result.rejectValue("user.username", "duplicate", "Already exists");
 				model.put("beautician", beautician);
 				return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
 

@@ -19,6 +19,7 @@
             <div class="control-group">
             	<petclinic:selectField name="Specializations" label="Specializations" names="${types}" size="6"/>
             </div>
+            <c:out value="${emptyError}"></c:out>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

@@ -18,7 +18,7 @@
             <petclinic:inputField label="Name" name="name"/>
             <petclinic:inputField label="Description" name="description"/>
             <div class="control-group">
-                    <petclinic:selectField name="petType" label="Type " names="${types}" size="5"/>
+                    <petclinic:selectField name="petType" label="Type " names="${beautyCenter.beautician.specializations}" size="5"/>
                 </div>
         </div>
         <div class="form-group">
@@ -26,6 +26,9 @@
                 <c:choose>
                     <c:when test="${beautyCenter['new']}">
                         <button class="btn btn-default" type="submit">Add Beauty Center</button>
+                    </c:when>
+                    <c:when test="${!beautyCenter['new']}">
+                        <button class="btn btn-default" type="submit">Modify Beauty Center</button>
                     </c:when>
                 </c:choose>
             </div>
