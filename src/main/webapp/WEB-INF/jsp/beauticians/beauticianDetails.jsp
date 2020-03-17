@@ -69,6 +69,13 @@
                     <c:out value="${beautyCenters.petType}"/>
                 </td>
                 <td>
+                	<spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete" var="beautyUrl">
+                		<spring:param name="beauticianId" value ="${beautyCenters.beautician.id}" />
+                		<spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
+                	</spring:url>
+                                <a href="${fn:escapeXml(beautyUrl)}">Delete BeautyCenter</a>
+                </td>
+                <td>
                 	 <spring:url value="/{beautyCenterId}/products" var="productUrl">
                                     <spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
                                 </spring:url>
