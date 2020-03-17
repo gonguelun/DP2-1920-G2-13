@@ -37,7 +37,14 @@
      <spring:url value="/beauticians/{beauticianId}/beauty-centers/new" var="addBeautyCenterUrl">
         <spring:param name="beauticianId" value="${beautician.id}"/>
      </spring:url>
-     <a href="${fn:escapeXml(addBeautyCenterUrl)}" class="btn btn-default">Add Beauty Center</a>
+
+     <a href="${fn:escapeXml(beautyCenterUrl)}" class="btn btn-default">Add Beauty Center</a>
+     
+     <spring:url value="/beauticians/{beauticianId}/products/new" var="productNewUrl">
+     	<spring:param name="beauticianId" value="${beautician.id}"/>
+     </spring:url>
+     <a href="${fn:escapeXml(productNewUrl)}" class="btn btn-default">Create Product</a>
+
     <br/>
     <br/>
     
@@ -64,6 +71,7 @@
                 <td>
                     <c:out value="${beautyCenters.petType}"/>
                 </td>
+
                 
                 
                 <td><spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit" var="updateBeautyCenterUrl">
@@ -72,6 +80,20 @@
 				    </spring:url>
 				    <a href="${fn:escapeXml(updateBeautyCenterUrl)}" >Modify ${beautyCenters.name} Beauty Center</a>
 				<td>
+
+                <td>
+                	<spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete" var="beautyUrl">
+                		<spring:param name="beauticianId" value ="${beautyCenters.beautician.id}" />
+                		<spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
+                	</spring:url>
+                                <a href="${fn:escapeXml(beautyUrl)}">Delete BeautyCenter</a>
+                </td>
+                <td>
+                	 <spring:url value="/{beautyCenterId}/products" var="productUrl">
+                                    <spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
+                                </spring:url>
+                                <a href="${fn:escapeXml(productUrl)}">Product List</a>
+                </td>
             </tr>
         </c:forEach>
         </tbody>

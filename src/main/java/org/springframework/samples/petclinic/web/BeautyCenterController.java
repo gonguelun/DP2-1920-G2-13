@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
+import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -29,6 +32,9 @@ public class BeautyCenterController {
 
 	@Autowired
 	private PetService			petService;
+
+	@Autowired
+	private BeauticianService	beauticianService;
 
 
 	@Autowired
@@ -56,10 +62,24 @@ public class BeautyCenterController {
 			model.put("beautyCenter", beautyCenter);
 			return "beauty-centers/createOrUpdateBeautyCenterForm";
 		} else {
-			Beautician beautician = this.beautyService.findBeauticianById(beauticianId);
-			beautyCenter.setBeautician(beautician);
-			this.beautyService.save(beautyCenter);
-			return "redirect:/beauticians/{beauticianId}";
+
+			if (beautyCenter.getName().length() >= 3 && !beautyCenter.getName().isEmpty()) {
+				if (beautyCenter.getPetType() != null) {
+					Beautician beautician = this.beautyService.findBeauticianById(beauticianId);
+					beautyCenter.setBeautician(beautician);
+					this.beautyService.save(beautyCenter);
+					return "redirect:/beauticians/{beauticianId}";
+				} else {
+					result.rejectValue("petType", "notnull", "it's mandatory");
+					model.put("beautyCenter", beautyCenter);
+					return "beauty-centers/createOrUpdateBeautyCenterForm";
+				}
+			} else {
+				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
+				model.put("beautyCenter", beautyCenter);
+				return "beauty-centers/createOrUpdateBeautyCenterForm";
+			}
+
 		}
 	}
 
@@ -91,6 +111,21 @@ public class BeautyCenterController {
 			return "redirect:/beauticians/{beauticianId}";
 		}
 
+	}
+
+	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete")
+	public String deleteBeautyCenter(@PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
+		if (currentPrincipalName.equals(beautician.getUser().getUsername())) {
+			BeautyCenter aux = this.beautyService.findById(beautyCenterId);
+			aux.setBeautician(null);
+			this.beautyService.remove(beautyCenterId);
+			return "redirect:/beauticians/{beauticianId}";
+		} else {
+			return "redirect:/oups";
+		}
 	}
 
 }
