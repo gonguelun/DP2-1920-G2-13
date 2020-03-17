@@ -22,10 +22,13 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.OwnerService;
+import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,12 +57,15 @@ public class OwnerController {
 	private final OwnerService	ownerService;
 
 	private final UserService	userService;
+	
+	private final PetService	petService;
 
 
 	@Autowired
-	public OwnerController(final OwnerService ownerService, final UserService userService, final AuthoritiesService authoritiesService) {
+	public OwnerController(final OwnerService ownerService, final UserService userService,final PetService petService, final AuthoritiesService authoritiesService) {
 		this.ownerService = ownerService;
 		this.userService = userService;
+		this.petService=petService;
 	}
 
 	@InitBinder
@@ -146,6 +152,20 @@ public class OwnerController {
 		ModelAndView mav = new ModelAndView("owners/ownerDetails");
 		mav.addObject(this.ownerService.findOwnerById(ownerId));
 		return mav;
+	}
+	
+	@GetMapping(value = "/owners/beauty-centers/{petTypeId}")
+	public String showBeautyCenter(final Map<String, Object> model,@PathVariable("petTypeId") final int petTypeId) {
+		Collection<BeautyCenter> bc=this.ownerService.findAllBeautyCentersByPetType(petTypeId);
+		model.put("beautyCenters", bc);
+		return "owners/beautyCenterList";
+	}
+	
+	@GetMapping(value = "/owners/search-beauty-center")
+	public String searcheautyCenter(final Map<String, Object> model) {
+		Collection<PetType> type=this.petService.findPetTypes();
+		model.put("type", type);
+		return "owners/searchBeautyCenter";
 	}
 
 }

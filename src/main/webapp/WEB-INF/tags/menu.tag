@@ -34,6 +34,11 @@
 						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 						<span>Find owners</span>
 					</petclinic:menuItem>
+					<petclinic:menuItem active="${name eq 'owners'}" url="/owners/search-beauty-center"
+						title="search beauty center">
+						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+						<span>Search Beauty Centers</span>
+					</petclinic:menuItem>
 				</sec:authorize>
 	
 				<sec:authorize access="hasAnyAuthority('vet')">
