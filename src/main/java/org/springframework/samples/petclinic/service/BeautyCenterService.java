@@ -57,10 +57,16 @@ public class BeautyCenterService {
 	public Collection<BeautyCenter> findAllBeautyCenterByBeauticianId(final int beauticianId) {
 		return this.beautyRepository.findAllBeautyCenterByBeauticianId(beauticianId);
 	}
-	
+
 	@Transactional
 	public BeautyCenter findBeautyCenterByBeautyCenterId(final int beautyCenterId) {
 		return this.beautyRepository.findBeautyCenterByBeautyCenterId(beautyCenterId);
+	}
+
+	@Transactional
+	public void remove(final int beautyCenterId) {
+
+		this.beautyRepository.remove(beautyCenterId);
 	}
 
 }
