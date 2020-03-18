@@ -60,12 +60,13 @@ public class BeautyCenterService {
 		return this.beautyRepository.findAllBeautyCenterByBeauticianId(beauticianId);
 	}
 
-
+	@Transactional
 	public void update(@Valid final BeautyCenter beauticianCenter, final int beauticianId) {
 		String name = beauticianCenter.getName();
 		String description = beauticianCenter.getDescription();
 		PetType petType = beauticianCenter.getPetType();
 		this.beautyRepository.update(name, description, petType, beauticianId);
+	}
 
 	@Transactional
 	public BeautyCenter findBeautyCenterByBeautyCenterId(final int beautyCenterId) {

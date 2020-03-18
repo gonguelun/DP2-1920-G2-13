@@ -11,7 +11,7 @@
 <jsp:body>
 
     <h2>
-        Beauty Center
+        <c:if test="${beautyCenter['new']}">New </c:if> Beauty Center
     </h2>
     <form:form modelAttribute="beautyCenter" class="form-horizontal" id="add-beautyCenter-form">
         <div class="form-group has-feedback">

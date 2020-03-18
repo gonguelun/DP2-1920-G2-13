@@ -38,7 +38,7 @@
         <spring:param name="beauticianId" value="${beautician.id}"/>
      </spring:url>
 
-     <a href="${fn:escapeXml(beautyCenterUrl)}" class="btn btn-default">Add Beauty Center</a>
+     <a href="${fn:escapeXml(addBeautyCenterUrl)}" class="btn btn-default">Add Beauty Center</a>
      
      <spring:url value="/beauticians/{beauticianId}/products/new" var="productNewUrl">
      	<spring:param name="beauticianId" value="${beautician.id}"/>
@@ -71,16 +71,15 @@
                 <td>
                     <c:out value="${beautyCenters.petType}"/>
                 </td>
-
                 
+                <td>
+                	<spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit" var="editBeautyUrl">
+                		<spring:param name="beauticianId" value ="${beautyCenters.beautician.id}" />
+                		<spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
+                	</spring:url>
+                                <a href="${fn:escapeXml(editBeautyUrl)}">Modify BeautyCenter</a>
+                </td>
                 
-                <td><spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit" var="updateBeautyCenterUrl">
-				        <spring:param name="beauticianId" value="${beautician.id}"/>
-				        <spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
-				    </spring:url>
-				    <a href="${fn:escapeXml(updateBeautyCenterUrl)}" >Modify ${beautyCenters.name} Beauty Center</a>
-				<td>
-
                 <td>
                 	<spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete" var="beautyUrl">
                 		<spring:param name="beauticianId" value ="${beautyCenters.beautician.id}" />

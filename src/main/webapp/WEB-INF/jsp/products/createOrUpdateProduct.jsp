@@ -7,7 +7,7 @@
 <petclinic:layout pageName="products">
     <jsp:body>
         <h2>
-            New Product
+            <c:if test="${product['new']}">New </c:if> Product
         </h2>
         <form:form modelAttribute="product"
                    class="form-horizontal">
@@ -20,7 +20,19 @@
                 <input type="checkbox" name="avaliable" value="true">
  					 <label for="avaliable"> Avaliable</label><br>
             </div>
-                 <button class="btn btn-default" type="submit">Create</button>
+          
+            <div class="form-group">
+            	<div class="col-sm-offset-2 col-sm-10">
+                	<c:choose>
+                    	<c:when test="${product['new']}">
+                        	<button class="btn btn-default" type="submit">Create Product</button>
+                    	</c:when>
+                    	<c:when test="${!product['new']}">
+                       		<button class="btn btn-default" type="submit">Modify Product</button>
+                   		</c:when>
+                	</c:choose>
+            	</div>
+        	</div>
         </form:form>
     </jsp:body>
 </petclinic:layout>
