@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.model;
 
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -25,6 +26,9 @@ public class Product extends NamedEntity{
 	
 	@Column(name="avaliable")
 	private boolean avaliable;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Beautician	beautician;
 
 	public PetType getType() {
 		return type;
@@ -48,6 +52,14 @@ public class Product extends NamedEntity{
 
 	public void setAvaliable(boolean avaliable) {
 		this.avaliable = avaliable;
+	}
+	
+	public Beautician getBeautician() {
+		return beautician;
+	}
+
+	public void setBeautician(Beautician beautician) {
+		this.beautician = beautician;
 	}
 	
 	

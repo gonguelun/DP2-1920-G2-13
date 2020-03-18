@@ -20,5 +20,11 @@ public interface ProductRepository{
 	void save(Product product) throws DataAccessException;
 
 	Collection<PetType> findSpecializationsByBeauticianId(int beauticianId) throws DataAccessException;
+
+	Beautician findBeauticianById(int beauticianId) throws DataAccessException;
+
+	Product findProductById(int productId) throws DataAccessException;
+
+	void delete(Product product) throws DataAccessException;
 	
 	}
