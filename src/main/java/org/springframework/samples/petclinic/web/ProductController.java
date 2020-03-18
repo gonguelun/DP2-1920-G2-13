@@ -20,7 +20,10 @@ import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.ProductService;
 import org.springframework.samples.petclinic.service.VetService;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,16 +31,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class ProductController {
 	private final ProductService productService;
 	private final BeautyCenterService beauticianCenterService;
+	private final BeauticianService beauticianService;
 
 	@Autowired
-	public ProductController(ProductService productService, BeautyCenterService beauticianCenterService) {
+	public ProductController(ProductService productService, BeautyCenterService beauticianCenterService,BeauticianService beauticianService) {
 		this.productService = productService;
 		this.beauticianCenterService=beauticianCenterService;
+		this.beauticianService=beauticianService;
 	}
 	
 
@@ -63,14 +69,30 @@ public class ProductController {
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/products/new")
-	public String processCreationForm(@Valid final Product product,BindingResult result, ModelMap model) {		
+	public String processCreationForm(@Valid final Product product,@PathVariable("beauticianId") int beauticianId,BindingResult result, ModelMap model) {		
 		if (result.hasErrors()) {
 			model.put("product", product);
 			return "products/createProduct";
 		} else {
+			Beautician beautician=this.productService.findBeauticianById(beauticianId);
+			product.setBeautician(beautician);
 			this.productService.save(product);
 			return "redirect:/";
 		}
 	}
+	
+	@RequestMapping(value = "/{beautyCenterId}/products/{productId}/delete", method = RequestMethod.GET)
+    public String delete(@PathVariable("productId") int productId, Model model) {
+    		Product product = this.productService.findProductById(productId);
+    		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    		String currentPrincipalName = authentication.getName();
+    		if (currentPrincipalName.equals(product.getBeautician().getUser().getUsername())) {
+    		product.setBeautician(null);
+            this.productService.deleteProduct(product);
+            return "redirect:/";
+    		}else {
+    			return "redirect:/oups";
+    		}
+    }
 
 }

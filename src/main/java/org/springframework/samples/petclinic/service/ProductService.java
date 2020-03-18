@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Product;
@@ -43,6 +44,20 @@ public class ProductService {
 	public Collection<PetType> findSpecializationsByBeauticianId(int beauticianId) {
 		return productRepository.findSpecializationsByBeauticianId(beauticianId);
 	}
+
+	public Beautician findBeauticianById(int beauticianId) {
+		return productRepository.findBeauticianById(beauticianId);
+	}
+
+	public Product findProductById(int productId) {
+		return productRepository.findProductById(productId);
+	}
+	@Transactional
+	public void deleteProduct(Product product) {
+		this.productRepository.delete(product);
+		
+	}
+	
 	
 	
 }

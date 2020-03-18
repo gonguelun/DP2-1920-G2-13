@@ -65,7 +65,7 @@ INSERT INTO visits(id,pet_id,visit_date,description) VALUES (2, 8, '2013-01-02',
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (3, 8, '2013-01-03', 'neutered');
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (4, 7, '2013-01-04', 'spayed');
 
-INSERT INTO products(id,name,type_id,description,avaliable) VALUES (1,'Champú',1,'Champú suave',true);
+
 
 INSERT INTO beautician VALUES (1, 'f', 'f', 4);
 INSERT INTO beautician_specializations VALUES (1, 1);
