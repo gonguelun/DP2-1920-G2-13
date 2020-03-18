@@ -52,3 +52,9 @@ INSERT IGNORE INTO visits VALUES (2, 8, '2011-03-04', 'rabies shot');
 INSERT IGNORE INTO visits VALUES (3, 8, '2009-06-04', 'neutered');
 INSERT IGNORE INTO visits VALUES (4, 7, '2008-09-04', 'spayed');
 
+INSERT IGNORE INTO products(id,name,type_id,description,avaliable) VALUES (1,'Champú',1,'Champú suave',true);
+
+INSERT IGNORE INTO beautician VALUES (1, 'f', 'f', 4);
+INSERT IGNORE INTO beautician_specializations VALUES (1, 1);
+
+INSERT IGNORE INTO beauty_center VALUES (1, 'name1', 'hey', 1, 1);

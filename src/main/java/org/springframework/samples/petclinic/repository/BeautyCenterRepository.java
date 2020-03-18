@@ -13,7 +13,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface BeautyCenterRepository extends CrudRepository<BeautyCenter, Integer> {
 
@@ -23,7 +22,6 @@ public interface BeautyCenterRepository extends CrudRepository<BeautyCenter, Int
 	@Query("SELECT b FROM BeautyCenter b WHERE b.beautician.id = ?1 ")
 	Collection<BeautyCenter> findAllBeautyCenterByBeauticianId(int beauticianId);
 
-
 	@Transactional
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE BeautyCenter b SET b.name = ?1, b.description = ?2, b.petType = ?3 WHERE b.id = ?4")
@@ -31,14 +29,13 @@ public interface BeautyCenterRepository extends CrudRepository<BeautyCenter, Int
 
 	@Query("SELECT b FROM BeautyCenter b WHERE b.id=?1")
 	BeautyCenter findBeautyCenterByBeautyCenterId(int beautyCenterId);
-	
+
 	@Query("SELECT b FROM BeautyCenter b WHERE b.petType.id=?1")
-	public Collection<BeautyCenter> findAllBeautyCentersByPetType(@Param("petTypeId") int petTypeId);
+	Collection<BeautyCenter> findAllBeautyCentersByPetType(@Param("petTypeId") int petTypeId);
 
 	@Transactional
 	@Modifying
 	@Query("DELETE FROM BeautyCenter b WHERE b.id=?1")
 	void remove(int beautyCenterId);
-
 
 }

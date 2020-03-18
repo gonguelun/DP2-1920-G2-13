@@ -107,7 +107,7 @@ public class UserController {
 
 			} else {
 				this.ownerService.saveOwner(owner);
-				;
+
 				return "redirect:/";
 			}
 		}

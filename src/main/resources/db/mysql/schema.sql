@@ -5,6 +5,13 @@ CREATE TABLE IF NOT EXISTS vets (
   INDEX(last_name)
 ) engine=InnoDB;
 
+CREATE TABLE IF NOT EXISTS beautician (
+  id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(30),
+  last_name VARCHAR(30),
+  INDEX(last_name)
+) engine=InnoDB;
+
 CREATE TABLE IF NOT EXISTS specialties (
   id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(80),
@@ -52,4 +59,20 @@ CREATE TABLE IF NOT EXISTS visits (
   visit_date DATE,
   description VARCHAR(255),
   FOREIGN KEY (pet_id) REFERENCES pets(id)
+) engine=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS beautician_specializations (
+  beautician_id INT(4) UNSIGNED NOT NULL,
+  specializations_id INT(4) UNSIGNED NOT NULL,
+  FOREIGN KEY (beautician_id) REFERENCES beautician(id),
+  FOREIGN KEY (specializations_id) REFERENCES types(id),
+  UNIQUE (beautician_id,specializations_id)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS beauty_center (
+  id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  beautician_id INT(4) UNSIGNED NOT NULL,
+  description VARCHAR(255),
+  FOREIGN KEY (pet_type_id) REFERENCES types(id)
 ) engine=InnoDB;
