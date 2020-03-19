@@ -33,6 +33,13 @@
                 <td>
                     <c:out value="${beautyDate.startDate} "/>
                 </td>
+                <td>
+                	<spring:url value="/owners/{ownerUsername}/beauty-dates/{beautyDateId}/delete" var="beautyDateUrl">
+                		<spring:param name="ownerUsername" value ="${beautyDate.pet.owner.user.username}" />
+                		<spring:param name="beautyDateId" value="${beautyDate.id}"/>
+                	</spring:url>
+                    <a href="${fn:escapeXml(beautyDateUrl)}">Delete Beauty Date</a>
+                </td>
            
             </tr>
         </c:forEach>

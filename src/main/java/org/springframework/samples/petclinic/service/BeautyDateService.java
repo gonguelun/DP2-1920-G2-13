@@ -49,4 +49,13 @@ public class BeautyDateService {
 		return this.beautyDateRepository.findBeautyDatesByOwnerUsername(ownerUsername);
 	}
 
+	public BeautyDate findById(final int beautyDateId) {
+		return this.beautyDateRepository.findById(beautyDateId).get();
+	}
+
+	public void remove(final int beautyDateId) {
+		this.beautyDateRepository.remove(beautyDateId);
+
+	}
+
 }
