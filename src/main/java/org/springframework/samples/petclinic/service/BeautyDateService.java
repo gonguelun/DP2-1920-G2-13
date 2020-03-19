@@ -45,4 +45,8 @@ public class BeautyDateService {
 		return this.beautyDateRepository.findPetsByOwnerAndType(ownerUsername, petTypeId);
 	}
 
+	public Collection<BeautyDate> findBeautyDatesByOwnerUsername(final String ownerUsername) {
+		return this.beautyDateRepository.findBeautyDatesByOwnerUsername(ownerUsername);
+	}
+
 }

@@ -27,7 +27,7 @@
 					<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
 					<span>Home</span>
 				</petclinic:menuItem>
-
+				<sec:authentication var="principal2" property="principal" />
 				<sec:authorize access="hasAnyAuthority('owner')">
 					<petclinic:menuItem active="${name eq 'owners'}" url="/owners/find"
 						title="find owners">
@@ -38,6 +38,10 @@
 						title="search beauty center">
 						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 						<span>Search Beauty Centers</span>
+					</petclinic:menuItem>
+					<petclinic:menuItem url="/owners/${principal2.username}/beauty-dates" active="${name eq 'owners'}"
+					title="view my beauty dates">
+						<span>View my beauty dates</span>
 					</petclinic:menuItem>
 				</sec:authorize>
 	
