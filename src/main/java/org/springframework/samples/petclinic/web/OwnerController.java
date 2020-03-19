@@ -27,6 +27,7 @@ import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
+import org.springframework.samples.petclinic.service.BeautyDateService;
 import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
@@ -52,20 +53,23 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class OwnerController {
 
-	private static final String	VIEWS_OWNER_UPDATE_FORM	= "owners/UpdateOwnerForm";
+	private static final String		VIEWS_OWNER_UPDATE_FORM	= "owners/UpdateOwnerForm";
 
-	private final OwnerService	ownerService;
+	private final OwnerService		ownerService;
 
-	private final UserService	userService;
-	
-	private final PetService	petService;
+	private final UserService		userService;
+
+	private final PetService		petService;
+
+	private final BeautyDateService	beautyDateService;
 
 
 	@Autowired
-	public OwnerController(final OwnerService ownerService, final UserService userService,final PetService petService, final AuthoritiesService authoritiesService) {
+	public OwnerController(final OwnerService ownerService, final UserService userService, final PetService petService, final BeautyDateService beautyDateService, final AuthoritiesService authoritiesService) {
 		this.ownerService = ownerService;
 		this.userService = userService;
-		this.petService=petService;
+		this.petService = petService;
+		this.beautyDateService = beautyDateService;
 	}
 
 	@InitBinder
@@ -153,19 +157,24 @@ public class OwnerController {
 		mav.addObject(this.ownerService.findOwnerById(ownerId));
 		return mav;
 	}
-	
+
 	@GetMapping(value = "/owners/beauty-centers/{petTypeId}")
-	public String showBeautyCenter(final Map<String, Object> model,@PathVariable("petTypeId") final int petTypeId) {
-		Collection<BeautyCenter> bc=this.ownerService.findAllBeautyCentersByPetType(petTypeId);
+	public String showBeautyCenter(final Map<String, Object> model, @PathVariable("petTypeId") final int petTypeId) {
+		Collection<BeautyCenter> bc = this.ownerService.findAllBeautyCentersByPetType(petTypeId);
 		model.put("beautyCenters", bc);
 		return "owners/beautyCenterList";
 	}
-	
+
 	@GetMapping(value = "/owners/search-beauty-center")
 	public String searcheautyCenter(final Map<String, Object> model) {
-		Collection<PetType> type=this.petService.findPetTypes();
+		Collection<PetType> type = this.petService.findPetTypes();
 		model.put("type", type);
 		return "owners/searchBeautyCenter";
 	}
 
+	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates")
+	public String showBeautyDates(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) {
+		model.put("beautyDates", this.beautyDateService.findBeautyDatesByOwnerUsername(ownerUsername));
+		return "beauty-dates/beautyDatesList";
+	}
 }

@@ -16,4 +16,7 @@ public interface BeautyDateRepository extends CrudRepository<BeautyDate, Integer
 	@Query("SELECT p FROM Pet p WHERE p.owner.user.username = ?1 AND p.type.id = ?2")
 	Collection<Pet> findPetsByOwnerAndType(String ownerUsername, int petTypeId);
 
+	@Query("SELECT bd FROM BeautyDate bd WHERE bd.pet.owner.user.username = ?1")
+	Collection<BeautyDate> findBeautyDatesByOwnerUsername(String ownerUsername);
+
 }
