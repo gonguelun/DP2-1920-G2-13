@@ -3,6 +3,9 @@ package org.springframework.samples.petclinic.repository;
 
 import java.util.Collection;
 
+import javax.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.BeautyDate;
@@ -18,5 +21,10 @@ public interface BeautyDateRepository extends CrudRepository<BeautyDate, Integer
 
 	@Query("SELECT bd FROM BeautyDate bd WHERE bd.pet.owner.user.username = ?1")
 	Collection<BeautyDate> findBeautyDatesByOwnerUsername(String ownerUsername);
+
+	@Transactional
+	@Modifying
+	@Query("DELETE FROM BeautyDate b WHERE b.id=?1")
+	void remove(int beautyCenterId);
 
 }

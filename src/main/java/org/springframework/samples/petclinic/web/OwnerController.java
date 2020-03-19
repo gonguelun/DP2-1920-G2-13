@@ -23,6 +23,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.BeautyCenter;
+import org.springframework.samples.petclinic.model.BeautyDate;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
@@ -176,5 +177,21 @@ public class OwnerController {
 	public String showBeautyDates(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) {
 		model.put("beautyDates", this.beautyDateService.findBeautyDatesByOwnerUsername(ownerUsername));
 		return "beauty-dates/beautyDatesList";
+	}
+
+	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/delete")
+	public String deleteBeautyDate(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Map<String, Object> model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+		if (currentPrincipalName.equals(ownerUsername)) {
+			BeautyDate aux = this.beautyDateService.findById(beautyDateId);
+			aux.setBeautyCenter(null);
+			aux.setPet(null);
+			this.beautyDateService.remove(beautyDateId);
+			return "redirect:/owners/{ownerUsername}/beauty-dates";
+		} else {
+			return "redirect:/oups";
+		}
+
 	}
 }

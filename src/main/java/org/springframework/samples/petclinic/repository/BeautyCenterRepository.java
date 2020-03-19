@@ -35,7 +35,7 @@ public interface BeautyCenterRepository extends CrudRepository<BeautyCenter, Int
 
 	@Transactional
 	@Modifying
-	@Query("DELETE FROM BeautyCenter b WHERE b.id=?1")
+	@Query("DELETE FROM BeautyDate b WHERE b.id=?1")
 	void remove(int beautyCenterId);
 
 }
