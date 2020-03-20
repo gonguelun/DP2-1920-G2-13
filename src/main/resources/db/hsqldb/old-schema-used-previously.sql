@@ -107,4 +107,3 @@ CREATE TABLE beauty_center (
 );
 ALTER TABLE beauty_center ADD CONSTRAINT fk_beauty_center_beautician FOREIGN KEY (beautician_id) REFERENCES beautician (id);
 ALTER TABLE beauty_center ADD CONSTRAINT fk_beauty_center_pet_type_id FOREIGN KEY (pet_type_id) REFERENCES types (id);
-CREATE INDEX beauty_center_name ON beauty_center (name);

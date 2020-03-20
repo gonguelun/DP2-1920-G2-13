@@ -58,22 +58,26 @@ public class BeautyCenterController {
 
 	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/new")
 	public String processCreationFormBeautyCenter(@Valid final BeautyCenter beautyCenter, @PathVariable("beauticianId") final int beauticianId, final BindingResult result, final ModelMap model) {
+		Beautician bea = this.beauticianService.findBeauticianById(beauticianId);
+		beautyCenter.setBeautician(bea);
+
 		if (result.hasErrors()) {
 			model.put("beautyCenter", beautyCenter);
 			return "beauty-centers/createOrUpdateBeautyCenterForm";
 		} else {
 
 			if (beautyCenter.getName().length() >= 3 && !beautyCenter.getName().isEmpty()) {
+
 				if (beautyCenter.getPetType() != null) {
-					Beautician beautician = this.beautyService.findBeauticianById(beauticianId);
-					beautyCenter.setBeautician(beautician);
 					this.beautyService.save(beautyCenter);
 					return "redirect:/beauticians/{beauticianId}";
+
 				} else {
-					result.rejectValue("petType", "notnull", "it's mandatory");
+					result.rejectValue("petType", "notnull", "It's mandatory");
 					model.put("beautyCenter", beautyCenter);
 					return "beauty-centers/createOrUpdateBeautyCenterForm";
 				}
+
 			} else {
 				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
 				model.put("beautyCenter", beautyCenter);
@@ -100,15 +104,32 @@ public class BeautyCenterController {
 
 	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
 	public String processUpdateBeauticianForm(@Valid final BeautyCenter beautyCenter, @PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId, final BindingResult result, final ModelMap model) {
+		Beautician bea = this.beauticianService.findBeauticianById(beauticianId);
+		beautyCenter.setBeautician(bea);
+
 		if (result.hasErrors()) {
 			model.put("beautyCenter", beautyCenter);
 			return "beauty-centers/createOrUpdateBeautyCenterForm";
 		} else {
-			Beautician bea = this.beautyService.findBeauticianById(beauticianId);
-			beautyCenter.setBeautician(bea);
-			beautyCenter.setId(beautyCenterId);
-			this.beautyService.update(beautyCenter, beautyCenterId);
-			return "redirect:/beauticians/{beauticianId}";
+
+			if (beautyCenter.getName().length() >= 3 && !beautyCenter.getName().isEmpty()) {
+
+				if (beautyCenter.getPetType() != null) {
+					beautyCenter.setId(beautyCenterId);
+					this.beautyService.update(beautyCenter, beautyCenterId);
+					return "redirect:/beauticians/{beauticianId}";
+
+				} else {
+					result.rejectValue("petType", "notnull", "It's mandatory");
+					model.put("beautyCenter", beautyCenter);
+					return "beauty-centers/createOrUpdateBeautyCenterForm";
+				}
+
+			} else {
+				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
+				model.put("beautyCenter", beautyCenter);
+				return "beauty-centers/createOrUpdateBeautyCenterForm";
+			}
 		}
 
 	}

@@ -52,7 +52,6 @@ INSERT IGNORE INTO visits VALUES (2, 8, '2011-03-04', 'rabies shot');
 INSERT IGNORE INTO visits VALUES (3, 8, '2009-06-04', 'neutered');
 INSERT IGNORE INTO visits VALUES (4, 7, '2008-09-04', 'spayed');
 
-
 INSERT IGNORE INTO users(id, username,password,enabled) VALUES (4, 'f','f',TRUE);
 INSERT IGNORE INTO authorities VALUES ('f','beautician');
 INSERT IGNORE INTO users(id, username,password,enabled) VALUES (5, 'g','g',TRUE);
@@ -97,7 +96,9 @@ INSERT IGNORE INTO beautician_specializations(beautician_id,specializations_id) 
 INSERT IGNORE INTO beautician_specializations(beautician_id,specializations_id) VALUES (5, 2);
 
 INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (1, 'name1', 'hey', 1, 1);
-INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (1, 'name1', 'hey', 3, 2);
-INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (1, 'name1', 'hey', 4, 3);
-INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (1, 'name1', 'hey', 5, 4);
-INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (1, 'name1', 'hey', 2, 5);
+INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (2, 'name1', 'hey', 3, 2);
+INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (3, 'name1', 'hey', 4, 3);
+INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (4, 'name1', 'hey', 5, 4);
+INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (5, 'name1', 'hey', 2, 5);
+
+INSERT IGNORE INTO products(id,name,type_id,description,avaliable) VALUES (1,'Champú',1,'Champú suave',true);
