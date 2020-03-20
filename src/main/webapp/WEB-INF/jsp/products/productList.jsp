@@ -39,7 +39,7 @@
                 </td>
                 
                 <td>
-                <spring:url value=" /{beauticianId}/products/{productId}/edit" var="editProductUrl">
+                <spring:url value=" /{beautyCenterId}/products/{productId}/edit" var="editProductUrl">
                     <spring:param name="productId" value="${product.id}"/>
                     </spring:url>
                     <a href="${fn:escapeXml(editProductUrl)}">Modify Product</a>

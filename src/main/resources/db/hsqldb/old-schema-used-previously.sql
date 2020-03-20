@@ -7,6 +7,9 @@ DROP TABLE types IF EXISTS;
 DROP TABLE owners IF EXISTS;
 DROP TABLE users IF EXISTS;
 DROP TABLE authorities IF EXISTS;
+DROP TABLE beautician IF EXISTS;
+DROP TABLE beautician_specializations IF EXISTS;
+DROP TABLE beauty_center IF EXISTS;
 
 CREATE TABLE vets (
   id         INTEGER IDENTITY PRIMARY KEY,
@@ -79,3 +82,29 @@ ALTER TABLE authorities ADD CONSTRAINT fk_authorities_users FOREIGN KEY (usernam
 
 CREATE UNIQUE INDEX ix_auth_username ON authorities (username,authority);
 
+CREATE TABLE beautician (
+	  id         INTEGER IDENTITY PRIMARY KEY,
+	  first_name VARCHAR(30),
+	  last_name  VARCHAR(30),
+	  user_id	INTEGER NOT NULL
+);
+ALTER TABLE beautician ADD CONSTRAINT fk_beautician_user_id FOREIGN KEY (user_id) REFERENCES users (id);
+CREATE INDEX beautician_last_name ON beautician (last_name);
+
+CREATE TABLE beautician_specializations (
+  beautician_id       INTEGER NOT NULL,
+  specializations_id INTEGER NOT NULL
+);
+ALTER TABLE beautician_specializations ADD CONSTRAINT fk_beautician_specializations FOREIGN KEY (beautician_id) REFERENCES beautician (id);
+ALTER TABLE beautician_specializations ADD CONSTRAINT fk_beautician_specializations FOREIGN KEY (beautician_id) REFERENCES specialties (id);
+
+CREATE TABLE beauty_center (
+	  id         INTEGER IDENTITY PRIMARY KEY,
+	  name       VARCHAR(30),
+	  description VARCHAR(30),
+	  pet_type_id    INTEGER NOT NULL,
+	  beautician_id   INTEGER NOT NULL
+);
+ALTER TABLE beauty_center ADD CONSTRAINT fk_beauty_center_beautician FOREIGN KEY (beautician_id) REFERENCES beautician (id);
+ALTER TABLE beauty_center ADD CONSTRAINT fk_beauty_center_pet_type_id FOREIGN KEY (pet_type_id) REFERENCES types (id);
+CREATE INDEX beauty_center_name ON beauty_center (name);

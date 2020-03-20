@@ -78,33 +78,35 @@ public class ProductController {
 		}
 	}
 
-	@GetMapping(value = "/{beauticianId}/products/{productId}/edit")
-	public String initUpdateForm(@PathVariable("beauticianId") final int beauticianId, @PathVariable("productId") final int productId, final ModelMap model) {
+	@GetMapping(value = "/{beautyCenterId}/products/{productId}/edit")
+	public String initUpdateForm(@PathVariable("productId") final int productId, final ModelMap model) {
 		Product product = this.productService.findProductById(productId);
-		Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(beauticianId);
+		Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(product.getBeautician().getId());
 		model.put("specialization", specializations);
 		model.put("product", product);
 		return "products/createOrUpdateProduct";
 	}
 
-	@PostMapping(value = "/{beauticianId}/products/{productId}/edit")
-	public String processUpdateForm(@Valid final Product product, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, @PathVariable("productId") final int productId, final ModelMap model) {
-		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
-		Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(beauticianId);
-		if (result.hasErrors()) {
-			model.put("specialization", specializations);
-			model.put("product", product);
-			return "products/createOrUpdateProduct";
-		} else {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			String currentPrincipalName = authentication.getName();
-			if (currentPrincipalName.equals(product.getBeautician().getUser().getUsername())) {
+	@PostMapping(value = "/{beautyCenterId}/products/{productId}/edit")
+	public String processUpdateForm(@Valid final Product product, final BindingResult result, @PathVariable("productId") final int productId, final ModelMap model) {
+		product.setId(productId);
+		Beautician beautician = this.productService.findBeauticianByProductId(productId);
+		product.setBeautician(beautician);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+		if (currentPrincipalName.equals(product.getBeautician().getUser().getUsername())) {
+			Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(beautician.getId());
+			if (result.hasErrors()) {
+				model.put("specialization", specializations);
+				model.put("product", product);
+				return "products/createOrUpdateProduct";
+			} else {
 				product.setBeautician(beautician);
 				this.productService.save(product);
-				return "redirect:/{productId}/products}";
-			} else {
-				return "redirect:/oups";
+				return "redirect:/";
 			}
+		} else {
+			return "redirect:/oups";
 		}
 	}
 

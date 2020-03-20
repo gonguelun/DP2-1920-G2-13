@@ -33,4 +33,8 @@ public interface SpringDataProductRepository extends ProductRepository, Reposito
 	@Override
 	@Query("SELECT p FROM Product p WHERE p.id=?1")
 	Product findProductById(@Param("productId") int productId) throws DataAccessException;
+
+	@Override
+	@Query("SELECT p.beautician FROM Product p WHERE p.id = ?1 ")
+	Beautician findBeauticianByProductId(@Param("productId") int productId) throws DataAccessException;
 }

@@ -56,4 +56,9 @@ public class ProductService {
 
 	}
 
+	@Transactional
+	public Beautician findBeauticianByProductId(final int productId) {
+		return this.productRepository.findBeauticianByProductId(productId);
+	}
+
 }

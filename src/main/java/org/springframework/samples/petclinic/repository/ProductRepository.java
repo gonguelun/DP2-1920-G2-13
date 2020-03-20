@@ -24,4 +24,6 @@ public interface ProductRepository {
 
 	void delete(Product product) throws DataAccessException;
 
+	Beautician findBeauticianByProductId(int productId) throws DataAccessException;
+
 }
