@@ -65,6 +65,58 @@ INSERT INTO visits(id,pet_id,visit_date,description) VALUES (2, 8, '2013-01-02',
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (3, 8, '2013-01-03', 'neutered');
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (4, 7, '2013-01-04', 'spayed');
 
+INSERT INTO users(id, username,password,enabled) VALUES (4, 'f','f',TRUE);
+INSERT INTO authorities VALUES ('f','beautician');
+INSERT INTO users(id, username,password,enabled) VALUES (5, 'g','g',TRUE);
+INSERT INTO authorities VALUES ('g','beautician');
+INSERT INTO users(id, username,password,enabled) VALUES (6, 'a','a',TRUE);
+INSERT INTO authorities VALUES ('a','beautician');
+INSERT INTO users(id, username,password,enabled) VALUES (7, 'c','c',TRUE);
+INSERT INTO authorities VALUES ('c','beautician');
+INSERT INTO users(id, username,password,enabled) VALUES (8, 's','s',TRUE);
+INSERT INTO authorities VALUES ('s','beautician');
+
+INSERT INTO beautician(id,first_name,last_name,user_id) VALUES (1, 'f', 'f', 4);
+INSERT INTO beautician(id,first_name,last_name,user_id) VALUES (2, 'g', 'g', 5);
+INSERT INTO beautician(id,first_name,last_name,user_id) VALUES (3, 'a', 'a', 6);
+INSERT INTO beautician(id,first_name,last_name,user_id) VALUES (4, 'c', 'c', 7);
+INSERT INTO beautician(id,first_name,last_name,user_id) VALUES (5, 's', 's', 8);
+
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (1, 1);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (1, 3);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (1, 4);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (1, 5);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (1, 6);
+
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (2, 1);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (2, 3);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (2, 4);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (2, 5);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (2, 6);
+
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (3, 1);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (3, 3);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (3, 4);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (3, 5);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (3, 6);
+
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (4, 1);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (4, 3);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (4, 4);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (4, 5);
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (4, 6);
+
+INSERT INTO beautician_specializations(beautician_id,specializations_id) VALUES (5, 2);
+
+INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (1, 'name1', 'hey', 1, 1);
+INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (2, 'name1', 'hey', 3, 2);
+INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (3, 'name1', 'hey', 4, 3);
+INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (4, 'name1', 'hey', 5, 4);
+INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (5, 'name1', 'hey', 2, 5);
+
+
+
+
 
 
 INSERT INTO beautician VALUES (1, 'f', 'f', 4);

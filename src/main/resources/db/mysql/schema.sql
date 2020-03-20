@@ -2,14 +2,18 @@ CREATE TABLE IF NOT EXISTS vets (
   id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30),
   last_name VARCHAR(30),
+  user_id INT(4) UNSIGNED NOT NULL,
   INDEX(last_name)
+  FOREIGN KEY (user_id) REFERENCES users(id)
 ) engine=InnoDB;
 
 CREATE TABLE IF NOT EXISTS beautician (
   id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30),
   last_name VARCHAR(30),
+  user_id INT(4) UNSIGNED NOT NULL,
   INDEX(last_name)
+  FOREIGN KEY (user_id) REFERENCES users(id)
 ) engine=InnoDB;
 
 CREATE TABLE IF NOT EXISTS specialties (

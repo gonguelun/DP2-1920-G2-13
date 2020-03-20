@@ -37,6 +37,14 @@
                 <td>
                     <c:out value="${product.beautician.firstName} ${product.beautician.lastName}"/>
                 </td>
+                
+                <td>
+                <spring:url value=" /{beautyCenterId}/products/{productId}/edit" var="editProductUrl">
+                    <spring:param name="productId" value="${product.id}"/>
+                    </spring:url>
+                    <a href="${fn:escapeXml(editProductUrl)}">Modify Product</a>
+                    </td>
+                    
                 <td>
                 <spring:url value=" /{beautyCenterId}/products/{productId}/delete" var="deleteProductUrl">
                     <spring:param name="productId" value="${product.id}"/>
