@@ -8,9 +8,6 @@ INSERT INTO authorities VALUES ('owner1','owner');
 INSERT INTO users(id, username,password,enabled) VALUES (3, 'vet1','v3t',TRUE);
 INSERT INTO authorities VALUES ('vet1','vet');
 
-INSERT INTO users(id, username,password,enabled) VALUES (4, 'f','f',TRUE);
-INSERT INTO authorities VALUES ('f','beautician');
-
 INSERT INTO vets VALUES (1, 'James', 'Carter', 3);
 INSERT INTO vets VALUES (2, 'Helen', 'Leary', 3);
 INSERT INTO vets VALUES (3, 'Linda', 'Douglas',3);
@@ -117,10 +114,3 @@ INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES 
 
 
 
-
-
-INSERT INTO beautician VALUES (1, 'f', 'f', 4);
-INSERT INTO beautician_specializations VALUES (1, 1);
-
-
-INSERT INTO beauty_center VALUES (1, 'name1', 'hey', 1, 1);

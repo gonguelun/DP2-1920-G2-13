@@ -20,21 +20,26 @@ public class BeautyCenterServiceTests {
 	@Test
 	public void testCountWithInitialData() {
 		int count = this.beautyService.beautyCount();
-		Assertions.assertEquals(count, 0);
+		Assertions.assertEquals(count, 5);
 	}
 
+	/* Test para la historia de usuario 2 */
+
+	//Casos positivos
 	@Test
 	public void testSaveBeautyCenter() {
+		int count = this.beautyService.beautyCount();
+
 		Beautician beautician = new Beautician();
-		beautician.setFirstName("g");
+		beautician.setFirstName("Juan");
 		beautician.setId(1);
-		beautician.setLastName("g");
+		beautician.setLastName("Prueba");
 		BeautyCenter beautyCenter = new BeautyCenter();
 		beautyCenter.setBeautician(beautician);
-		beautyCenter.setDescription("a");
-		beautyCenter.setId(1);
+		beautyCenter.setDescription("Test description");
+		beautyCenter.setId(count + 1);
 		this.beautyService.save(beautyCenter);
-		BeautyCenter beautyCenterBD = this.beautyService.findById(1);
+		BeautyCenter beautyCenterBD = this.beautyService.findById(count + 1);
 		Assertions.assertEquals(beautyCenter, beautyCenterBD);
 	}
 
