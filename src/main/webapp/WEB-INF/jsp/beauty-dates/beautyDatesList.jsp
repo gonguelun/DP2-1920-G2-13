@@ -4,17 +4,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
-
 <petclinic:layout pageName="owners">
     <h2>Beauty Dates</h2>
 
     <table id="ownersTable" class="table table-striped">
         <thead>
         <tr>
-            <th style="width: 20%;">Pet name</th>
-            <th style="width: 30%;">Beauty Center name</th>
-            <th style="width: 30%;">Description</th>
-            <th style="width: 25%">Start time</th>
+            <th style="width: 15%;">Pet name</th>
+            <th style="width: 25%;">Beauty Center name</th>
+            <th style="width: 25%;">Description</th>
+            <th style="width: 20%">Start time</th>
+            <th style="width: 15%"></th>
        
         </tr>
         </thead>
