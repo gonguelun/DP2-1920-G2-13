@@ -23,12 +23,15 @@ public class PetFormatter implements Formatter<Pet> {
 
 	@Override
 	public String print(final Pet pet, final Locale locale) {
-		return pet.getName();
+		String petId = Integer.toString(pet.getId());
+		return pet.getName() + " - " + petId;
 	}
 
 	@Override
 	public Pet parse(final String text, final Locale locale) throws ParseException {
-		Pet pet = this.petService.findPetByName(text);
+		String aux = text.trim();
+		String[] trozos = aux.split("-");
+		Pet pet = this.petService.findPetById(Integer.parseInt(trozos[1].trim()));
 		if (pet == null) {
 			throw new ParseException("type not found: " + text, 0);
 		}
