@@ -11,7 +11,6 @@ import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
-import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,19 +26,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class BeautyCenterController {
 
-	@Autowired
 	private BeautyCenterService	beautyService;
 
-	@Autowired
-	private PetService			petService;
-
-	@Autowired
 	private BeauticianService	beauticianService;
 
 
 	@Autowired
-	public BeautyCenterController(final BeautyCenterService beautyService, final UserService userService, final AuthoritiesService authoritiesService) {
+	public BeautyCenterController(final BeautyCenterService beautyService, final UserService userService, final AuthoritiesService authoritiesService, final BeauticianService beauticianService) {
 		this.beautyService = beautyService;
+		this.beauticianService = beauticianService;
 	}
 
 	@InitBinder

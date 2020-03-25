@@ -18,12 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BeautyCenterService {
 
-	@Autowired
 	private BeautyCenterRepository	beautyRepository;
 
-	@Autowired
 	private BeauticianRepository	beauticianRepository;
 
+
+	@Autowired
+	public BeautyCenterService(final BeautyCenterRepository beautyRepository, final BeauticianRepository beauticianRepository) {
+		this.beautyRepository = beautyRepository;
+		this.beauticianRepository = beauticianRepository;
+	}
 
 	@Transactional
 	public int beautyCount() {
@@ -59,7 +63,6 @@ public class BeautyCenterService {
 	public Collection<BeautyCenter> findAllBeautyCenterByBeauticianId(final int beauticianId) {
 		return this.beautyRepository.findAllBeautyCenterByBeauticianId(beauticianId);
 	}
-
 
 	@Transactional
 	public void update(@Valid final BeautyCenter beauticianCenter, final int beauticianId) {
