@@ -12,7 +12,7 @@ import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
-import org.springframework.samples.petclinic.service.PetService;
+import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -32,14 +32,11 @@ public class BeautyCenterController {
 
 	private BeauticianService	beauticianService;
 
-	private PetService			petService;
-
 
 	@Autowired
-	public BeautyCenterController(final BeautyCenterService beautyService, final BeauticianService beauticianService, final PetService petService) {
+	public BeautyCenterController(final BeautyCenterService beautyService, final UserService userService, final AuthoritiesService authoritiesService, final BeauticianService beauticianService) {
 		this.beautyService = beautyService;
 		this.beauticianService = beauticianService;
-		this.petService = petService;
 	}
 
 	@InitBinder
