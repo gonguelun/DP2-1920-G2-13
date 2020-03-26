@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
+import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.UserService;
@@ -66,7 +67,7 @@ public class BeautyCenterController {
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/new")
-	public String processCreationFormBeautyCenter(@Valid final BeautyCenter beautyCenter, @PathVariable("beauticianId") final int beauticianId, final BindingResult result, final ModelMap model) {
+	public String processCreationFormBeautyCenter(@Valid final BeautyCenter beautyCenter, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) {
 		Beautician bea = this.beauticianService.findBeauticianById(beauticianId);
 		beautyCenter.setBeautician(bea);
 
@@ -119,7 +120,7 @@ public class BeautyCenterController {
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
-	public String processUpdateBeauticianForm(@Valid final BeautyCenter beautyCenter, @PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId, final BindingResult result, final ModelMap model) {
+	public String processUpdateBeauticianForm(@Valid final BeautyCenter beautyCenter, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId, final ModelMap model) {
 		Beautician bea = this.beauticianService.findBeauticianById(beauticianId);
 		beautyCenter.setBeautician(bea);
 
