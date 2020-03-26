@@ -8,6 +8,7 @@ INSERT INTO authorities VALUES ('owner1','owner');
 INSERT INTO users(id, username,password,enabled) VALUES (3, 'vet1','v3t',TRUE);
 INSERT INTO authorities VALUES ('vet1','vet');
 
+
 INSERT INTO users(id, username,password,enabled) VALUES (4, 'f','f',TRUE);
 INSERT INTO authorities VALUES ('f','beautician');
 
@@ -22,6 +23,7 @@ INSERT INTO authorities VALUES ('c','beautician');
 
 INSERT INTO users(id, username,password,enabled) VALUES (8, 's','s',TRUE);
 INSERT INTO authorities VALUES ('s','beautician');
+
 
 INSERT INTO vets VALUES (1, 'James', 'Carter', 3);
 INSERT INTO vets VALUES (2, 'Helen', 'Leary', 3);
@@ -117,3 +119,4 @@ INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES 
 INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (5, 'name1', 'hey', 2, 5);
 
 INSERT INTO products(id,name,type_id,description,avaliable) VALUES (1,'Champú',1,'Champú suave',true);
+
