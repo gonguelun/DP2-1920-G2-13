@@ -1,6 +1,7 @@
 
 package org.springframework.samples.petclinic.web;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -12,10 +13,12 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
+import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
+import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -46,6 +49,9 @@ public class BeautyCenterControllerTests {
 	@MockBean
 	private AuthoritiesService		authoritiesService;
 
+	@MockBean
+	private PetService				petService;
+
 	@Autowired
 	private MockMvc					mockMvc;
 
@@ -58,6 +64,11 @@ public class BeautyCenterControllerTests {
 
 	@BeforeEach
 	void setup() {
+		PetType cat = new PetType();
+		cat.setId(1);
+		cat.setName("gato");
+		BDDMockito.given(this.petService.findPetTypes()).willReturn(Lists.newArrayList(cat));
+
 		this.user1 = new User();
 		this.user1.setId(1);
 		this.user1.setEnabled(true);
@@ -76,7 +87,7 @@ public class BeautyCenterControllerTests {
 		this.beautyCenter1.setDescription("prueba1");
 		this.beautyCenter1.setBeautician(this.beautician1);
 
-		BDDMockito.given(this.beautyService.findBeauticianById(BeautyCenterControllerTests.TEST_BEAUTICIAN_ID)).willReturn(this.beautician1);
+		BDDMockito.given(this.beauticianService.findBeauticianById(BeautyCenterControllerTests.TEST_BEAUTICIAN_ID)).willReturn(this.beautician1);
 		BDDMockito.given(this.beautyService.findById(BeautyCenterControllerTests.TEST_BEAUTYCENTER_ID)).willReturn(this.beautyCenter1);
 	}
 
@@ -84,18 +95,9 @@ public class BeautyCenterControllerTests {
 		"beautician"
 	}, password = "beautician1")
 	@Test
-	void testInitCreationForm() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/new")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeExists("owner"))
-			.andExpect(MockMvcResultMatchers.view().name("owners/createOrUpdateOwnerForm"));
-	}
-
-	@WithMockUser(username = "beautician1", roles = {
-		"beautician"
-	}, password = "beautician1")
-	@Test
 	void testProcessDeleteBeautyCenterFormSuccess() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER_ID)
-			.with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER_ID)
+			.with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/beauticians/{beauticianId}"));
 	}
 
 }
