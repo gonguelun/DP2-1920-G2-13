@@ -1,6 +1,5 @@
-package org.springframework.samples.petclinic.model;
 
-import java.time.LocalDate;
+package org.springframework.samples.petclinic.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,57 +9,55 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 @Entity
 @Table(name = "products")
-public class Product extends NamedEntity{
-	
+public class Product extends NamedEntity {
+
 	@ManyToOne
 	@JoinColumn(name = "type_id")
-	private PetType type;
-	
-	@Column(name = "description") 
+	private PetType		type;
+
+	@Column(name = "description")
 	@NotEmpty
-	private String description;
-	
-	@Column(name="avaliable")
-	private boolean avaliable;
-	
+	private String		description;
+
+	@Column(name = "avaliable")
+	private boolean		avaliable;
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Beautician	beautician;
 
+
 	public PetType getType() {
-		return type;
+		return this.type;
 	}
 
-	public void setType(PetType type) {
+	public void setType(final PetType type) {
 		this.type = type;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
 	public boolean isAvaliable() {
-		return avaliable;
+		return this.avaliable;
 	}
 
-	public void setAvaliable(boolean avaliable) {
+	public void setAvaliable(final boolean avaliable) {
 		this.avaliable = avaliable;
 	}
-	
+
 	public Beautician getBeautician() {
-		return beautician;
+		return this.beautician;
 	}
 
-	public void setBeautician(Beautician beautician) {
+	public void setBeautician(final Beautician beautician) {
 		this.beautician = beautician;
 	}
-	
-	
+
 }
