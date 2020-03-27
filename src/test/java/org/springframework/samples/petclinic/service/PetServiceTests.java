@@ -187,6 +187,7 @@ class PetServiceTests {
 			e.printStackTrace();
 		}
 
+
 			assertThrows(DuplicatedPetNameException.class, () -> {
 			anotherPet.setName("wario");
 			this.petService.savePet(anotherPet);

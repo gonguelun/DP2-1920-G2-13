@@ -78,14 +78,6 @@
                 </td>
                 
                 <td>
-                	<spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit" var="editBeautyUrl">
-                		<spring:param name="beauticianId" value ="${beautyCenters.beautician.id}" />
-                		<spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
-                	</spring:url>
-                                <a href="${fn:escapeXml(editBeautyUrl)}">Modify BeautyCenter</a>
-                </td>
-                
-                <td>
                 	<spring:url value="/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit" var="updateBeautyCenterUrl">
 				        <spring:param name="beauticianId" value="${beautician.id}"/>
 				        <spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
