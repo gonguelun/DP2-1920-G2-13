@@ -166,6 +166,7 @@ public class UserController {
 				return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
 
 			} else {
+				model.put("beautician", beautician);
 				this.beauticianService.saveBeautician(beautician);
 				return "redirect:/";
 			}

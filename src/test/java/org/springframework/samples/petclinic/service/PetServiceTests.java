@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.assertj.core.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -141,7 +142,7 @@ class PetServiceTests {
 		anotherPetWithTheSameName.setName("wario");
 		anotherPetWithTheSameName.setType(EntityUtils.getById(types, PetType.class, 1));
 		anotherPetWithTheSameName.setBirthDate(LocalDate.now().minusWeeks(2));
-		Assertions.assertThrows(DuplicatedPetNameException.class, () -> {
+		assertThrows(DuplicatedPetNameException.class, () -> {
 			owner6.addPet(anotherPetWithTheSameName);
 			this.petService.savePet(anotherPetWithTheSameName);
 		});
@@ -186,7 +187,7 @@ class PetServiceTests {
 			e.printStackTrace();
 		}
 
-		Assertions.assertThrows(DuplicatedPetNameException.class, () -> {
+			assertThrows(DuplicatedPetNameException.class, () -> {
 			anotherPet.setName("wario");
 			this.petService.savePet(anotherPet);
 		});

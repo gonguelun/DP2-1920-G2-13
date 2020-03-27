@@ -18,13 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BeautyCenterService {
 
-	@Autowired
 	private BeautyCenterRepository	beautyRepository;
 
-	@Autowired
 	private BeauticianRepository	beauticianRepository;
 
-
+	@Autowired
+	public BeautyCenterService(BeautyCenterRepository beautyRepository,BeauticianRepository beauticianRepository) {
+		this.beautyRepository=beautyRepository;
+		this.beauticianRepository=beauticianRepository;
+	}
 	@Transactional
 	public int beautyCount() {
 		return (int) this.beautyRepository.count();
