@@ -28,9 +28,13 @@ public class BeauticianService {
 	private PetService				petService;
 
 	@Autowired
-	public BeauticianService(BeauticianRepository beauticianRepository,PetRepository petRepository) {
+	public BeauticianService(BeauticianRepository beauticianRepository,PetRepository petRepository,
+			UserService userService,AuthoritiesService authoritiesService,PetService petService) {
 		this.beauticianRepository=beauticianRepository;
 		this.petRepository=petRepository;
+		this.userService=userService;
+		this.authoritiesService=authoritiesService;
+		this.petService=petService;
 	}
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {

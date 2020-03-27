@@ -143,7 +143,7 @@ class BeauticianControllerTests {
         		"beautician"
         },password="1234")
 	@Test
-	void testProcessUpdateBeauticianFormHasErrors() throws Exception {
+	void testProcessUpdateBeauticianFormHasErrorsFirstName() throws Exception {
 		mockMvc.perform(post("/beauticians/{beauticianId}/edit", TEST_BEAUTICIAN_ID)
 							.with(csrf())
 							.param("lastName", "Skere")
@@ -153,16 +153,38 @@ class BeauticianControllerTests {
 				.andExpect(model().attributeHasFieldErrors("beautician", "firstName"))
 				.andExpect(view().name("beauticians/updateBeauticianForm"));
 	}
+        @WithMockUser(username = "MicSker",roles= {
+        		"beautician"
+        },password="1234")
+        @Test
+    	void testProcessUpdateBeauticianFormHasErrorsSpecialization() throws Exception {
+    		mockMvc.perform(post("/beauticians/{beauticianId}/edit", TEST_BEAUTICIAN_ID)
+    							.with(csrf())
+    							.param("firstName", "Michael")
+    							.param("lastName", "Skere")
+    							.param("specializations","reptil"))
+    				.andExpect(status().isOk())
+    				.andExpect(model().attributeHasErrors("beautician"))
+    				.andExpect(model().attributeHasFieldErrors("beautician", "specializations"))
+    				.andExpect(view().name("beauticians/updateBeauticianForm"));
+    	}
 
         @WithMockUser(username = "MicSker",roles= {
         		"beautician"
         },password="1234")
 	@Test
 	void testShowBeautician() throws Exception {
+        	Collection<PetType> specialization=new ArrayList<>();
+    		PetType pet=new PetType();
+    		pet.setName("cat");
+    		PetType pet2=new PetType();
+    		pet2.setName("dog");
+    		specialization.add(pet);
+    		specialization.add(pet2);
 		mockMvc.perform(get("/beauticians/{beauticianId}", TEST_BEAUTICIAN_ID)).andExpect(status().isOk())
 				.andExpect(model().attribute("beautician", hasProperty("firstName", is("Michael"))))
 				.andExpect(model().attribute("beautician", hasProperty("lastName", is("Skere"))))
-				//.andExpect(model().attribute("beautician", hasProperty("specializations", is("cat"))))
+				.andExpect(model().attribute("beautician", hasProperty("specializations", is(specialization))))
 				.andExpect(view().name("beauticians/beauticianDetails"));
 	}
 

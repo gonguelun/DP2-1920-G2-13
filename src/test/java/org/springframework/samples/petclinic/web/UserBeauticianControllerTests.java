@@ -110,11 +110,22 @@ class UserBeauticianControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testProcessCreationFormHasErrors() throws Exception {
+	void testProcessCreationFormHasErrorsFirstName() throws Exception {
 		mockMvc.perform(post("/users/new-beautician").with(csrf()).param("lastName", "Skere")
-				.param("specializations","reptil"))
+				.param("specializations","cat")
+				.param("firstName",""))
 				.andExpect(status().isOk()).andExpect(model().attributeHasErrors("beautician"))
 				.andExpect(model().attributeHasFieldErrors("beautician", "firstName"))
+				.andExpect(view().name("users/createBeauticianForm"));
+	}
+	
+	@WithMockUser(value = "spring")
+	@Test
+	void testProcessCreationFormHasErrorsSpecializations() throws Exception {
+		mockMvc.perform(post("/users/new-beautician").with(csrf()).param("lastName", "Skere")
+				.param("firstName","Michael")
+				.param("specializations","reptil"))
+				.andExpect(status().isOk()).andExpect(model().attributeHasErrors("beautician"))
 				.andExpect(model().attributeHasFieldErrors("beautician", "specializations"))
 				.andExpect(view().name("users/createBeauticianForm"));
 	}
