@@ -12,7 +12,6 @@ import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Product;
-import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.ProductService;
 import org.springframework.security.core.Authentication;
@@ -32,14 +31,13 @@ public class ProductController {
 
 	private final ProductService		productService;
 	private final BeautyCenterService	beauticianCenterService;
-	private final BeauticianService		beauticianService;
 
 
 	@Autowired
-	public ProductController(final ProductService productService, final BeautyCenterService beauticianCenterService, final BeauticianService beauticianService) {
+	public ProductController(final ProductService productService, final BeautyCenterService beauticianCenterService) {
 		this.productService = productService;
 		this.beauticianCenterService = beauticianCenterService;
-		this.beauticianService = beauticianService;
+
 	}
 
 	@GetMapping(value = {
@@ -80,11 +78,19 @@ public class ProductController {
 
 	@GetMapping(value = "/{beautyCenterId}/products/{productId}/edit")
 	public String initUpdateForm(@PathVariable("productId") final int productId, final ModelMap model) {
+
 		Product product = this.productService.findProductById(productId);
-		Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(product.getBeautician().getId());
-		model.put("specialization", specializations);
-		model.put("product", product);
-		return "products/createOrUpdateProduct";
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+		if (currentPrincipalName.equals(product.getBeautician().getUser().getUsername())) {
+
+			Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(product.getBeautician().getId());
+			model.put("specialization", specializations);
+			model.put("product", product);
+			return "products/createOrUpdateProduct";
+		} else {
+			return "exception";
+		}
 	}
 
 	@PostMapping(value = "/{beautyCenterId}/products/{productId}/edit")
