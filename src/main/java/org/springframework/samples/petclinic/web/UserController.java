@@ -60,25 +60,26 @@ public class UserController {
 	private final OwnerService	ownerService;
 
 	private final VetService	vetService;
+	
+	private BeauticianService	beauticianService;
+
+	private UserService			userService;
+
+	private PetService			petService;
 
 
 	@Autowired
-	public UserController(final OwnerService clinicService, final VetService vetService, final BeauticianService beauticianService) {
+	public UserController(final OwnerService clinicService, final VetService vetService, final BeauticianService beauticianService,
+			final UserService userService, final PetService petService) {
 
 		this.ownerService = clinicService;
 		this.vetService = vetService;
 		this.beauticianService = beauticianService;
+		this.userService=userService;
+		this.petService=petService;
+		
 	}
 
-
-	@Autowired
-	private BeauticianService	beauticianService;
-
-	@Autowired
-	private UserService			userService;
-
-	@Autowired
-	private PetService			petService;
 
 
 	@InitBinder
@@ -166,6 +167,7 @@ public class UserController {
 				return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
 
 			} else {
+				model.put("beautician", beautician);
 				this.beauticianService.saveBeautician(beautician);
 				return "redirect:/";
 			}

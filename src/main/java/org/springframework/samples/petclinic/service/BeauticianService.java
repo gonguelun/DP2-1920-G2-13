@@ -17,22 +17,25 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @Service
 public class BeauticianService {
 
-	@Autowired
 	private BeauticianRepository	beauticianRepository;
 
-	@Autowired
 	private PetRepository			petRepository;
 
-	@Autowired
 	private UserService				userService;
 
-	@Autowired
 	private AuthoritiesService		authoritiesService;
 
-	@Autowired
 	private PetService				petService;
 
-
+	@Autowired
+	public BeauticianService(BeauticianRepository beauticianRepository,PetRepository petRepository,
+			UserService userService,AuthoritiesService authoritiesService,PetService petService) {
+		this.beauticianRepository=beauticianRepository;
+		this.petRepository=petRepository;
+		this.userService=userService;
+		this.authoritiesService=authoritiesService;
+		this.petService=petService;
+	}
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {
 		return this.petService.findPetTypes();

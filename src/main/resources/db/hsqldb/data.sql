@@ -117,6 +117,3 @@ INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES 
 INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (3, 'name1', 'hey', 4, 3);
 INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (4, 'name1', 'hey', 5, 4);
 INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (5, 'name1', 'hey', 2, 5);
-
-INSERT INTO products(id,name,type_id,description,avaliable) VALUES (1,'Champú',1,'Champú suave',true);
-
