@@ -36,21 +36,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OwnerService {
 
-	private OwnerRepository		ownerRepository;
-	
-	private BeautyCenterRepository		beautyCenterRepository;
+	private OwnerRepository			ownerRepository;
 
-	@Autowired
-	private UserService			userService;
+	private BeautyCenterRepository	beautyCenterRepository;
 
-	@Autowired
-	private AuthoritiesService	authoritiesService;
+	private UserService				userService;
+
+	private AuthoritiesService		authoritiesService;
 
 
 	@Autowired
-	public OwnerService(final OwnerRepository ownerRepository,final BeautyCenterRepository beautyCenterRepository) {
+	public OwnerService(final OwnerRepository ownerRepository, final BeautyCenterRepository beautyCenterRepository, final UserService userService, final AuthoritiesService authoritiesService) {
 		this.ownerRepository = ownerRepository;
-		this.beautyCenterRepository=beautyCenterRepository;
+		this.beautyCenterRepository = beautyCenterRepository;
+		this.userService = userService;
+		this.authoritiesService = authoritiesService;
 	}
 
 	@Transactional(readOnly = true)
@@ -70,8 +70,8 @@ public class OwnerService {
 		this.authoritiesService.saveAuthorities(owner.getUser().getUsername(), "owner");
 	}
 	@Transactional
-	public Collection<BeautyCenter> findAllBeautyCentersByPetType(int petTypeId) {
-		return beautyCenterRepository.findAllBeautyCentersByPetType(petTypeId);
+	public Collection<BeautyCenter> findAllBeautyCentersByPetType(final int petTypeId) {
+		return this.beautyCenterRepository.findAllBeautyCentersByPetType(petTypeId);
 	}
 
 }
