@@ -1,48 +1,56 @@
 
 package org.springframework.samples.petclinic.web;
 
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.VetService;
+import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.BDDMockito.given;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.BeautyDateService;
+import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@WebMvcTest(controllers = BeautyCenterController.class, includeFilters = @ComponentScan.Filter(value = PetTypeFormatter.class, type = FilterType.ASSIGNABLE_TYPE),
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+
+@WebMvcTest(controllers = BeautyDateController.class, includeFilters = @ComponentScan.Filter(value = PetFormatter.class, type = FilterType.ASSIGNABLE_TYPE),
 	excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
 public class BeautyDateControllerTests {
 
@@ -51,10 +59,10 @@ public class BeautyDateControllerTests {
 	private static final int		TEST_PETTYPE_ID		= 1;
 	
 	private static final String		TEST_OWNER_USERNAME		= "MicSker";
-
+	
 	@Autowired
-	private BeautyCenterController	beautyCenterController;
-
+	private BeautyDateController beautyDateController;
+	
 	@MockBean
 	private BeautyCenterService		beautyService;
 
@@ -75,12 +83,7 @@ public class BeautyDateControllerTests {
 
 	@Autowired
 	private MockMvc					mockMvc;
-
-	private User					user2;
-
-	private Owner					owner;
-
-	private BeautyCenter			beautyCenter;
+	
 
 
 
@@ -91,6 +94,13 @@ public class BeautyDateControllerTests {
 		cat.setName("cat");
 		List<PetType> temp = new ArrayList<>();
 		temp.add(cat);
+		Collection<Pet> temp2=new ArrayList<>();
+		Pet pet=new Pet();
+		pet.setId(1);
+		pet.setName("currupipi");
+		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		pet.setType(cat);
+		temp2.add(pet);
 
 		User user = new User();
 		user.setId(1);
@@ -128,9 +138,12 @@ public class BeautyDateControllerTests {
 		
 		
 		BDDMockito.given(this.beautyService.findById(TEST_BEAUTYCENTER_ID)).willReturn(beautyCenter);
-		BDDMockito.given(this.beautyDateService.findPetsByOwnerAndType(TEST_OWNER_USERNAME, TEST_PETTYPE_ID));
+		BDDMockito.given(this.beautyDateService.findPetsByOwnerAndType(TEST_OWNER_USERNAME, TEST_PETTYPE_ID)).willReturn(temp2);
+		BDDMockito.given(this.petService.findPetById(pet.getId())).willReturn(pet);
 	}
 
+	//Tests historia de usuario 11
+		//Casos positivos
 	@WithMockUser(username = TEST_OWNER_USERNAME, roles = {
 		"owner"
 	}, password = "123")
@@ -142,19 +155,52 @@ public class BeautyDateControllerTests {
 			.andExpect(MockMvcResultMatchers.model().attributeExists("beautyDate"));
 	}
 	
-//	@WithMockUser(username = TEST_OWNER_USERNAME, roles = {
-//			"owner"
-//		}, password = "123")
-//	@Test
-//	void testProcessCreateBeautyDateFormSuccess() throws Exception {
-//		mockMvc.perform(post("/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new",TEST_OWNER_USERNAME,TEST_BEAUTYCENTER_ID,TEST_PETTYPE_ID )
-//							.with(csrf())
-//							.param("description","descripcion")
-//							.param("startDate", "2020/04/29 16:00")
-//							.param("pet","avelino"))
-//				.andExpect(status().is3xxRedirection())
-//				.andExpect(view().name("redirect:/"));
-//	}
+	@WithMockUser(username = TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+	@Test
+	void testProcessCreateBeautyDateFormSuccess() throws Exception {
+		
+		mockMvc.perform(post("/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new",TEST_OWNER_USERNAME,TEST_BEAUTYCENTER_ID,TEST_PETTYPE_ID )
+							.with(SecurityMockMvcRequestPostProcessors.csrf())
+							.param("description","descripcion")
+							.param("startDate", "2020/04/29 16:00")
+							.param("pet","currupipi - 1"))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/"));
+	}
+		//Casos negativos
+	@WithMockUser(username = TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+	@Test
+	void testProcessCreateBeautyDateFormErrorEmptyDate() throws Exception {
+		
+		mockMvc.perform(post("/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new",TEST_OWNER_USERNAME,TEST_BEAUTYCENTER_ID,TEST_PETTYPE_ID )
+							.with(SecurityMockMvcRequestPostProcessors.csrf())
+							.param("description","descripcion")
+							.param("startDate", "")
+							.param("pet","currupipi - 1"))
+				.andExpect(status().isOk())
+				.andExpect(model().attributeHasErrors("beautyDate"))
+				.andExpect(model().attributeHasFieldErrors("beautyDate", "startDate"))
+				.andExpect(view().name("beauty-dates/createOrUpdateBeautyDateForm"));
+	}
+	
+	@WithMockUser(username = TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+	@Test
+	void testProcessCreateBeautyDateFormErrorEmptyPet() throws Exception {
+		
+		mockMvc.perform(post("/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new",TEST_OWNER_USERNAME,TEST_BEAUTYCENTER_ID,TEST_PETTYPE_ID )
+							.with(SecurityMockMvcRequestPostProcessors.csrf())
+							.param("description","descripcion")
+							.param("startDate", "2020/04/29 16:00")
+							.param("pet",""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("exception"));
+	}
 
 
 
