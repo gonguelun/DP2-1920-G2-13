@@ -2,6 +2,7 @@
 package org.springframework.samples.petclinic.repository;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -26,5 +27,9 @@ public interface BeautyDateRepository extends CrudRepository<BeautyDate, Integer
 	@Modifying
 	@Query("DELETE FROM BeautyDate b WHERE b.id=?1")
 	void remove(int beautyCenterId);
+
+	@Transactional
+	@Query("SELECT bd FROM BeautyDate bd WHERE bd.beautyCenter.beautician.id = ?1")
+	List<BeautyDate> findBeautyDatesByBeauticianId(int beauticianId);
 
 }

@@ -19,10 +19,12 @@ import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Product;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.ProductService;
+import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -30,18 +32,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-/**
- * Test class for the {@link PetController}
- *
- * @author Colin But
- */
 @WebMvcTest(controllers = ProductController.class, includeFilters = @ComponentScan.Filter(value = PetTypeFormatter.class, type = FilterType.ASSIGNABLE_TYPE),
 	excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
 public class ProductControllerTests {
 
-	private static final int	TEST_PRODUCT_ID			= 1;
-	private static final int	TEST_BEAUTICIAN_ID		= 1;
 	private static final int	TEST_BEAUTY_CENTER_ID	= 1;
+	private static final int	TEST_BEAUTICIAN_ID		= 1;
+	private static final int	TEST_PRODUCT_ID			= 1;
 
 	@Autowired
 	private ProductController	productController;
@@ -50,16 +47,23 @@ public class ProductControllerTests {
 	private ProductService		productService;
 
 	@MockBean
+	private PetService			petService;
+
+	@MockBean
+	private UserService			userService;
+
+	@MockBean
+	private BeautyCenterService	beautyCenterService;
+
+	@MockBean
 	private BeauticianService	beauticianService;
 
 	@MockBean
-	BeautyCenterService			beautyCenterService;
-
-	@MockBean
-	PetService					petService;
+	private AuthoritiesService	authoritiesService;
 
 	@Autowired
 	private MockMvc				mockMvc;
+
 
 
 	@BeforeEach
@@ -70,19 +74,34 @@ public class ProductControllerTests {
 		User user = new User();
 		Beautician beautician = new Beautician();
 		BeautyCenter beautyCenter = new BeautyCenter();
-
+    
 		petType.setId(1);
 		petType.setName("cat");
 		petTypes.add(petType);
-
-		user.setId(1);
+    
+    user.setId(1);
 		user.setEnabled(true);
 		user.setUsername("beautician1");
 		user.setPassword("123");
-
+    
 		beautician.setUser(user);
 		beautician.setSpecializations(petTypes);
 		beautician.setId(ProductControllerTests.TEST_BEAUTICIAN_ID);
+		beautician.setFirstName("juan");
+		beautician.setLastName("aurora");
+
+		User user2 = new User();
+		user2.setId(2);
+		user2.setEnabled(true);
+		user2.setUsername("beautician2");
+		user2.setPassword("123");
+
+		Beautician beautician2 = new Beautician();
+		beautician2.setId(2);
+		beautician2.setFirstName("juan");
+		beautician2.setLastName("aurora");
+		beautician2.setSpecializations(temp);
+		beautician2.setUser(user2);
 
 		beautyCenter.setId(ProductControllerTests.TEST_BEAUTY_CENTER_ID);
 		beautyCenter.setName("BeautyCenter1");
@@ -102,6 +121,10 @@ public class ProductControllerTests {
 		BDDMockito.given(this.productService.findBeauticianById(ProductControllerTests.TEST_BEAUTICIAN_ID)).willReturn(beautician);
 		BDDMockito.given(this.beautyCenterService.findBeautyCenterByBeautyCenterId(ProductControllerTests.TEST_BEAUTY_CENTER_ID)).willReturn(beautyCenter);
 		BDDMockito.given(this.productService.findProductsByPet(beautyCenter.getPetType().getId())).willReturn(Lists.newArrayList(producto));
+    
+		BDDMockito.given(this.productService.findProductById(ProductControllerTests.TEST_PRODUCT_ID)).willReturn(product);
+		BDDMockito.given(this.productService.findBeauticianByProductId(ProductControllerTests.TEST_PRODUCT_ID)).willReturn(beautician);
+
 
 	}
 
@@ -117,8 +140,8 @@ public class ProductControllerTests {
 			.andExpect(MockMvcResultMatchers.model().attributeExists("product")).andExpect(MockMvcResultMatchers.view().name("products/createOrUpdateProduct"));
 	}
 
-	// GET MAPPING DE CREATE PRODUCT (Con id de autenticado incorrecto)
-	@WithMockUser(username = "beautician1", roles = {
+  // GET MAPPING DE CREATE PRODUCT (Con id de autenticado incorrecto)
+	@WithMockUser(username = "beautician2", roles = {
 		"beautician"
 	}, password = "123")
 	@Test
@@ -135,9 +158,9 @@ public class ProductControllerTests {
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/products/new", ProductControllerTests.TEST_BEAUTICIAN_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "producto").param("description", "description")
 			.param("avaliable", "true").param("type", "cat")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
 	}
-
-	// POST DE CREATE PRODUCT (Faltan campos obligatorios (description) por rellenar)
-	@WithMockUser(username = "beautician1", roles = {
+  
+   // POST DE CREATE PRODUCT (Faltan campos obligatorios (description) por rellenar)
+  	@WithMockUser(username = "beautician1", roles = {
 		"beautician"
 	}, password = "123")
 	@Test
@@ -148,8 +171,8 @@ public class ProductControllerTests {
 			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("product")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("product", "description")).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("products/createOrUpdateProduct"));
 	}
-
-	// POST DE CREATE PRODUCT (Hay campos erroneos (PetType y avaliable))
+  
+  // POST DE CREATE PRODUCT (Hay campos erroneos (PetType y avaliable))
 	@WithMockUser(username = "beautician1", roles = {
 		"beautician"
 	}, password = "123")
@@ -161,8 +184,8 @@ public class ProductControllerTests {
 			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("product")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("product", "type")).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("products/createOrUpdateProduct"));
 	}
-
-	// GET SHOW PRODUCT LIST (Caso positivo)
+  
+  // GET SHOW PRODUCT LIST (Caso positivo)
 	@WithMockUser(username = "beautician1", roles = {
 		"beautician"
 	}, password = "123")
@@ -171,6 +194,61 @@ public class ProductControllerTests {
 
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products", ProductControllerTests.TEST_BEAUTY_CENTER_ID)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("products/productList"))
 			.andExpect(MockMvcResultMatchers.model().attributeExists("products"));
+	}
+  
+
+  // TESTS HISTORIA DE USUARIO 6
+  
+  /* GetMapping "/{beautyCenterId}/products/{productId}/edit" */
+
+	// Caso positivo. Siendo el dueño de un producto accedo a la pagina de editarlo
+  	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
+	@Test
+	void testInitCreationForm() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products/{productId}/edit", ProductControllerTests.TEST_BEAUTY_CENTER_ID, ProductControllerTests.TEST_PRODUCT_ID)).andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("products/createOrUpdateProduct")).andExpect(MockMvcResultMatchers.model().attributeExists("product")).andExpect(MockMvcResultMatchers.model().attributeExists("specialization"));
+	}
+
+	//Caso negativo. No siendo el dueño de un producto accedo a la página de editarlo
+
+	@WithMockUser(username = "beautician2", roles = {
+		"beautician"
+	}, password = "123")
+	@Test
+	void testInitCreationFormError() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products/{productId}/edit", ProductControllerTests.TEST_BEAUTY_CENTER_ID, ProductControllerTests.TEST_PRODUCT_ID)).andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("exception"));
+	}
+
+	/* PostMapping "/{beautyCenterId}/products/{productId}/edit" */
+
+	//Caso positivo. Lo edito todo correcto
+
+	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
+	@Test
+	void testProcessUpdateFormSuccess() throws Exception {
+		this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/{beautyCenterId}/products/{productId}/edit", ProductControllerTests.TEST_BEAUTY_CENTER_ID, ProductControllerTests.TEST_PRODUCT_ID).with(SecurityMockMvcRequestPostProcessors.csrf())
+				.param("name", "other name").param("type", "cat").param("description", "new description").param("avalaible", "true"))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
+	}
+
+	//Caso negativo. No introduzco descripción
+
+	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
+  @Test
+	void testProcessUpdateFormNoDescriptionError() throws Exception {
+		this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/{beautyCenterId}/products/{productId}/edit", ProductControllerTests.TEST_BEAUTY_CENTER_ID, ProductControllerTests.TEST_PRODUCT_ID).with(SecurityMockMvcRequestPostProcessors.csrf())
+				.param("name", "other name").param("type", "cat").param("avalaible", "true"))
+			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("product")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("product", "description")).andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("products/createOrUpdateProduct"));
 	}
 
 }

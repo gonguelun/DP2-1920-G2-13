@@ -12,6 +12,7 @@ import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.repository.BeauticianRepository;
 import org.springframework.samples.petclinic.repository.BeautyCenterRepository;
+import org.springframework.samples.petclinic.repository.PetRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,16 @@ public class BeautyCenterService {
 
 	private BeauticianRepository	beauticianRepository;
 
+	private PetRepository			petRepository;
+
+
+	@Autowired
+	public BeautyCenterService(final BeautyCenterRepository beautyCenterRepository, final BeauticianRepository beauticianRepository, final PetRepository petRepository) {
+		this.beauticianRepository = beauticianRepository;
+		this.beautyRepository = beautyCenterRepository;
+		this.petRepository = petRepository;
+
+	}
 
 	@Autowired
 	public BeautyCenterService(final BeautyCenterRepository beautyRepository, final BeauticianRepository beauticianRepository) {
@@ -82,6 +93,11 @@ public class BeautyCenterService {
 
 		this.beautyRepository.remove(beautyCenterId);
 
+	}
+
+	@Transactional(readOnly = true)
+	public Collection<PetType> findPetTypes() throws DataAccessException {
+		return this.petRepository.findPetTypes();
 	}
 
 }
