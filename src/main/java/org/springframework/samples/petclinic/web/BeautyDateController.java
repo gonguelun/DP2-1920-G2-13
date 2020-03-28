@@ -75,8 +75,15 @@ public class BeautyDateController {
 				model.put("beautyDate", beautyDate);
 				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 			} else {
-				this.beautyDateService.saveBeautyDate(beautyDate);
-				return "redirect:/";
+
+				if (beautyDate.getStartDate().getDayOfWeek().equals(DayOfWeek.SATURDAY) || beautyDate.getStartDate().getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+					result.rejectValue("startDate", "finde", "it's a weekend!");
+					model.put("beautyDate", beautyDate);
+					return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+				} else {
+					this.beautyDateService.saveBeautyDate(beautyDate);
+					return "redirect:/";
+				}
 			}
 		}
 	}
