@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -62,9 +63,6 @@ class OwnerControllerTests {
 	private OwnerController		ownerController;
 
 	@MockBean
-	private OwnerService		clinicService;
-
-	@MockBean
 	private UserService			userService;
 
 	@MockBean
@@ -81,6 +79,9 @@ class OwnerControllerTests {
 
 	@MockBean
 	private BeauticianService	beauticianService;
+
+	@MockBean
+	private OwnerService		ownerService;
 
 	@Autowired
 	private MockMvc				mockMvc;
@@ -101,9 +102,12 @@ class OwnerControllerTests {
 
 	private User				user3;
 
+	private User				user4;
+
 	private Owner				pepa;
 
 
+	@BeforeEach
 	void setup() {
 
 		// Creación de user para owner
@@ -192,9 +196,18 @@ class OwnerControllerTests {
 		this.pepa.setTelephone("6085551023");
 		this.pepa.setUser(this.user3);
 
-		BDDMockito.given(this.clinicService.findOwnerById(OwnerControllerTests.TEST_OWNER_ID)).willReturn(this.george);
-		BDDMockito.given(this.clinicService.findOwnerById(OwnerControllerTests.TEST_OWNER2_ID)).willReturn(this.pepa);
+		this.user4 = new User();
+		this.user4.setId(4);
+		this.user4.setEnabled(true);
+		this.user4.setUsername("user4");
+		this.user4.setPassword("user4");
+
+		BDDMockito.given(this.ownerService.findOwnerById(OwnerControllerTests.TEST_OWNER_ID)).willReturn(this.george);
+		BDDMockito.given(this.ownerService.findOwnerById(OwnerControllerTests.TEST_OWNER2_ID)).willReturn(this.pepa);
 		BDDMockito.given(this.beautyDateService.findById(OwnerControllerTests.TEST_BEAUTYDATE_ID)).willReturn(this.beautyDate1);
+		BDDMockito.given(this.ownerService.findAllBeautyCentersByPetType(1)).willReturn(Lists.newArrayList(this.beautyCenter1));
+		BDDMockito.given(this.ownerService.findAllBeautyCentersByPetType(7)).willReturn(null);
+		BDDMockito.given(this.petService.findPetTypes()).willReturn(Lists.newArrayList(cat));
 
 	}
 
@@ -303,6 +316,28 @@ class OwnerControllerTests {
 	void testProcessDeleteBeautyDateFormWithErrors() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/delete", this.george.getUser().getUsername(), OwnerControllerTests.TEST_BEAUTYDATE_ID).with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
+	}
+
+	// TESTS HISTORIA DE USUARIO 10
+
+	// SEARCH BEAUTY CENTER (Caso positivo)
+	@WithMockUser(username = "owner1", roles = {
+		"owner"
+	}, password = "owner1")
+	@Test
+	void testShowBeautyCenter() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/beauty-centers/{petTypeId}", 1)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("owners/beautyCenterList"))
+			.andExpect(MockMvcResultMatchers.model().attributeExists("beautyCenters"));
+	}
+
+	// SEARCH BEAUTY CENTER (Caso positivo)
+	@WithMockUser(username = "owner1", roles = {
+		"owner"
+	}, password = "owner1")
+	@Test
+	void testSearchBeautyCenter() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/search-beauty-center")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("owners/searchBeautyCenter"))
+			.andExpect(MockMvcResultMatchers.model().attributeExists("type"));
 	}
 
 }

@@ -33,6 +33,7 @@ public class BeautyCenterService {
 		this.petRepository = petRepository;
 
 	}
+
 	@Transactional
 	public int beautyCount() {
 		return (int) this.beautyRepository.count();
