@@ -34,12 +34,6 @@ public class BeautyCenterService {
 
 	}
 
-	@Autowired
-	public BeautyCenterService(final BeautyCenterRepository beautyRepository, final BeauticianRepository beauticianRepository) {
-		this.beautyRepository = beautyRepository;
-		this.beauticianRepository = beauticianRepository;
-	}
-
 	@Transactional
 	public int beautyCount() {
 		return (int) this.beautyRepository.count();
