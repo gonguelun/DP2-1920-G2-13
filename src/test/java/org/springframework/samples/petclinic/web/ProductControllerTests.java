@@ -144,7 +144,7 @@ public class ProductControllerTests {
 	}, password = "123")
 	@Test
 	void testProductInitCreationFormError() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/beauticians/{beauticianId}/products/new", 0)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("exception"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/beauticians/{beauticianId}/products/new", 2)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
 	// POST DE CREATE PRODUCT (Caso positivo)
@@ -244,6 +244,29 @@ public class ProductControllerTests {
 				.param("name", "other name").param("type", "cat").param("avalaible", "true"))
 			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("product")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("product", "description")).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("products/createOrUpdateProduct"));
+	}
+
+	// TESTS HISTORIA DE USUARIO 7
+
+	// ELIMINAR PRODUCTO (Caso positivo)
+	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
+	@Test
+	void testProcessDeleteProductFormSuccess() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products/{productId}/delete", ProductControllerTests.TEST_BEAUTICIAN_ID, ProductControllerTests.TEST_BEAUTY_CENTER_ID).with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
+	}
+
+	// ELIMINAR PRODUCTO (Caso negativo, usuario sin permiso)
+	@WithMockUser(username = "beautician2", roles = {
+		"beautician"
+	}, password = "123")
+	@Test
+	void testProcessDeleteProductFormErrors() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products/{productId}/delete", 2, ProductControllerTests.TEST_BEAUTY_CENTER_ID)).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
+
 	}
 
 }
