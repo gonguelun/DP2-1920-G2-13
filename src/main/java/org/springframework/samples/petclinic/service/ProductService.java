@@ -28,6 +28,7 @@ public class ProductService {
 		return this.productRepository.findProducts();
 	}
 
+	@Transactional
 	public Collection<Product> findProductsByPet(final int petTypeId) {
 		return this.productRepository.findProductsByPet(petTypeId);
 	}
@@ -42,10 +43,12 @@ public class ProductService {
 		return this.productRepository.findSpecializationsByBeauticianId(beauticianId);
 	}
 
+	@Transactional
 	public Beautician findBeauticianById(final int beauticianId) {
 		return this.productRepository.findBeauticianById(beauticianId);
 	}
 
+	@Transactional
 	public Product findProductById(final int productId) {
 		return this.productRepository.findProductById(productId);
 	}

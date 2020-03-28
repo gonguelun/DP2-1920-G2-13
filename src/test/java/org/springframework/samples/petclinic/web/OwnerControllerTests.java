@@ -104,7 +104,6 @@ class OwnerControllerTests {
 	private Owner				pepa;
 
 
-	@BeforeEach
 	void setup() {
 
 		// Creación de user para owner

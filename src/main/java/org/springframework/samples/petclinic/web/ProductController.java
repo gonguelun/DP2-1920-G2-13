@@ -20,7 +20,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,25 +32,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ProductController {
 
 	private final ProductService		productService;
-	private final BeautyCenterService	beauticianCenterService;
+	private final BeautyCenterService	beautyCenterService;
 
 
 	@Autowired
-	public ProductController(final ProductService productService, final BeautyCenterService beauticianCenterService) {
+	public ProductController(final ProductService productService, final BeautyCenterService beautyCenterService) {
 		this.productService = productService;
-		this.beauticianCenterService = beauticianCenterService;
+		this.beautyCenterService = beautyCenterService;
+	}
 
+	@InitBinder
+	public void setAllowedFields(final WebDataBinder dataBinder) {
+		dataBinder.setDisallowedFields("id");
 	}
 
 	@GetMapping(value = {
 		"{beautyCenterId}/products"
 	})
 	public String showProductList(final Map<String, Object> model, @PathVariable("beautyCenterId") final int beautyCenterId) {
-		// Here we are returning an object of type 'Vets' rather than a collection of Vet
-		// objects
-		// so it is simpler for Object-Xml mapping
 		Collection<Product> product = new ArrayList<>();
-		BeautyCenter beautyCenter = this.beauticianCenterService.findBeautyCenterByBeautyCenterId(beautyCenterId);
+		BeautyCenter beautyCenter = this.beautyCenterService.findBeautyCenterByBeautyCenterId(beautyCenterId);
 		product = this.productService.findProductsByPet(beautyCenter.getPetType().getId());
 		model.put("products", product);
 		return "products/productList";
@@ -56,15 +59,25 @@ public class ProductController {
 
 	@GetMapping(value = "/beauticians/{beauticianId}/products/new")
 	public String initCreationForm(final ModelMap model, @PathVariable("beauticianId") final int beauticianId) {
-		Product product = new Product();
-		Collection<PetType> spe = this.productService.findSpecializationsByBeauticianId(beauticianId);
-		model.put("specialization", spe);
-		model.put("product", product);
-		return "products/createOrUpdateProduct";
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+		Beautician beautician = this.productService.findBeauticianById(beauticianId);
+
+		if (currentPrincipalName.equals(beautician.getUser().getUsername())) {
+			Product product = new Product();
+			model.put("product", product);
+			Collection<PetType> spe = this.productService.findSpecializationsByBeauticianId(beauticianId);
+			model.put("specialization", spe);
+			return "products/createOrUpdateProduct";
+
+		} else {
+			return "exception";
+		}
+
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/products/new")
-	public String processCreationForm(@Valid final Product product, @PathVariable("beauticianId") final int beauticianId, final BindingResult result, final ModelMap model) {
+	public String processCreationForm(@Valid final Product product, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) {
 		if (result.hasErrors()) {
 			model.put("product", product);
 			return "products/createOrUpdateProduct";
