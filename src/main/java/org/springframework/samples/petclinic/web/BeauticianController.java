@@ -81,7 +81,6 @@ public class BeauticianController {
 				return BeauticianController.VIEWS_BEAUTICIAN_UPDATE_FORM;
 			}
 		}
-
 	}
 
 	@GetMapping("/{beauticianId}")
