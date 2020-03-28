@@ -62,4 +62,9 @@ public class BeautyDateService {
 	public List<BeautyDate> findBeautyDatesByBeauticianId(final int beauticianId) {
 		return this.beautyDateRepository.findBeautyDatesByBeauticianId(beauticianId);
 	}
+	
+	@Transactional
+	public Integer countBeautyDates() {
+		return (int) this.beautyDateRepository.count();
+	}
 }
