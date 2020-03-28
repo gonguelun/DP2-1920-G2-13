@@ -208,6 +208,7 @@ class OwnerControllerTests {
 		BDDMockito.given(this.ownerService.findAllBeautyCentersByPetType(1)).willReturn(Lists.newArrayList(this.beautyCenter1));
 		BDDMockito.given(this.ownerService.findAllBeautyCentersByPetType(7)).willReturn(null);
 		BDDMockito.given(this.petService.findPetTypes()).willReturn(Lists.newArrayList(cat));
+		BDDMockito.given(this.beautyDateService.findBeautyDatesByOwnerUsername(this.george.getUser().getUsername())).willReturn(Lists.newArrayList(this.beautyDate1));
 
 	}
 
@@ -338,6 +339,16 @@ class OwnerControllerTests {
 	void testSearchBeautyCenter() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/search-beauty-center")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("owners/searchBeautyCenter"))
 			.andExpect(MockMvcResultMatchers.model().attributeExists("type"));
+	}
+
+	//Caso positivo: El propietario lista correctamente las citas pasadas y futuras.
+	@WithMockUser(username = "owner1", roles = {
+		"owner"
+	}, password = "owner1")
+	@Test
+	void testShowBeautyDate() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/beauty-dates", this.george.getUser().getUsername())).andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("beauty-dates/beautyDatesList")).andExpect(MockMvcResultMatchers.model().attributeExists("beautyDates"));
 	}
 
 }
