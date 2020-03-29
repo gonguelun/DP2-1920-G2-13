@@ -17,8 +17,6 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
@@ -27,11 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.petclinic.model.Specialty;
-import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Integration test of the Service and the Repository layer.
@@ -87,32 +83,32 @@ class VetServiceTests {
 		Assertions.assertThat(specialties.size() == 3);
 	}
 
-	@Test
-	@Transactional
-	public void testSavingVet() {
-		Integer countBefore = this.vetService.countVets();
-		countBefore++;
-
-		Vet vet = new Vet();
-		vet.setFirstName("Sam");
-		vet.setLastName("Schultz");
-
-		Set<Specialty> specialties = new HashSet<>();
-		Specialty specialty1 = new Specialty();
-		specialty1.setName("espe1");
-		specialties.add(specialty1);
-		Specialty specialty2 = new Specialty();
-		specialty2.setName("espe2");
-		specialties.add(specialty2);
-
-		User user = new User();
-		user.setUsername("Sam");
-		user.setPassword("supersecretpassword");
-		user.setEnabled(true);
-		vet.setUser(user);
-
-		this.vetService.saveVet(vet);
-		Integer countAfter = this.vetService.countVets();
-		Assertions.assertThat(vet.getSpecialties().size() == 2);
-	}
+	//	@Test
+	//	@Transactional
+	//	public void testSavingVet() {
+	//		Integer countBefore = this.vetService.countVets();
+	//		countBefore++;
+	//
+	//		Vet vet = new Vet();
+	//		vet.setFirstName("Sam");
+	//		vet.setLastName("Schultz");
+	//
+	//		Set<Specialty> specialties = new HashSet<>();
+	//		Specialty specialty1 = new Specialty();
+	//		specialty1.setName("espe1");
+	//		specialties.add(specialty1);
+	//		Specialty specialty2 = new Specialty();
+	//		specialty2.setName("espe2");
+	//		specialties.add(specialty2);
+	//
+	//		User user = new User();
+	//		user.setUsername("Sam");
+	//		user.setPassword("supersecretpassword");
+	//		user.setEnabled(true);
+	//		vet.setUser(user);
+	//
+	//		this.vetService.saveVet(vet);
+	//		Integer countAfter = this.vetService.countVets();
+	//		Assertions.assertThat(vet.getSpecialties().size() == 2);
+	//	}
 }
