@@ -13,6 +13,8 @@ import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.repository.BeauticianRepository;
 import org.springframework.samples.petclinic.repository.BeautyCenterRepository;
 import org.springframework.samples.petclinic.repository.PetRepository;
+import org.springframework.samples.petclinic.service.exceptions.NoPetTypeException;
+import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,9 +46,19 @@ public class BeautyCenterService {
 		return this.beautyRepository.findAll();
 	}
 
-	@Transactional
-	public void save(final BeautyCenter beautyCenter) {
-		this.beautyRepository.save(beautyCenter);
+	@Transactional(rollbackFor = {
+		NoPetTypeException.class, NullOrShortNameException.class
+	})
+	public boolean save(final BeautyCenter beautyCenter) throws NullOrShortNameException, NoPetTypeException {
+		if (beautyCenter.getName() == null || beautyCenter.getName().length() < 3) {
+			throw new NullOrShortNameException();
+		} else if (beautyCenter.getPetType() == null) {
+			throw new NoPetTypeException();
+
+		} else {
+			this.beautyRepository.save(beautyCenter);
+			return true;
+		}
 	}
 
 	@Transactional

@@ -58,13 +58,15 @@ public class AuthoritiesService {
 	}
 
 	@Transactional
-	public void isAuthor(final String username) throws Exception {
+	public boolean isAuthor(final String username) throws Exception {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
 
 		boolean aux = currentPrincipalName.equals(username);
 		if (!aux) {
 			throw new InvalidActivityException("You are not the author");
+		} else {
+			return true;
 		}
 	}
 

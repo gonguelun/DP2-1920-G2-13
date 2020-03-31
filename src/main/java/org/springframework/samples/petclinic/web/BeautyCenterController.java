@@ -15,6 +15,8 @@ import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.UserService;
+import org.springframework.samples.petclinic.service.exceptions.NoPetTypeException;
+import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -71,7 +73,7 @@ public class BeautyCenterController {
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/new")
-	public String processCreationFormBeautyCenter(@Valid final BeautyCenter beautyCenter, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) {
+	public String processCreationFormBeautyCenter(@Valid final BeautyCenter beautyCenter, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) throws NoPetTypeException, NullOrShortNameException {
 		Beautician bea = this.beauticianService.findBeauticianById(beauticianId);
 		beautyCenter.setBeautician(bea);
 
@@ -80,25 +82,22 @@ public class BeautyCenterController {
 			return "beauty-centers/createOrUpdateBeautyCenterForm";
 		} else {
 
-			if (beautyCenter.getName().length() >= 3 && !beautyCenter.getName().isEmpty()) {
-
-				if (beautyCenter.getPetType() != null) {
-					this.beautyService.save(beautyCenter);
-					return "redirect:/beauticians/{beauticianId}";
-
-				} else {
-					result.rejectValue("petType", "notnull", "It's mandatory");
-					model.put("beautyCenter", beautyCenter);
-					return "beauty-centers/createOrUpdateBeautyCenterForm";
-				}
-
-			} else {
-				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
+			try {
+				this.beautyService.save(beautyCenter);
+			} catch (NullOrShortNameException a) {
 				model.put("beautyCenter", beautyCenter);
+				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
+				return "beauty-centers/createOrUpdateBeautyCenterForm";
+			} catch (NoPetTypeException b) {
+				model.put("beautyCenter", beautyCenter);
+				result.rejectValue("petType", "notnull", "It's mandatory");
 				return "beauty-centers/createOrUpdateBeautyCenterForm";
 			}
 
+			return "redirect:/beauticians/{beauticianId}";
+
 		}
+
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers")
