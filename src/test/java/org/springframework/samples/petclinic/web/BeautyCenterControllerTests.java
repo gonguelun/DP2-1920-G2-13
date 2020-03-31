@@ -1,23 +1,15 @@
 
 package org.springframework.samples.petclinic.web;
 
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.assertj.core.util.Lists;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,6 +25,8 @@ import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
+import org.springframework.samples.petclinic.service.exceptions.NoPetTypeException;
+import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -85,7 +79,7 @@ public class BeautyCenterControllerTests {
 	/* Test controlador hisoria de usuario 2 */
 
 	@BeforeEach
-	void setup() {
+	void setup() throws NullOrShortNameException, NoPetTypeException {
 		PetType cat = new PetType();
 		cat.setId(3);
 		cat.setName("hamster");
@@ -203,9 +197,10 @@ public class BeautyCenterControllerTests {
 	}, password = "123")
 	@Test
 	void testProcessCreationNoPetTypeHasErrors() throws Exception {
+		Mockito.when(this.beautyService.save(ArgumentMatchers.any())).thenThrow(new NoPetTypeException());
 		this.mockMvc
-			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/new", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "beauty center test 2").param("description",
-				"this is a description 2"))
+			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/new", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "beauty center test 2")
+				.param("description", "this is a description 2").param("petType", ""))
 			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyCenter")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyCenter", "petType")).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
 	}
@@ -217,6 +212,7 @@ public class BeautyCenterControllerTests {
 	}, password = "123")
 	@Test
 	void testProcessCreationShortNameHasErrors() throws Exception {
+		Mockito.when(this.beautyService.save(ArgumentMatchers.any())).thenThrow(new NullOrShortNameException());
 		this.mockMvc
 			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/new", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "be")
 				.param("description", "this is a description 2").param("petType", "hamster"))
@@ -266,84 +262,69 @@ public class BeautyCenterControllerTests {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete", BeautyCenterControllerTests.TEST_BEAUTICIAN2_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER3_ID)
 			.with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 	}
-	
+
 	/*
 	 * Tests historia de usuario 3
 	 */
-	@WithMockUser(username = "beautician1",roles= {
-    		"beautician"
-    },password="123")
-@Test
-void testInitUpdateBeautyCenterForm() throws Exception {
-		PetType pet=new PetType();
+	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
+	@Test
+	void testInitUpdateBeautyCenterForm() throws Exception {
+		PetType pet = new PetType();
 		pet.setName("hamster");
-	mockMvc.perform(get("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", TEST_BEAUTICIAN_ID,TEST_BEAUTYCENTER2_ID)).andExpect(status().isOk())
-			.andExpect(model().attributeExists("beautyCenter"))
-			.andExpect(model().attribute("beautyCenter", hasProperty("name", is("beautycenter1"))))
-			.andExpect(model().attribute("beautyCenter", hasProperty("description", is("prueba1"))))
-			.andExpect(model().attribute("beautyCenter", hasProperty("petType",is(pet))))
-			.andExpect(view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
-}
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER2_ID))
+			.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeExists("beautyCenter"))
+			.andExpect(MockMvcResultMatchers.model().attribute("beautyCenter", Matchers.hasProperty("name", Matchers.is("beautycenter1"))))
+			.andExpect(MockMvcResultMatchers.model().attribute("beautyCenter", Matchers.hasProperty("description", Matchers.is("prueba1"))))
+			.andExpect(MockMvcResultMatchers.model().attribute("beautyCenter", Matchers.hasProperty("petType", Matchers.is(pet)))).andExpect(MockMvcResultMatchers.view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
+	}
 	//Caso Positivo
-	@WithMockUser(username = "beautician1",roles= {
-    		"beautician"
-    },password="123")
+	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
 	@Test
 	void testProcessUpdateBeautyCenterFormSuccess() throws Exception {
-		mockMvc.perform(post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", TEST_BEAUTICIAN_ID,TEST_BEAUTYCENTER2_ID)
-							.with(csrf())
-							.param("name", "beautycentermodified")
-							.param("description", "descriptionmodified")
-							.param("petType", "dog"))
-				.andExpect(status().is3xxRedirection())
-				.andExpect(view().name("redirect:/beauticians/{beauticianId}"));
+		this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER2_ID)
+				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "beautycentermodified").param("description", "descriptionmodified").param("petType", "dog"))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/beauticians/{beauticianId}"));
 	}
-	
-	@WithMockUser(username = "beautician1",roles= {
-    		"beautician"
-    },password="123")
+
+	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
 	@Test
 	void testProcessUpdateBeautyCenterFormSuccessNoDescription() throws Exception {
-		mockMvc.perform(post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", TEST_BEAUTICIAN_ID,TEST_BEAUTYCENTER2_ID)
-							.with(csrf())
-							.param("name", "beautycentermodified")
-							.param("description", "")
-							.param("petType", "dog"))
-				.andExpect(status().is3xxRedirection())
-				.andExpect(view().name("redirect:/beauticians/{beauticianId}"));
+		this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER2_ID)
+				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "beautycentermodified").param("description", "").param("petType", "dog"))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/beauticians/{beauticianId}"));
 	}
-	
+
 	//Casos negativos
-	@WithMockUser(username = "beautician1",roles= {
-    		"beautician"
-    },password="123")
+	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
 	@Test
 	void testProcessUpdateBeautyCenterFormHasErrorsPetType() throws Exception {
-		mockMvc.perform(post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", TEST_BEAUTICIAN_ID,TEST_BEAUTYCENTER2_ID)
-							.with(csrf())
-							.param("name", "beautycentermodified")
-							.param("description","descriptionmodified")
-							.param("petType", "crocodile"))
-				.andExpect(status().isOk())
-				.andExpect(model().attributeHasErrors("beautyCenter"))
-				.andExpect(model().attributeHasFieldErrors("beautyCenter", "petType"))
-				.andExpect(view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
+		this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER2_ID)
+				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "beautycentermodified").param("description", "descriptionmodified").param("petType", "crocodile"))
+			.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyCenter")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyCenter", "petType"))
+			.andExpect(MockMvcResultMatchers.view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
 	}
-	
-	@WithMockUser(username = "beautician1",roles= {
-    		"beautician"
-    },password="123")
+
+	@WithMockUser(username = "beautician1", roles = {
+		"beautician"
+	}, password = "123")
 	@Test
 	void testProcessUpdateBeautyCenterFormHasErrorsEmptyAttribute() throws Exception {
-		mockMvc.perform(post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", TEST_BEAUTICIAN_ID,TEST_BEAUTYCENTER2_ID)
-							.with(csrf())
-							.param("name", "")
-							.param("description","descriptionmodified")
-							.param("petType", "dog"))
-				.andExpect(status().isOk())
-				.andExpect(model().attributeHasErrors("beautyCenter"))
-				.andExpect(model().attributeHasFieldErrors("beautyCenter", "name"))
-				.andExpect(view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
+		this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER2_ID)
+				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "").param("description", "descriptionmodified").param("petType", "dog"))
+			.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyCenter")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyCenter", "name"))
+			.andExpect(MockMvcResultMatchers.view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
 	}
 
 }
