@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,9 @@ import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Product;
+import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.ProductService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -33,12 +33,14 @@ public class ProductController {
 
 	private final ProductService		productService;
 	private final BeautyCenterService	beautyCenterService;
+	private final AuthoritiesService	authoritiesService;
 
 
 	@Autowired
-	public ProductController(final ProductService productService, final BeautyCenterService beautyCenterService) {
+	public ProductController(final ProductService productService, final BeautyCenterService beautyCenterService, final AuthoritiesService authoritiesService) {
 		this.productService = productService;
 		this.beautyCenterService = beautyCenterService;
+		this.authoritiesService = authoritiesService;
 	}
 
 	@InitBinder
@@ -58,22 +60,21 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/products/new")
-	public String initCreationForm(final ModelMap model, @PathVariable("beauticianId") final int beauticianId) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
+	public String initCreationForm(final ModelMap model, @PathVariable("beauticianId") final int beauticianId) throws Exception {
+
 		Beautician beautician = this.productService.findBeauticianById(beauticianId);
 
-		if (currentPrincipalName.equals(beautician.getUser().getUsername())) {
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 			Product product = new Product();
 			model.put("product", product);
 			Collection<PetType> spe = this.productService.findSpecializationsByBeauticianId(beauticianId);
 			model.put("specialization", spe);
-			return "products/createOrUpdateProduct";
 
-		} else {
+		} catch (InvalidActivityException e) {
 			return "exception";
 		}
-
+		return "products/createOrUpdateProduct";
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/products/new")
@@ -90,57 +91,63 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/{beautyCenterId}/products/{productId}/edit")
-	public String initUpdateForm(@PathVariable("productId") final int productId, final ModelMap model) {
+	public String initUpdateForm(@PathVariable("productId") final int productId, final ModelMap model) throws Exception {
 
 		Product product = this.productService.findProductById(productId);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		if (currentPrincipalName.equals(product.getBeautician().getUser().getUsername())) {
+		try {
+			this.authoritiesService.isAuthor(product.getBeautician().getUser().getUsername());
 
 			Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(product.getBeautician().getId());
 			model.put("specialization", specializations);
 			model.put("product", product);
-			return "products/createOrUpdateProduct";
-		} else {
+
+		} catch (InvalidActivityException e) {
 			return "exception";
 		}
+
+		return "products/createOrUpdateProduct";
 	}
 
 	@PostMapping(value = "/{beautyCenterId}/products/{productId}/edit")
-	public String processUpdateForm(@Valid final Product product, final BindingResult result, @PathVariable("productId") final int productId, final ModelMap model) {
+	public String processUpdateForm(@Valid final Product product, final BindingResult result, @PathVariable("productId") final int productId, final ModelMap model) throws Exception {
 		product.setId(productId);
 		Beautician beautician = this.productService.findBeauticianByProductId(productId);
 		product.setBeautician(beautician);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		if (currentPrincipalName.equals(product.getBeautician().getUser().getUsername())) {
-			Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(beautician.getId());
-			if (result.hasErrors()) {
-				model.put("specialization", specializations);
-				model.put("product", product);
-				return "products/createOrUpdateProduct";
-			} else {
+		Collection<PetType> specializations = this.productService.findSpecializationsByBeauticianId(beautician.getId());
+
+		if (result.hasErrors()) {
+			model.put("specialization", specializations);
+			model.put("product", product);
+			return "products/createOrUpdateProduct";
+		} else {
+			try {
+
+				this.authoritiesService.isAuthor(product.getBeautician().getUser().getUsername());
+
 				product.setBeautician(beautician);
 				this.productService.save(product);
-				return "redirect:/";
+			} catch (InvalidActivityException a) {
+				return "redirect:/oups";
 			}
-		} else {
-			return "redirect:/oups";
+			return "redirect:/";
 		}
+
 	}
 
 	@RequestMapping(value = "/{beautyCenterId}/products/{productId}/delete", method = RequestMethod.GET)
-	public String delete(@PathVariable("productId") final int productId, final Model model) {
+	public String delete(@PathVariable("productId") final int productId, final Model model) throws Exception {
 		Product product = this.productService.findProductById(productId);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		if (currentPrincipalName.equals(product.getBeautician().getUser().getUsername())) {
+
+		try {
+			this.authoritiesService.isAuthor(product.getBeautician().getUser().getUsername());
 			product.setBeautician(null);
 			this.productService.deleteProduct(product);
-			return "redirect:/";
-		} else {
+
+		} catch (InvalidActivityException a) {
 			return "redirect:/oups";
 		}
+
+		return "redirect:/";
 	}
 
 }

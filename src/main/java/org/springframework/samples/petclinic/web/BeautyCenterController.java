@@ -4,6 +4,7 @@ package org.springframework.samples.petclinic.web;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,6 @@ import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -33,11 +32,14 @@ public class BeautyCenterController {
 
 	private BeauticianService	beauticianService;
 
+	private AuthoritiesService	authoritiesService;
+
 
 	@Autowired
 	public BeautyCenterController(final BeautyCenterService beautyService, final UserService userService, final AuthoritiesService authoritiesService, final BeauticianService beauticianService) {
 		this.beautyService = beautyService;
 		this.beauticianService = beauticianService;
+		this.authoritiesService = authoritiesService;
 	}
 
 	@InitBinder
@@ -51,19 +53,21 @@ public class BeautyCenterController {
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/new")
-	public String initCreationFormBeautyCenter(@PathVariable("beauticianId") final int beauticianId, final Map<String, Object> model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
-		if (currentPrincipalName.equals(beautician.getUser().getUsername())) {
+	public String initCreationFormBeautyCenter(@PathVariable("beauticianId") final int beauticianId, final Map<String, Object> model) throws Exception {
 
+		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
+		try {
+
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 			BeautyCenter beautyCenter = new BeautyCenter();
 			beautyCenter.setBeautician(beautician);
 			model.put("beautyCenter", beautyCenter);
-			return "beauty-centers/createOrUpdateBeautyCenterForm";
-		} else {
+
+		} catch (InvalidActivityException e) {
 			return "exception";
 		}
+
+		return "beauty-centers/createOrUpdateBeautyCenterForm";
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/new")
@@ -98,24 +102,32 @@ public class BeautyCenterController {
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers")
-	public String showBeautyCenter(@PathVariable("beauticianId") final int beauticianId, final Map<String, Object> model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
+	public String showBeautyCenter(@PathVariable("beauticianId") final int beauticianId, final Map<String, Object> model) throws Exception {
+
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
-		if (currentPrincipalName.equals(beautician.getUser().getUsername())) {
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 			model.put("beauty-centers", this.beautyService.findAllBeautyCenterByBeauticianId(beauticianId));
-			return "beautyCenterList";
-		} else {
+
+		} catch (InvalidActivityException e) {
 			return "redirect:/oups";
 		}
+
+		return "beautyCenterList";
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
-	public String initUpdateOwnerForm(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) {
+	public String initUpdateOwnerForm(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) throws Exception {
 		BeautyCenter beautyCenter = this.beautyService.findById(beautyCenterId);
 		Beautician beautician = this.beautyService.findBeauticianById(beautyCenter.getBeautician().getId());
-		beautyCenter.setBeautician(beautician);
-		model.put("beautyCenter", beautyCenter);
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
+			beautyCenter.setBeautician(beautician);
+			model.put("beautyCenter", beautyCenter);
+		} catch (InvalidActivityException a) {
+			return "redirect:/oups";
+		}
+
 		return "beauty-centers/createOrUpdateBeautyCenterForm";
 	}
 
@@ -152,18 +164,20 @@ public class BeautyCenterController {
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete")
-	public String deleteBeautyCenter(@PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
+	public String deleteBeautyCenter(@PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId) throws Exception {
+
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
-		if (currentPrincipalName.equals(beautician.getUser().getUsername())) {
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 			BeautyCenter aux = this.beautyService.findById(beautyCenterId);
 			aux.setBeautician(null);
 			this.beautyService.remove(beautyCenterId);
-			return "redirect:/beauticians/{beauticianId}";
-		} else {
+
+		} catch (InvalidActivityException a) {
 			return "redirect:/oups";
 		}
+
+		return "redirect:/beauticians/{beauticianId}";
 	}
 
 }
