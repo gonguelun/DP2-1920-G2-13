@@ -4,10 +4,14 @@ package org.springframework.samples.petclinic.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.activity.InvalidActivityException;
+
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -203,7 +207,7 @@ public class ProductControllerTests {
 		"beautician"
 	}, password = "123")
 	@Test
-	void testInitCreationForm() throws Exception {
+	void testInitUpdateForm() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products/{productId}/edit", ProductControllerTests.TEST_BEAUTY_CENTER_ID, ProductControllerTests.TEST_PRODUCT_ID)).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("products/createOrUpdateProduct")).andExpect(MockMvcResultMatchers.model().attributeExists("product")).andExpect(MockMvcResultMatchers.model().attributeExists("specialization"));
 	}
@@ -214,7 +218,8 @@ public class ProductControllerTests {
 		"beautician"
 	}, password = "123")
 	@Test
-	void testInitCreationFormError() throws Exception {
+	void testInitUpdateFormError() throws Exception {
+		Mockito.when(this.authoritiesService.isAuthor(ArgumentMatchers.any())).thenThrow(new InvalidActivityException());
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products/{productId}/edit", ProductControllerTests.TEST_BEAUTY_CENTER_ID, ProductControllerTests.TEST_PRODUCT_ID)).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}

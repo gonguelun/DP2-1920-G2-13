@@ -1,9 +1,7 @@
 
 package org.springframework.samples.petclinic.web;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +17,11 @@ import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.BeautyDateService;
+import org.springframework.samples.petclinic.service.exceptions.AlreadyDateException;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
+import org.springframework.samples.petclinic.service.exceptions.EmptyPetException;
+import org.springframework.samples.petclinic.service.exceptions.IsNotInTimeException;
+import org.springframework.samples.petclinic.service.exceptions.IsWeekendException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -80,23 +82,27 @@ public class BeautyDateController {
 			return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 
 		} else {
-			BeautyDate guardado = this.beautyDateService.findBeautyDateByPetId(beautyDate.getPet().getId());
-			if (guardado != null) {
-				result.rejectValue("pet", "beautyDateError", "Already has a date to a beauty service");
-				model.put("beautyDate", beautyDate);
-				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
-			} else {
 
-				if (beautyDate.getStartDate().getDayOfWeek().equals(DayOfWeek.SATURDAY) || beautyDate.getStartDate().getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-					result.rejectValue("startDate", "finde", "it's a weekend!");
-					model.put("beautyDate", beautyDate);
-					return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
-				} else {
-					this.beautyDateService.saveBeautyDate(beautyDate);
-					return "redirect:/";
-				}
+			try {
+				this.beautyDateService.saveBeautyDate(beautyDate);
+			} catch (AlreadyDateException e) {
+				result.rejectValue("pet", "beautyDateError", "Already has a date to a beauty service");
+				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+			} catch (IsWeekendException a) {
+				result.rejectValue("startDate", "finde", "it's a weekend!");
+				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+			} catch (IsNotInTimeException b) {
+				result.rejectValue("startDate", "horario", "it's not working time!");
+				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+			} catch (EmptyPetException c) {
+				result.rejectValue("pet", "mandatorydate", "you must choose a pet!");
+				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 			}
+
+			return "redirect:/";
+
 		}
+
 	}
 
 	@ModelAttribute("ownerPets")
@@ -106,31 +112,6 @@ public class BeautyDateController {
 
 	@ModelAttribute("dateWeek")
 	public List<LocalDateTime> datesInAWeek() {
-		List<LocalDateTime> hours = new ArrayList<>();
-		LocalDateTime fechaActual = LocalDateTime.now();
-		LocalDateTime fechaEn1Mes = fechaActual.plusMonths(1);
-		fechaEn1Mes = fechaEn1Mes.withHour(16);
-		fechaEn1Mes = fechaEn1Mes.withMinute(0);
-		hours.add(fechaEn1Mes);
-		for (int i = 0; i < 32; i = i + 4) {
-			LocalDateTime aux = hours.get(i);
-			for (int j = 0; j < 3; j++) {
-				aux = aux.plusHours(1);
-				hours.add(aux);
-			}
-			if (i < 28) {
-				aux = hours.get(i);
-				aux = aux.plusDays(1);
-				hours.add(aux);
-			}
-		}
-		for (int k = 0; k < hours.size(); k++) {
-			LocalDateTime aux2 = hours.get(k);
-			if (aux2.getDayOfWeek() == DayOfWeek.SATURDAY || aux2.getDayOfWeek() == DayOfWeek.SUNDAY) {
-				hours.remove(aux2);
-				k--;
-			}
-		}
-		return hours;
+		return this.beautyDateService.datesInAWeek();
 	}
 }
