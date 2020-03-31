@@ -3,17 +3,17 @@ package org.springframework.samples.petclinic.web;
 
 import java.util.Collection;
 
+import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -40,6 +40,9 @@ public class BeauticianController {
 	private PetService			petService;
 
 	@Autowired
+	private AuthoritiesService	authoritiesService;
+
+	@Autowired
 	private UserService			userService;
 
 
@@ -49,16 +52,17 @@ public class BeauticianController {
 	}
 
 	@GetMapping(value = "/{beauticianId}/edit")
-	public String initUpdateOwnerForm(@PathVariable("beauticianId") final int beauticianId, final Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
+	public String initUpdateOwnerForm(@PathVariable("beauticianId") final int beauticianId, final Model model) throws Exception {
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
-		if (currentPrincipalName.equals(beautician.getUser().getUsername())) {
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 			model.addAttribute(beautician);
-			return BeauticianController.VIEWS_BEAUTICIAN_UPDATE_FORM;
-		} else {
+
+		} catch (InvalidActivityException a) {
 			return "redirect:/oups";
 		}
+
+		return BeauticianController.VIEWS_BEAUTICIAN_UPDATE_FORM;
 	}
 
 	@PostMapping(value = "/{beauticianId}/edit")

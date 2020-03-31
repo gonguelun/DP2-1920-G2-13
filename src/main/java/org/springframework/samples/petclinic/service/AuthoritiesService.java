@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.samples.petclinic.service;
 
+import javax.activity.InvalidActivityException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Authorities;
 import org.springframework.samples.petclinic.repository.AuthoritiesRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,23 +38,34 @@ public class AuthoritiesService {
 
 	private AuthoritiesRepository authoritiesRepository;
 
+
 	@Autowired
-	public AuthoritiesService(AuthoritiesRepository authoritiesRepository) {
+	public AuthoritiesService(final AuthoritiesRepository authoritiesRepository) {
 		this.authoritiesRepository = authoritiesRepository;
 	}
 
 	@Transactional
-	public void saveAuthorities(Authorities authorities) throws DataAccessException {
-		authoritiesRepository.save(authorities);
+	public void saveAuthorities(final Authorities authorities) throws DataAccessException {
+		this.authoritiesRepository.save(authorities);
 	}
-	
+
 	@Transactional
-	public void saveAuthorities(String username, String role) throws DataAccessException {
+	public void saveAuthorities(final String username, final String role) throws DataAccessException {
 		Authorities authority = new Authorities();
 		authority.setUsername(username);
 		authority.setAuthority(role);
-		authoritiesRepository.save(authority);
+		this.authoritiesRepository.save(authority);
 	}
 
+	@Transactional
+	public void isAuthor(final String username) throws Exception {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		boolean aux = currentPrincipalName.equals(username);
+		if (!aux) {
+			throw new InvalidActivityException("You are not the author");
+		}
+	}
 
 }

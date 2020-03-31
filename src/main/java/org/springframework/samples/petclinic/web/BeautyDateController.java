@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.BeautyDate;
 import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.BeautyDateService;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
@@ -37,11 +39,14 @@ public class BeautyDateController {
 
 	private BeautyCenterService	beautyCenterService;
 
+	private AuthoritiesService	authoritiesService;
+
 
 	@Autowired
-	public BeautyDateController(final BeautyDateService beautyDateService, final BeautyCenterService beautyCenterService) {
+	public BeautyDateController(final BeautyDateService beautyDateService, final BeautyCenterService beautyCenterService, final AuthoritiesService authoritiesService) {
 		this.beautyDateService = beautyDateService;
 		this.beautyCenterService = beautyCenterService;
+		this.authoritiesService = authoritiesService;
 	}
 
 	@InitBinder
@@ -50,11 +55,17 @@ public class BeautyDateController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new")
-	public String initCreationFormOwner(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) {
+	public String initCreationFormOwner(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
 		BeautyCenter beautyCenter = this.beautyCenterService.findById(beautyCenterId);
-		BeautyDate beautyDate = new BeautyDate();
-		beautyDate.setBeautyCenter(beautyCenter);
-		model.put("beautyDate", beautyDate);
+		try {
+			this.authoritiesService.isAuthor(ownerUsername);
+			BeautyDate beautyDate = new BeautyDate();
+			beautyDate.setBeautyCenter(beautyCenter);
+			model.put("beautyDate", beautyDate);
+		} catch (InvalidActivityException a) {
+			return "redirect:/oups";
+		}
+
 		return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 	}
 
