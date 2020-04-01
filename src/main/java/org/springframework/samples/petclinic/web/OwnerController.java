@@ -19,6 +19,7 @@ package org.springframework.samples.petclinic.web;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,15 +55,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class OwnerController {
 
-	private static final String		VIEWS_OWNER_UPDATE_FORM	= "owners/UpdateOwnerForm";
+	private static final String			VIEWS_OWNER_UPDATE_FORM	= "owners/UpdateOwnerForm";
 
-	private final OwnerService		ownerService;
+	private final OwnerService			ownerService;
 
-	private final UserService		userService;
+	private final UserService			userService;
 
-	private final PetService		petService;
+	private final PetService			petService;
 
-	private final BeautyDateService	beautyDateService;
+	private final BeautyDateService		beautyDateService;
+
+	private final AuthoritiesService	authoritiesService;
 
 
 	@Autowired
@@ -71,6 +74,7 @@ public class OwnerController {
 		this.userService = userService;
 		this.petService = petService;
 		this.beautyDateService = beautyDateService;
+		this.authoritiesService = authoritiesService;
 	}
 
 	@InitBinder
@@ -174,24 +178,29 @@ public class OwnerController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates")
-	public String showBeautyDates(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) {
-		model.put("beautyDates", this.beautyDateService.findBeautyDatesByOwnerUsername(ownerUsername));
+	public String showBeautyDates(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
+		try {
+			this.authoritiesService.isAuthor(ownerUsername);
+			model.put("beautyDates", this.beautyDateService.findBeautyDatesByOwnerUsername(ownerUsername));
+		} catch (InvalidActivityException e) {
+			return "redirect:/oups";
+		}
 		return "beauty-dates/beautyDatesList";
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/delete")
-	public String deleteBeautyDate(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Map<String, Object> model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		if (currentPrincipalName.equals(ownerUsername)) {
+	public String deleteBeautyDate(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Map<String, Object> model) throws Exception {
+		try {
+			this.authoritiesService.isAuthor(ownerUsername);
 			BeautyDate aux = this.beautyDateService.findById(beautyDateId);
 			aux.setBeautyCenter(null);
 			aux.setPet(null);
 			this.beautyDateService.remove(beautyDateId);
-			return "redirect:/owners/{ownerUsername}/beauty-dates";
-		} else {
+		} catch (InvalidActivityException a) {
 			return "redirect:/oups";
 		}
+
+		return "redirect:/owners/{ownerUsername}/beauty-dates";
 
 	}
 }

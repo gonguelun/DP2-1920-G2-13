@@ -6,10 +6,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.activity.InvalidActivityException;
+
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -315,6 +319,7 @@ class OwnerControllerTests {
 	}, password = "owner2")
 	@Test
 	void testProcessDeleteBeautyDateFormWithErrors() throws Exception {
+		Mockito.when(this.authoritiesService.isAuthor(ArgumentMatchers.any())).thenThrow(new InvalidActivityException());
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/delete", this.george.getUser().getUsername(), OwnerControllerTests.TEST_BEAUTYDATE_ID).with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 	}
@@ -349,6 +354,16 @@ class OwnerControllerTests {
 	void testShowBeautyDate() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/beauty-dates", this.george.getUser().getUsername())).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("beauty-dates/beautyDatesList")).andExpect(MockMvcResultMatchers.model().attributeExists("beautyDates"));
+	}
+
+	@WithMockUser(username = "owner2", roles = {
+		"owner"
+	}, password = "owner2")
+	@Test
+	void testShowBeautyDateFormWithErrors() throws Exception {
+		Mockito.when(this.authoritiesService.isAuthor(ArgumentMatchers.any())).thenThrow(new InvalidActivityException());
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/beauty-dates", this.george.getUser().getUsername(), OwnerControllerTests.TEST_BEAUTYDATE_ID).with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 	}
 
 }
