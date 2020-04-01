@@ -1,7 +1,7 @@
 
 package org.springframework.samples.petclinic.service;
 
-import static org.junit.Assert.fail;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
+import org.springframework.samples.petclinic.service.exceptions.InvalidSpecializationException;
+import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.stereotype.Service;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -35,7 +38,7 @@ public class BeauticianServiceTests {
 	public void testSavingBeauticianCorrect() {
 		Integer countBefore = this.beauticianService.countBeauticians();
 		countBefore++;
-
+		
 		Beautician beautician = new Beautician();
 		beautician.setFirstName("Jane");
 		beautician.setLastName("Doe");
@@ -56,42 +59,27 @@ public class BeauticianServiceTests {
 
 	@Test
 	public void testSavingBeauticianWithIncorrectSpecialization() {
-		Integer countBefore = this.beauticianService.countBeauticians();
-		countBefore++;
-
+		
+		Beautician beauticianGuardado = new Beautician();
+		beauticianGuardado.setFirstName("Jane");
+		beauticianGuardado.setLastName("Doe");
+		User userGuardado = new User();
+		userGuardado.setUsername("JaneDoe");
+		userGuardado.setPassword("1234");
+		userGuardado.setEnabled(true);
+		beauticianGuardado.setUser(userGuardado);
+		Collection<PetType> specializationsGuardado = new ArrayList<PetType>();
+		PetType petGuardado = new PetType();
+		petGuardado.setName("dog");
+		specializationsGuardado.add(petGuardado);
+		beauticianGuardado.setSpecializations(specializationsGuardado);
+		
 		Beautician beautician = new Beautician();
-		beautician.setFirstName("Jane");
-		beautician.setLastName("Doe");
+		beautician.setFirstName("Jane Michael");
+		beautician.setLastName("Doesnt");
 		User user = new User();
 		user.setUsername("JaneDoe");
-		user.setPassword("1234");
-		user.setEnabled(true);
-		beautician.setUser(user);
-		Collection<PetType> types = this.petService.findPetTypes();
-		Collection<PetType> specializations = new ArrayList<PetType>();
-		PetType pet = new PetType();
-		pet.setName("reptiles");
-		specializations.add(pet);
-		if (types.stream().anyMatch(i -> i.getName().equals(pet.getName()))) {
-			beautician.setSpecializations(specializations);
-			this.beauticianService.saveBeautician(beautician);
-			Integer countAfter = this.beauticianService.countBeauticians();
-			Assertions.assertThat(countBefore == countAfter);
-		} else {
-			fail("You have selected an incorrect specialization!");
-		}
-	}
-
-	@Test
-	public void testSavingBeauticianWithIncorrectAttribute() {
-		Beautician beautician = new Beautician();
-		assertThrows(ConstraintViolationException.class, () -> {
-			beautician.setFirstName("");
-		});
-		beautician.setLastName("Doe");
-		User user = new User();
-		user.setUsername("JaneDoe");
-		user.setPassword("1234");
+		user.setPassword("12345");
 		user.setEnabled(true);
 		beautician.setUser(user);
 		Collection<PetType> specializations = new ArrayList<PetType>();
@@ -99,8 +87,40 @@ public class BeauticianServiceTests {
 		pet.setName("reptiles");
 		specializations.add(pet);
 		beautician.setSpecializations(specializations);
-		this.beauticianService.saveBeautician(beautician);
+		assertThrows(InvalidSpecializationException.class, () -> this.beauticianService.isBeauticianGuardado(beautician.getUser(), beautician, beauticianGuardado));
+	}
 
+	@Test
+	public void testSavingBeauticianWithIncorrectAttribute() {
+		Beautician beauticianGuardado = new Beautician();
+		beauticianGuardado.setFirstName("Jane");
+		beauticianGuardado.setLastName("Doe");
+		User userGuardado = new User();
+		userGuardado.setUsername("JaneDoe");
+		userGuardado.setPassword("1234");
+		userGuardado.setEnabled(true);
+		beauticianGuardado.setUser(userGuardado);
+		Collection<PetType> specializationsGuardado = new ArrayList<PetType>();
+		PetType petGuardado = new PetType();
+		petGuardado.setName("dog");
+		specializationsGuardado.add(petGuardado);
+		beauticianGuardado.setSpecializations(specializationsGuardado);
+		
+		Beautician beautician = new Beautician();
+		beautician.setFirstName("");
+		beautician.setLastName("Doesnt");
+		User user = new User();
+		user.setUsername("JaneDoe");
+		user.setPassword("12345");
+		user.setEnabled(true);
+		beautician.setUser(user);
+		Collection<PetType> specializations = new ArrayList<PetType>();
+		PetType pet = new PetType();
+		pet.setName("cat");
+		specializations.add(pet);
+		beautician.setSpecializations(specializations);
+		
+		assertThrows(NullOrShortNameException.class, () -> this.beauticianService.isBeauticianGuardado(beautician.getUser(), beautician, beauticianGuardado));
 	}
 
 }

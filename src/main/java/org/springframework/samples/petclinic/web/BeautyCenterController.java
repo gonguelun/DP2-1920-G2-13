@@ -131,7 +131,7 @@ public class BeautyCenterController {
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
-	public String processUpdateBeauticianForm(@Valid final BeautyCenter beautyCenter, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId, final ModelMap model) {
+	public String processUpdateBeauticianForm(@Valid final BeautyCenter beautyCenter, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId, final ModelMap model) throws NullOrShortNameException,NoPetTypeException{
 		Beautician bea = this.beauticianService.findBeauticianById(beauticianId);
 		beautyCenter.setBeautician(bea);
 
@@ -140,24 +140,22 @@ public class BeautyCenterController {
 			return "beauty-centers/createOrUpdateBeautyCenterForm";
 		} else {
 
-			if (beautyCenter.getName().length() >= 3 && !beautyCenter.getName().isEmpty()) {
-
-				if (beautyCenter.getPetType() != null) {
+			try {
 					beautyCenter.setId(beautyCenterId);
 					this.beautyService.update(beautyCenter, beautyCenterId);
-					return "redirect:/beauticians/{beauticianId}";
 
-				} else {
+				} catch(NoPetTypeException a) {
 					result.rejectValue("petType", "notnull", "It's mandatory");
 					model.put("beautyCenter", beautyCenter);
 					return "beauty-centers/createOrUpdateBeautyCenterForm";
-				}
+				
 
-			} else {
+			} catch(NullOrShortNameException b) {
 				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
 				model.put("beautyCenter", beautyCenter);
 				return "beauty-centers/createOrUpdateBeautyCenterForm";
 			}
+			return "redirect:/beauticians/{beauticianId}";
 		}
 
 	}

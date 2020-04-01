@@ -26,13 +26,17 @@ public class BeautyCenterService {
 	private BeauticianRepository	beauticianRepository;
 
 	private PetRepository			petRepository;
+	
+	private PetService petService;
 
 
 	@Autowired
-	public BeautyCenterService(final BeautyCenterRepository beautyCenterRepository, final BeauticianRepository beauticianRepository, final PetRepository petRepository) {
+	public BeautyCenterService(final BeautyCenterRepository beautyCenterRepository, final BeauticianRepository beauticianRepository, final PetRepository petRepository,final PetService petService) {
 		this.beauticianRepository = beauticianRepository;
 		this.beautyRepository = beautyCenterRepository;
 		this.petRepository = petRepository;
+		this.petService=petService;
+		
 
 	}
 
@@ -82,11 +86,23 @@ public class BeautyCenterService {
 	}
 
 	@Transactional
-	public void update(@Valid final BeautyCenter beauticianCenter, final int beauticianId) {
+	public boolean update(@Valid final BeautyCenter beauticianCenter, final int beauticianId) throws NullOrShortNameException, NoPetTypeException {
 		String name = beauticianCenter.getName();
 		String description = beauticianCenter.getDescription();
 		PetType petType = beauticianCenter.getPetType();
+		if (beauticianCenter.getName().length() < 3 && beauticianCenter.getName().isEmpty()) {
+			throw new NullOrShortNameException();
+		}else if(petType == null || petType.getName()=="" || (!beauticianCenter.getPetType().getName().equals("bird") &&
+				!beauticianCenter.getPetType().getName().equals("cat") &&
+				!beauticianCenter.getPetType().getName().equals("dog") &&
+				!beauticianCenter.getPetType().getName().equals("hamster") &&
+				!beauticianCenter.getPetType().getName().equals("lizard") &&
+				!beauticianCenter.getPetType().getName().equals("snake"))){
+			throw new NoPetTypeException();
+		}else {
 		this.beautyRepository.update(name, description, petType, beauticianId);
+		return true;
+		}
 	}
 
 	@Transactional

@@ -216,9 +216,13 @@ public class BeautyCenterControllerTests {
 	void testProcessCreationShortNameHasErrors() throws Exception {
 		Mockito.when(this.beautyService.save(ArgumentMatchers.any())).thenThrow(new NullOrShortNameException());
 		this.mockMvc
-			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/new", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "be")
-				.param("description", "this is a description 2").param("petType", "hamster"))
-			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyCenter")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyCenter", "name")).andExpect(MockMvcResultMatchers.status().isOk())
+			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/new", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID).with(SecurityMockMvcRequestPostProcessors.csrf())
+					.param("name", "be")
+				.param("description", "this is a description 2")
+				.param("petType", "hamster"))
+			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyCenter"))
+			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyCenter", "name"))
+			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
 	}
 
@@ -323,10 +327,15 @@ public class BeautyCenterControllerTests {
 	}, password = "123")
 	@Test
 	void testProcessUpdateBeautyCenterFormHasErrorsEmptyAttribute() throws Exception {
+		Mockito.when(this.beautyService.update(ArgumentMatchers.any(), ArgumentMatchers.anyInt())).thenThrow(new NullOrShortNameException());
 		this.mockMvc
 			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER2_ID)
-				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "").param("description", "descriptionmodified").param("petType", "dog"))
-			.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyCenter")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyCenter", "name"))
+				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "")
+				.param("description", "descriptionmodified")
+				.param("petType", "dog"))
+			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyCenter"))
+			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyCenter", "name"))
+			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("beauty-centers/createOrUpdateBeautyCenterForm"));
 	}
 
