@@ -118,7 +118,7 @@ public class BeautyCenterController {
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
 	public String initUpdateOwnerForm(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) throws Exception {
 		BeautyCenter beautyCenter = this.beautyService.findById(beautyCenterId);
-		Beautician beautician = this.beautyService.findBeauticianById(beautyCenter.getBeautician().getId());
+		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 			beautyCenter.setBeautician(beautician);

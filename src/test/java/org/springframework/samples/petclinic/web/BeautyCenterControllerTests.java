@@ -4,6 +4,8 @@ package org.springframework.samples.petclinic.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.activity.InvalidActivityException;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -259,6 +261,7 @@ public class BeautyCenterControllerTests {
 	}, password = "123")
 	@Test
 	void testProcessDeleteBeautyCenterFormWithErrors() throws Exception {
+		Mockito.when(this.authoritiesService.isAuthor(ArgumentMatchers.any())).thenThrow(new InvalidActivityException());
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete", BeautyCenterControllerTests.TEST_BEAUTICIAN2_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER3_ID)
 			.with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 	}
