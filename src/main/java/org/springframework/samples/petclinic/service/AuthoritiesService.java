@@ -58,7 +58,7 @@ public class AuthoritiesService {
 	}
 
 	@Transactional
-	public boolean isAuthor(final String username) throws Exception {
+	public boolean isAuthor(final String username) throws InvalidActivityException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
 
