@@ -171,7 +171,10 @@ public class BeautyDateControllerTests {
 		this.mockMvc
 			.perform(MockMvcRequestBuilders
 				.post("/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYCENTER_ID, BeautyDateControllerTests.TEST_PETTYPE_ID)
-				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("description", "descripcion").param("startDate", "2020/04/29 16:00").param("pet", "currupipi - 1"))
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.param("description", "descripcion")
+				.param("startDate", "2020/04/29 16:00")
+				.param("pet", "currupipi - 1"))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
 	}
 	//Casos negativos

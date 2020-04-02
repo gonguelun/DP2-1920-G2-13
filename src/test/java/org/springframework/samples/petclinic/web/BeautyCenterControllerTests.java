@@ -294,7 +294,10 @@ public class BeautyCenterControllerTests {
 	void testProcessUpdateBeautyCenterFormSuccess() throws Exception {
 		this.mockMvc
 			.perform(MockMvcRequestBuilders.post("/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit", BeautyCenterControllerTests.TEST_BEAUTICIAN_ID, BeautyCenterControllerTests.TEST_BEAUTYCENTER2_ID)
-				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("name", "beautycentermodified").param("description", "descriptionmodified").param("petType", "dog"))
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.param("name", "beautycentermodified")
+				.param("description", "descriptionmodified")
+				.param("petType", "dog"))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/beauticians/{beauticianId}"));
 	}
 

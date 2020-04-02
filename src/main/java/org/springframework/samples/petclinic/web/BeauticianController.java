@@ -91,7 +91,15 @@ public class BeauticianController {
 	}
 
 	@GetMapping("/{beauticianId}")
-	public ModelAndView showBeautician(@PathVariable("beauticianId") final int beauticianId){
+	public ModelAndView showBeautician(@PathVariable("beauticianId") final int beauticianId) throws Exception{
+		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
+
+		} catch (InvalidActivityException a) {
+			ModelAndView mv=new ModelAndView("exception");
+			return mv;
+		}
 		ModelAndView mav = new ModelAndView("beauticians/beauticianDetails");
 		mav.addObject(this.beauticianService.findBeauticianById(beauticianId));
 		return mav;
@@ -101,12 +109,7 @@ public class BeauticianController {
 	public String showBeauticianByUsername(@PathVariable("beauticianUsername") final String beauticianUsername,final Model model) throws Exception {
 
 		int beauticianId = this.beauticianService.findBeauticianByUsername(beauticianUsername).getId();
-		try {
-			this.authoritiesService.isAuthor(beauticianUsername);
-
-		} catch (InvalidActivityException a) {
-			return "redirect:/oups";
-		}
+		
 		return "redirect:/beauticians/" + beauticianId;
 		
 	}
