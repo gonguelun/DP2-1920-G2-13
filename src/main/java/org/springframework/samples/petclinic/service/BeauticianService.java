@@ -8,8 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.PetType;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.repository.BeauticianRepository;
 import org.springframework.samples.petclinic.repository.PetRepository;
+import org.springframework.samples.petclinic.service.exceptions.InvalidBeauticianException;
+import org.springframework.samples.petclinic.service.exceptions.InvalidSpecializationException;
+import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -55,8 +59,8 @@ public class BeauticianService {
 
 	@Transactional
 	public Integer countBeauticians() {
-		Integer count = (int) this.beauticianRepository.count();
-		return count;
+		return (int) this.beauticianRepository.count();
+		
 	}
 
 	@Transactional
@@ -67,6 +71,28 @@ public class BeauticianService {
 
 	public Beautician findBeauticianByUsername(final String beauticianUsername) throws DataAccessException {
 		return this.beauticianRepository.findByUsername(beauticianUsername);
+	}
+	
+	@Transactional
+	public void isBeauticianGuardado(User usuario,Beautician beautician,Beautician beauticianGuardado) throws InvalidBeauticianException,InvalidSpecializationException, NullOrShortNameException {
+		boolean aux= beautician.getUser().getUsername().equals(beauticianGuardado.getUser().getUsername()) || usuario == null;
+		if (!aux) {
+			throw new InvalidBeauticianException();
+		}else if (!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("bird")) && 
+				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("cat")) && 
+				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("dog")) && 
+				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("hamster")) && 
+				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("lizard")) && 
+				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("snake"))) {
+			throw new InvalidSpecializationException();
+			
+		}else if(beautician.getFirstName()==null || beautician.getFirstName()=="") {
+			throw new NullOrShortNameException();
+		}else {
+			beautician.getUser().setId(beauticianGuardado.getUser().getId());
+			beautician.getUser().setEnabled(true);
+		}
+		
 	}
 
 }

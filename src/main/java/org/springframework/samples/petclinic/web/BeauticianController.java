@@ -14,6 +14,9 @@ import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
+import org.springframework.samples.petclinic.service.exceptions.InvalidBeauticianException;
+import org.springframework.samples.petclinic.service.exceptions.InvalidSpecializationException;
+import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -66,7 +69,7 @@ public class BeauticianController {
 	}
 
 	@PostMapping(value = "/{beauticianId}/edit")
-	public String processUpdateBeauticianForm(@Valid final Beautician beautician, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) {
+	public String processUpdateBeauticianForm(@Valid final Beautician beautician, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) throws InvalidBeauticianException,InvalidSpecializationException, NullOrShortNameException{
 		if (result.hasErrors()) {
 			model.put("beautician", beautician);
 			return BeauticianController.VIEWS_BEAUTICIAN_UPDATE_FORM;
@@ -74,32 +77,41 @@ public class BeauticianController {
 			beautician.setId(beauticianId);
 			Beautician beauticianGuardado = this.beauticianService.findBeauticianById(beauticianId);
 			User usuario = this.userService.findUserWithSameName(beautician.getUser().getUsername());
-			if (beautician.getUser().getUsername().equals(beauticianGuardado.getUser().getUsername()) || usuario == null) {
-				beautician.getUser().setId(beauticianGuardado.getUser().getId());
+			try {
+				this.beauticianService.isBeauticianGuardado(usuario, beautician, beauticianGuardado);
 				this.beauticianService.saveBeautician(beautician);
-				return "redirect:/beauticians/{beauticianId}";
 
-			} else {
+			} catch(InvalidBeauticianException a) {
 				result.rejectValue("user.username", "duplicate", "already exists");
 				model.put("beautician", beautician);
 				return BeauticianController.VIEWS_BEAUTICIAN_UPDATE_FORM;
 			}
 		}
+		return "redirect:/beauticians/{beauticianId}";
 	}
 
 	@GetMapping("/{beauticianId}")
-	public ModelAndView showBeautician(@PathVariable("beauticianId") final int beauticianId) {
+	public ModelAndView showBeautician(@PathVariable("beauticianId") final int beauticianId) throws Exception{
+		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
+
+		} catch (InvalidActivityException a) {
+			ModelAndView mv=new ModelAndView("exception");
+			return mv;
+		}
 		ModelAndView mav = new ModelAndView("beauticians/beauticianDetails");
 		mav.addObject(this.beauticianService.findBeauticianById(beauticianId));
 		return mav;
 	}
 
 	@GetMapping("/principal/{beauticianUsername}")
-	public String showBeauticianByUsername(@PathVariable("beauticianUsername") final String beauticianUsername) {
+	public String showBeauticianByUsername(@PathVariable("beauticianUsername") final String beauticianUsername,final Model model) throws Exception {
 
 		int beauticianId = this.beauticianService.findBeauticianByUsername(beauticianUsername).getId();
-
+		
 		return "redirect:/beauticians/" + beauticianId;
+		
 	}
 
 	@ModelAttribute("types")

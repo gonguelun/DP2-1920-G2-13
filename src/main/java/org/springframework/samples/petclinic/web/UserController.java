@@ -33,6 +33,7 @@ import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.service.VetService;
+import org.springframework.samples.petclinic.service.exceptions.InvalidBeauticianException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -153,7 +154,7 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/users/new-beautician")
-	public String processCreationForm(@Valid final Beautician beautician, final BindingResult result, final ModelMap model) {
+	public String processCreationForm(@Valid final Beautician beautician, final BindingResult result, final ModelMap model){
 
 		if (result.hasErrors()) {
 			model.put("beautician", beautician);
