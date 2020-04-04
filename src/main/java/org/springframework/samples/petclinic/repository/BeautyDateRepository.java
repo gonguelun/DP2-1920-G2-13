@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.BeautyDate;
 import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.Product;
 
 public interface BeautyDateRepository extends CrudRepository<BeautyDate, Integer> {
 
@@ -31,5 +32,9 @@ public interface BeautyDateRepository extends CrudRepository<BeautyDate, Integer
 	@Transactional
 	@Query("SELECT bd FROM BeautyDate bd WHERE bd.beautyCenter.beautician.id = ?1")
 	List<BeautyDate> findBeautyDatesByBeauticianId(int beauticianId);
+
+	@Transactional
+	@Query("SELECT p FROM Product p WHERE p.beautician.id = ?1 AND p.type.id = ?2")
+	List<Product> bringProductsFromBeauticianWithPetType(Integer beauticianId, Integer petTypeId);
 
 }
