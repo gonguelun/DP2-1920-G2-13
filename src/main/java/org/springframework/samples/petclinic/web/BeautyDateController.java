@@ -14,6 +14,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.BeautyDate;
 import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.Product;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.BeautyDateService;
@@ -59,11 +60,14 @@ public class BeautyDateController {
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new")
 	public String initCreationFormOwner(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
 		BeautyCenter beautyCenter = this.beautyCenterService.findById(beautyCenterId);
+
 		try {
 			this.authoritiesService.isAuthor(ownerUsername);
 			BeautyDate beautyDate = new BeautyDate();
 			beautyDate.setBeautyCenter(beautyCenter);
 			model.put("beautyDate", beautyDate);
+			List<Product> products = this.beautyDateService.bringProductsFromBeauticianWithPetType(beautyCenter.getBeautician(), beautyCenter.getPetType());
+			model.put("products", products);
 		} catch (InvalidActivityException a) {
 			return "redirect:/oups";
 		}
@@ -114,4 +118,5 @@ public class BeautyDateController {
 	public List<LocalDateTime> datesInAWeek() {
 		return this.beautyDateService.datesInAWeek();
 	}
+
 }

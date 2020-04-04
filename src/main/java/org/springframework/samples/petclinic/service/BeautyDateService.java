@@ -9,8 +9,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyDate;
 import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.PetType;
+import org.springframework.samples.petclinic.model.Product;
 import org.springframework.samples.petclinic.repository.BeautyDateRepository;
 import org.springframework.samples.petclinic.service.exceptions.AlreadyDateException;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
@@ -115,5 +118,9 @@ public class BeautyDateService {
 		}
 		return hours;
 
+	}
+
+	public List<Product> bringProductsFromBeauticianWithPetType(final Beautician beautician, final PetType petType) {
+		return this.beautyDateRepository.bringProductsFromBeauticianWithPetType(beautician.getId(), petType.getId());
 	}
 }

@@ -2,9 +2,12 @@
 package org.springframework.samples.petclinic.model;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.Valid;
@@ -18,19 +21,22 @@ import lombok.Data;
 @Entity
 public class BeautyDate extends BaseEntity {
 
-	private String			description;
+	private String				description;
 
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy/MM/dd HH:mm")
-	private LocalDateTime	startDate;
+	private LocalDateTime		startDate;
 
 	@Valid
 	@OneToOne(cascade = CascadeType.ALL)
-	private Pet				pet;
+	private Pet					pet;
 
 	@Valid
 	@ManyToOne(cascade = CascadeType.ALL)
-	private BeautyCenter	beautyCenter;
+	private BeautyCenter		beautyCenter;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Collection<Product>	products;
 
 
 	public LocalDateTime endTime() {
