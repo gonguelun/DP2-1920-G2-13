@@ -22,6 +22,7 @@ import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.service.exceptions.InvalidBeauticianException;
 import org.springframework.samples.petclinic.service.exceptions.InvalidSpecializationException;
 import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
+import org.springframework.samples.petclinic.service.exceptions.PastDateException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -152,8 +153,11 @@ public class BeauticianController {
 		LocalDateTime dateHourMax=LocalDateTime.of(dateMax, time);
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
+			this.beautyDateService.isDateValid(dateMax);
 			model.put("beautyDates", this.beautyDateService.findBeautyDatesByBeauticianIdAndDate(beauticianId,dateHourMax));
-		} catch (InvalidActivityException e) {
+		} catch (PastDateException e) {
+			return "redirect:/oups";
+		}catch (InvalidActivityException a) {
 			return "redirect:/oups";
 		}
 		return "beauticians/beautyDatesList";
