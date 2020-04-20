@@ -1,7 +1,11 @@
 
 package org.springframework.samples.petclinic.web;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
@@ -12,6 +16,7 @@ import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeauticianService;
+import org.springframework.samples.petclinic.service.BeautyDateService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.service.exceptions.InvalidBeauticianException;
@@ -47,6 +52,9 @@ public class BeauticianController {
 
 	@Autowired
 	private UserService			userService;
+	
+	@Autowired
+	private BeautyDateService			beautyDateService;
 
 
 	@InitBinder
@@ -112,6 +120,43 @@ public class BeauticianController {
 		
 		return "redirect:/beauticians/" + beauticianId;
 		
+	}
+	
+	@GetMapping("/searchBeautyDates/{beauticianUsername}")
+	public String searchBeautyDates(@PathVariable("beauticianUsername") final String beauticianUsername,final Model model) throws Exception {
+		int beauticianId = this.beauticianService.findBeauticianByUsername(beauticianUsername).getId();
+	return "redirect:/beauticians/searchDates/" + beauticianId;
+		
+	}
+	
+	@GetMapping("/searchDates/{beauticianId}")
+	public ModelAndView searchBeautyDatesId(@PathVariable("beauticianId") final int beauticianId) throws Exception{
+		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
+
+		} catch (InvalidActivityException a) {
+			ModelAndView mv=new ModelAndView("exception");
+			return mv;
+		}
+		ModelAndView mav = new ModelAndView("beauticians/searchBeautyDates");
+		mav.addObject(this.beauticianService.findBeauticianById(beauticianId));
+		return mav;
+	}
+	
+	@GetMapping(value = "/{beauticianId}/beautyDates/{date}/{hour}")
+	public String showBeautyDates(@PathVariable("beauticianId") final int beauticianId,@PathVariable("hour") final int hour,@PathVariable("date") final String date, final Map<String, Object> model) throws Exception {
+		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
+		LocalDate dateMax=LocalDate.parse(date);
+		LocalTime time=LocalTime.of(hour, 0);
+		LocalDateTime dateHourMax=LocalDateTime.of(dateMax, time);
+		try {
+			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
+			model.put("beautyDates", this.beautyDateService.findBeautyDatesByBeauticianIdAndDate(beauticianId,dateHourMax));
+		} catch (InvalidActivityException e) {
+			return "redirect:/oups";
+		}
+		return "beauticians/beautyDatesList";
 	}
 
 	@ModelAttribute("types")

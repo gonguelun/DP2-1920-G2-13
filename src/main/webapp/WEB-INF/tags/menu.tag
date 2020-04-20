@@ -62,6 +62,11 @@
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Beautician</span>
 					</petclinic:menuItem>
+					<petclinic:menuItem active="${name eq 'beauticians'}" url="/beauticians/searchBeautyDates/${principal.username}"
+						title="beauticians">
+						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						<span>Search Beauty Dates</span>
+					</petclinic:menuItem>
 				</sec:authorize>
 
 				<petclinic:menuItem active="${name eq 'error'}" url="/oups"

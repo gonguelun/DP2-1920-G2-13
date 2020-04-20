@@ -1,6 +1,8 @@
 
 package org.springframework.samples.petclinic.repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,5 +38,9 @@ public interface BeautyDateRepository extends CrudRepository<BeautyDate, Integer
 	@Transactional
 	@Query("SELECT p FROM Product p WHERE p.beautician.id = ?1 AND p.type.id = ?2")
 	List<Product> bringProductsFromBeauticianWithPetType(Integer beauticianId, Integer petTypeId);
+	
+	@Transactional
+	@Query("SELECT bd FROM BeautyDate bd WHERE bd.beautyCenter.beautician.id=?1 and bd.startDate>sysdate and bd.startDate<=?2")
+	Collection<BeautyDate> findBeautyDatesByBeauticianIdAndDate(int beauticianId,LocalDateTime dateMaxHour);
 
 }

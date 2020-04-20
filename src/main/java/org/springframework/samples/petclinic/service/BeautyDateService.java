@@ -2,6 +2,7 @@
 package org.springframework.samples.petclinic.service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -122,5 +123,9 @@ public class BeautyDateService {
 
 	public List<Product> bringProductsFromBeauticianWithPetType(final Beautician beautician, final PetType petType) {
 		return this.beautyDateRepository.bringProductsFromBeauticianWithPetType(beautician.getId(), petType.getId());
+	}
+
+	public Collection<BeautyDate> findBeautyDatesByBeauticianIdAndDate(int beauticianId,LocalDateTime dateHourMax) {
+		return this.beautyDateRepository.findBeautyDatesByBeauticianIdAndDate(beauticianId,dateHourMax);
 	}
 }
