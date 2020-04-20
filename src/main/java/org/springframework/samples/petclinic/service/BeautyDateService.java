@@ -2,6 +2,7 @@
 package org.springframework.samples.petclinic.service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNam
 import org.springframework.samples.petclinic.service.exceptions.EmptyPetException;
 import org.springframework.samples.petclinic.service.exceptions.IsNotInTimeException;
 import org.springframework.samples.petclinic.service.exceptions.IsWeekendException;
+import org.springframework.samples.petclinic.service.exceptions.PastDateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,5 +124,16 @@ public class BeautyDateService {
 
 	public List<Product> bringProductsFromBeauticianWithPetType(final Beautician beautician, final PetType petType) {
 		return this.beautyDateRepository.bringProductsFromBeauticianWithPetType(beautician.getId(), petType.getId());
+	}
+
+	public Collection<BeautyDate> findBeautyDatesByBeauticianIdAndDate(int beauticianId,LocalDateTime dateHourMax) {
+		return this.beautyDateRepository.findBeautyDatesByBeauticianIdAndDate(beauticianId,dateHourMax);
+	}
+
+	public void isDateValid(LocalDate dateMax) throws PastDateException {
+		if(dateMax.isBefore(LocalDate.now())) {
+			throw new PastDateException();
+		}
+		
 	}
 }
