@@ -24,6 +24,7 @@ import org.springframework.samples.petclinic.service.exceptions.EmptyPetExceptio
 import org.springframework.samples.petclinic.service.exceptions.IsNotInTimeException;
 import org.springframework.samples.petclinic.service.exceptions.IsWeekendException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -109,9 +110,53 @@ public class BeautyDateController {
 
 	}
 
+	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/update", params = "update")
+	public String initUpdateBeautyDateForm(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Model model) throws Exception {
+		try {
+			this.authoritiesService.isAuthor(ownerUsername);
+		} catch (InvalidActivityException a) {
+			return "redirect:/oups";
+		}
+
+		BeautyDate aux = this.beautyDateService.findById(beautyDateId);
+		model.addAttribute(aux);
+		return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+
+	}
+
+	@PostMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/update")
+	public String processUpdateBeautyDateForm(@Valid final BeautyDate beautyDate, final BindingResult result, @PathVariable("ownerUsername") final String ownerUsername, final ModelMap model) throws Exception {
+		if (result.hasErrors()) {
+			model.put("beautyDate", beautyDate);
+			return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+		} else {
+
+			try {
+				this.beautyDateService.saveBeautyDate(beautyDate);
+			} catch (AlreadyDateException e) {
+				result.rejectValue("pet", "beautyDateError", "Already has a date to a beauty service");
+				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+			} catch (IsWeekendException a) {
+				result.rejectValue("startDate", "finde", "it's a weekend!");
+				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+			} catch (IsNotInTimeException b) {
+				result.rejectValue("startDate", "horario", "it's not working time!");
+				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+			} catch (EmptyPetException c) {
+				result.rejectValue("pet", "mandatorydate", "you must choose a pet!");
+				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
+			}
+		}
+		return "redirect:/";
+	}
+
 	@ModelAttribute("ownerPets")
-	public Collection<Pet> petsByOwner(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("petTypeId") final int petTypeId) {
-		return this.beautyDateService.findPetsByOwnerAndType(ownerUsername, petTypeId);
+	public Collection<Pet> petsByOwner(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable(value = "petTypeId", required = false) final Integer petTypeId) {
+		try {
+			return this.beautyDateService.findPetsByOwnerAndType(ownerUsername, petTypeId);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	@ModelAttribute("dateWeek")

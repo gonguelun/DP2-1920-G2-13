@@ -15,7 +15,7 @@
             <th style="width: 25%;">Description</th>
             <th style="width: 20%">Start time</th>
             <th style="width: 15%"></th>
-       
+       		<th style="width: 15%"></th>
         </tr>
         </thead>
         <tbody>
@@ -32,6 +32,13 @@
                 </td>
                 <td>
                     <c:out value="${beautyDate.startDate} "/>
+                </td>
+                <td>
+                	<spring:url value="/owners/{ownerUsername}/beauty-dates/{beautyDateId}/update" var="beautyDateUpdateUrl">
+                		<spring:param name="ownerUsername" value ="${beautyDate.pet.owner.user.username}" />
+                		<spring:param name="beautyDateId" value="${beautyDate.id}"/>
+                	</spring:url>
+                    <a href="${fn:escapeXml(beautyDateUpdateUrl)}">Update Beauty Date</a>
                 </td>
                 <td>
                 	<spring:url value="/owners/{ownerUsername}/beauty-dates/{beautyDateId}/delete" var="beautyDateUrl">
