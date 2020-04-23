@@ -2,6 +2,7 @@
 package org.springframework.samples.petclinic.web;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.OwnerService;
 import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.PickUpRequestService;
+import org.springframework.samples.petclinic.service.exceptions.NoPetTypeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -53,7 +55,7 @@ public class PickUpRequestController {
 	}
 
 	@GetMapping(value = "/owners/{ownerId}/pick-up-requests/new")
-	public String initUpdateOwnerForm(@PathVariable("ownerId") final int ownerId, final Model model) throws Exception {
+	public String initCreatePickUpRequestForm(@PathVariable("ownerId") final int ownerId, final Model model) throws Exception {
 		Owner owner = this.ownerService.findOwnerById(ownerId);
 		try {
 			this.authoritiesService.isAuthor(owner.getUser().getUsername());
@@ -70,7 +72,7 @@ public class PickUpRequestController {
 	}
 
 	@PostMapping(value = "/owners/{ownerId}/pick-up-requests/new")
-	public String processUpdateOwnerForm(@Valid final PickUpRequest pickUpRequest, final BindingResult result, @PathVariable("ownerId") final int ownerId, final ModelMap model) {
+	public String processCreatePickUpRequestForm(@Valid final PickUpRequest pickUpRequest, final BindingResult result, @PathVariable("ownerId") final int ownerId, final ModelMap model) {
 
 		if (result.hasErrors()) {
 			model.put("pickUpRequest", pickUpRequest);
@@ -78,10 +80,30 @@ public class PickUpRequestController {
 		} else {
 			Owner owner = this.ownerService.findOwnerById(ownerId);
 			pickUpRequest.setOwner(owner);
-			this.pickUpRequestService.savePickUpRequest(pickUpRequest);
+			try {
+				this.pickUpRequestService.savePickUpRequest(pickUpRequest);
+			} catch (NoPetTypeException b) {
+				model.put("pickUpRequest", pickUpRequest);
+				result.rejectValue("petType", "notnull", "It's mandatory");
+				return PickUpRequestController.VIEWS_PICK_UP_REQUEST_CREATE_OR_UPDATE_FORM;
+
+			}
 			return "redirect:/";
 
 		}
+	}
+
+	@GetMapping(value = "/owners/{ownerUsername}/pick-up-requests")
+	public String showPickUpRequests(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
+		try {
+			this.authoritiesService.isAuthor(ownerUsername);
+			model.put("pickUpRequests", this.pickUpRequestService.findPickUpRequestsByOwnerUsername(ownerUsername));
+		} catch (InvalidActivityException e) {
+			return "redirect:/oups";
+		}
+		Owner owner = this.pickUpRequestService.findOwnerByUsername(ownerUsername);
+		model.put("ownerId", owner.getId());
+		return "pick-up-requests/pickUpRequestsList";
 	}
 
 	@ModelAttribute("types")
