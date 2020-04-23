@@ -32,7 +32,6 @@
 		         	<div class="control-group">
 		                    <petclinic:selectField name="startDate" label="Start Date" names="${dateWeek}" size="28"/>
 		            </div>
-		            
 		         </c:when>
 		     </c:choose>
         </div>

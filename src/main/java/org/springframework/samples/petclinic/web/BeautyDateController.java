@@ -18,6 +18,7 @@ import org.springframework.samples.petclinic.model.Product;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.BeautyDateService;
+import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.exceptions.AlreadyDateException;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.service.exceptions.EmptyPetException;
@@ -45,12 +46,15 @@ public class BeautyDateController {
 
 	private AuthoritiesService	authoritiesService;
 
+	private PetService			petService;
+
 
 	@Autowired
-	public BeautyDateController(final BeautyDateService beautyDateService, final BeautyCenterService beautyCenterService, final AuthoritiesService authoritiesService) {
+	public BeautyDateController(final BeautyDateService beautyDateService, final BeautyCenterService beautyCenterService, final AuthoritiesService authoritiesService, final PetService petService) {
 		this.beautyDateService = beautyDateService;
 		this.beautyCenterService = beautyCenterService;
 		this.authoritiesService = authoritiesService;
+		this.petService = petService;
 	}
 
 	@InitBinder
@@ -110,7 +114,7 @@ public class BeautyDateController {
 
 	}
 
-	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/update", params = "update")
+	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/update")
 	public String initUpdateBeautyDateForm(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Model model) throws Exception {
 		try {
 			this.authoritiesService.isAuthor(ownerUsername);
@@ -125,14 +129,16 @@ public class BeautyDateController {
 	}
 
 	@PostMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/update")
-	public String processUpdateBeautyDateForm(@Valid final BeautyDate beautyDate, final BindingResult result, @PathVariable("ownerUsername") final String ownerUsername, final ModelMap model) throws Exception {
+	public String processUpdateBeautyDateForm(@Valid final BeautyDate beautyDate, final BindingResult result, @PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final ModelMap model)
+		throws Exception {
 		if (result.hasErrors()) {
 			model.put("beautyDate", beautyDate);
 			return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 		} else {
-
+			BeautyDate aux = this.beautyDateService.findBeautyDateById(beautyDateId);
+			aux.setStartDate(beautyDate.getStartDate());
 			try {
-				this.beautyDateService.saveBeautyDate(beautyDate);
+				this.beautyDateService.saveBeautyDate(aux);
 			} catch (AlreadyDateException e) {
 				result.rejectValue("pet", "beautyDateError", "Already has a date to a beauty service");
 				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;

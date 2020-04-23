@@ -46,7 +46,7 @@ public class BeautyDateService {
 	public boolean saveBeautyDate(final BeautyDate beautyDate) throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
 		if (beautyDate.getPet() == null) {
 			throw new EmptyPetException();
-		} else if (this.findBeautyDateByPetId(beautyDate.getPet().getId()) != null) {
+		} else if (this.findBeautyDateByPetId(beautyDate.getPet().getId()) != null && !beautyDate.getId().equals(this.findBeautyDateByPetId(beautyDate.getPet().getId()).getId())) {
 			throw new AlreadyDateException();
 		} else if (beautyDate.getStartDate().getDayOfWeek().equals(DayOfWeek.SATURDAY) || beautyDate.getStartDate().getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
 			throw new IsWeekendException();
