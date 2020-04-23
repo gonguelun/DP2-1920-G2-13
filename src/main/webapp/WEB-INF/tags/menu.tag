@@ -40,8 +40,12 @@
 						<span>Search Beauty Centers</span>
 					</petclinic:menuItem>
 					<petclinic:menuItem url="/owners/${principal2.username}/beauty-dates" active="${name eq 'owners'}"
-					title="view my beauty dates">
+						title="view my beauty dates">
 						<span>View my beauty dates</span>
+					</petclinic:menuItem>
+					<petclinic:menuItem url="/owners/${principal2.username}/pick-up-requests" active="${name eq 'owners'}"
+						title="view my pick up requests">
+						<span>View my pick up requests</span>
 					</petclinic:menuItem>
 				</sec:authorize>
 	
