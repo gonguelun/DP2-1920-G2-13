@@ -2,6 +2,7 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -37,6 +38,10 @@ public class PickUpRequestService {
 
 	public Owner findOwnerByUsername(final String ownerUsername) {
 		return this.pickUpRequestRepository.findOwnerByUsername(ownerUsername);
+	}
+
+	public List<PickUpRequest> findAllPickUpRequests() {
+		return (List<PickUpRequest>) this.pickUpRequestRepository.findAll();
 	}
 
 }

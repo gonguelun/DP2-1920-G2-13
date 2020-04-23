@@ -110,4 +110,10 @@ public class PickUpRequestController {
 	public Collection<PetType> populatePetTypes() {
 		return this.petService.findPetTypes();
 	}
+
+	@GetMapping("/vets/pick-up-requests")
+	public String listPickUpRequets(final Map<String, Object> model) {
+		model.put("pickUpRequests", this.pickUpRequestService.findAllPickUpRequests());
+		return "pick-up-requests/allPickUpRequestsList";
+	}
 }

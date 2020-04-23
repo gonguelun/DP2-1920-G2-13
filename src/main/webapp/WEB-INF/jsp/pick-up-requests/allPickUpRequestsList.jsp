@@ -5,14 +5,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 <petclinic:layout pageName="pickUpRequests">
-    <h2>My Pick Up Requests</h2>
+    <h2>All Pick Up Requests</h2>
     
-     <td>
-     	 <spring:url value="/owners/{ownerId}/pick-up-requests/new" var="newPickUpRequestUrl">
-     		<spring:param name="ownerId" value ="${ownerId}" />
-     	 </spring:url>
-         <a href="${fn:escapeXml(newPickUpRequestUrl)}">New request</a>
-     </td>
 
     <table id="pickUpRequestsTable" class="table table-striped">
         <thead>
@@ -22,6 +16,8 @@
             <th style="width: 20%">Physical status</th>
             <th style="width: 7%;">Is accepted</th>
             <th style="width: 15%">Location</th>
+            <th style="width: 7%;">User reporter</th>
+      
         </tr>
         </thead>
         <tbody>
@@ -41,7 +37,12 @@
                 </td>
                 <td>
                     <c:out value="${pickUpRequest.address} "/>
-                </td>           
+                </td>  
+                
+                <td>
+                    <c:out value="${pickUpRequest.owner.user.username} "/>
+                </td>   
+                       
             </tr>
         </c:forEach>
         </tbody>

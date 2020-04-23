@@ -117,26 +117,6 @@ public class VetController {
 		}
 	}
 
-	/*
-	 * @PostMapping(value = "/users/new-beautician")
-	 * public String processCreationForm(@Valid final Beautician beautician, final BindingResult result, final ModelMap model) {
-	 * if (result.hasErrors()) {
-	 * model.put("beautician", beautician);
-	 * return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
-	 * } else {
-	 *
-	 * try {
-	 * this.beauticianService.saveBeautician(beautician);
-	 *
-	 * } catch (DuplicatedUserException ex) {
-	 * result.rejectValue("user.username", "duplicate", "already exists");
-	 * return UserController.VIEWS_BEAUTICIAN_CREATE_FORM;
-	 * }
-	 * return "redirect:/";
-	 * }
-	 * }
-	 */
-
 	@PostMapping(value = "/vets/{vetId}/edit")
 	public String processUpdateVetForm(@Valid final Vet vet, final BindingResult result, @PathVariable("vetId") final int vetId, final ModelMap model) {
 		if (result.hasErrors()) {
