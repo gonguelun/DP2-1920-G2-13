@@ -55,6 +55,11 @@
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Veterinarians</span>
 					</petclinic:menuItem>
+					<petclinic:menuItem active="${name eq 'pickUpRequests'}" url="/vets/pick-up-requests"
+						title="pickUpRequests">
+						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						<span>Pick Up Requests</span>
+					</petclinic:menuItem>
 				</sec:authorize>
 				
 			
