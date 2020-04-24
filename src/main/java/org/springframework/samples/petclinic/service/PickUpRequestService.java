@@ -7,11 +7,13 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.PickUpRequest;
 import org.springframework.samples.petclinic.repository.PickUpRequestRepository;
 import org.springframework.samples.petclinic.service.exceptions.NoPetTypeException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PickUpRequestService {
@@ -43,5 +45,16 @@ public class PickUpRequestService {
 	public List<PickUpRequest> findAllPickUpRequests() {
 		return (List<PickUpRequest>) this.pickUpRequestRepository.findAll();
 	}
+	
+	@Transactional
+	public void remove(final int pickUpRequestId) {
 
+		this.pickUpRequestRepository.remove(pickUpRequestId);
+
+	}
+	
+	@Transactional
+	public PickUpRequest findPickUpRequestByPickUpRequestId(final int pickUpRequestId) {
+		return this.pickUpRequestRepository.findPickUpRequestByPickUpRequestId(pickUpRequestId);
+	}
 }

@@ -8,6 +8,8 @@ import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Beautician;
+import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.PickUpRequest;
@@ -115,5 +117,11 @@ public class PickUpRequestController {
 	public String listPickUpRequets(final Map<String, Object> model) {
 		model.put("pickUpRequests", this.pickUpRequestService.findAllPickUpRequests());
 		return "pick-up-requests/allPickUpRequestsList";
+	}
+	
+	@GetMapping(value = "/vets/pick-up-requests/{pickUpId}/delete")
+	public String deletePickUpRequest(@PathVariable("pickUpId") final int pickUpId) throws Exception {
+		this.pickUpRequestService.remove(pickUpId);
+		return "redirect:/vets/pick-up-requests";
 	}
 }
