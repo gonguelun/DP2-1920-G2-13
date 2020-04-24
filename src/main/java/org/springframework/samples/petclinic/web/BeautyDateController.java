@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.BeautyCenter;
@@ -95,7 +96,7 @@ public class BeautyDateController {
 			try {
 				this.beautyDateService.saveBeautyDate(beautyDate);
 			} catch (AlreadyDateException e) {
-				result.rejectValue("pet", "beautyDateError", "Already has a date to a beauty service");
+				result.rejectValue("startDate", "beautyDateError", "Already has a date to a beauty service");
 				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 			} catch (IsWeekendException a) {
 				result.rejectValue("startDate", "finde", "it's a weekend!");
@@ -114,7 +115,7 @@ public class BeautyDateController {
 
 	}
 
-	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/update")
+	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit")
 	public String initUpdateBeautyDateForm(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Model model) throws Exception {
 		try {
 			this.authoritiesService.isAuthor(ownerUsername);
@@ -128,19 +129,21 @@ public class BeautyDateController {
 
 	}
 
-	@PostMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/update")
+	@PostMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit")
 	public String processUpdateBeautyDateForm(@Valid final BeautyDate beautyDate, final BindingResult result, @PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final ModelMap model)
 		throws Exception {
+		BeautyDate guardado = this.beautyDateService.findBeautyDateById(beautyDateId);
+		BeanUtils.copyProperties(guardado, beautyDate, "startDate");
+
 		if (result.hasErrors()) {
 			model.put("beautyDate", beautyDate);
 			return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 		} else {
-			BeautyDate aux = this.beautyDateService.findBeautyDateById(beautyDateId);
-			aux.setStartDate(beautyDate.getStartDate());
+
 			try {
-				this.beautyDateService.saveBeautyDate(aux);
+				this.beautyDateService.saveBeautyDate(beautyDate);
 			} catch (AlreadyDateException e) {
-				result.rejectValue("pet", "beautyDateError", "Already has a date to a beauty service");
+				result.rejectValue("startDate", "beautyDateError", "Is concurrent, choose other date");
 				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 			} catch (IsWeekendException a) {
 				result.rejectValue("startDate", "finde", "it's a weekend!");
@@ -153,7 +156,7 @@ public class BeautyDateController {
 				return BeautyDateController.CREATE_UPDATE_BEAUTY_DATES;
 			}
 		}
-		return "redirect:/";
+		return "redirect:/owners/{ownerUsername}/beauty-dates";
 	}
 
 	@ModelAttribute("ownerPets")
