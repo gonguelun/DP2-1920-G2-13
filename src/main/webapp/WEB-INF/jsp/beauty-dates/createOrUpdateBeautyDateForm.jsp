@@ -14,16 +14,20 @@
     </h2>
     <form:form modelAttribute="beautyDate" class="form-horizontal" id="add-beautyDate-form">
         <div class="form-group has-feedback">
-            <petclinic:inputField label="Description" name="description"/>
-            <div class="control-group">
-                    <petclinic:selectField name="startDate" label="Start Date" names="${dateWeek}" size="28"/>
-            </div>
-            <div class="control-group">
-             	<petclinic:selectField name="pet" label="Pets " names="${ownerPets}" size="5"/>  
-             </div>
-             <div class="control-group">
-             	<petclinic:selectField name="products" label="Products " names="${products}" size="5"/>  
-             </div>
+	        	 <c:if test="${beautyDate['new']}">
+		            <petclinic:inputField label="Description" name="description"/>
+		         </c:if>
+		         	<div class="control-group">
+		                    <petclinic:selectField name="startDate" label="Start Date" names="${dateWeek}" size="28"/>
+		            </div>
+		         <c:if test="${beautyDate['new']}">
+		            <div class="control-group">
+		             	<petclinic:selectField name="pet" label="Pets " names="${ownerPets}" size="5"/>  
+		            </div>
+		            <div class="control-group">
+		             	<petclinic:selectField name="products" label="Products " names="${products}" size="5"/>  
+		            </div>
+		         </c:if>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

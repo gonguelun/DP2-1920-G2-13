@@ -48,7 +48,7 @@ public class BeautyDateService {
 	public boolean saveBeautyDate(final BeautyDate beautyDate) throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
 		if (beautyDate.getPet() == null) {
 			throw new EmptyPetException();
-		} else if (this.findBeautyDateByPetId(beautyDate.getPet().getId()) != null) {
+		} else if (this.isConcurrent(beautyDate)) {
 			throw new AlreadyDateException();
 		} else if (beautyDate.getStartDate().getDayOfWeek().equals(DayOfWeek.SATURDAY) || beautyDate.getStartDate().getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
 			throw new IsWeekendException();
@@ -59,6 +59,16 @@ public class BeautyDateService {
 			this.beautyDateRepository.save(beautyDate);
 			return true;
 		}
+	}
+
+	private Boolean isConcurrent(final BeautyDate beautyDate) {
+		Boolean res = false;
+
+		Beautician bea = beautyDate.getBeautyCenter().getBeautician();
+		List<BeautyDate> lista = this.beautyDateRepository.findBeautyDatesByBeauticianId(bea.getId());
+		res = !lista.stream().noneMatch(f -> f.getStartDate().compareTo(beautyDate.getStartDate()) == 0);
+
+		return res;
 	}
 
 	public BeautyDate findBeautyDateByPetId(final int id) {
