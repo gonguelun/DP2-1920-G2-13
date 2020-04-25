@@ -29,6 +29,7 @@ import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNam
 import org.springframework.samples.petclinic.service.exceptions.EmptyPetException;
 import org.springframework.samples.petclinic.service.exceptions.IsNotInTimeException;
 import org.springframework.samples.petclinic.service.exceptions.IsWeekendException;
+import org.springframework.samples.petclinic.service.exceptions.PastDateException;
 import org.springframework.stereotype.Service;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -256,7 +257,7 @@ public class BeautyDateServiceTests {
 		bc.setBeautyCenter(beautyCenter);
 		bc.setPet(peto);
 
-		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
+		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 4, 1), LocalTime.of(16, 0)));
 
 		this.beautyDateService.saveBeautyDate(bc);
 
@@ -271,7 +272,7 @@ public class BeautyDateServiceTests {
 		Assertions.assertThrows(AlreadyDateException.class, () -> this.beautyDateService.saveBeautyDate(bc2));
 	}
 
-	//Caso negatio. Intento introducir un BeautyDate un domingo
+	//Caso negativo. Intento introducir un BeautyDate un domingo
 	@Test
 	public void testSavingBeautyIncorrectWeekend() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException {
 
@@ -452,4 +453,32 @@ public class BeautyDateServiceTests {
 		Assert.assertTrue(!dias.stream().anyMatch(d -> d.getHour() == 12));
 
 	}
+
+	// TESTS HISTORIA DE USUARIO 9 (Métodos en BeautyDateService)
+
+	/* IS DATE VALID */
+
+	// Caso positivo: la fecha es futura
+
+	@Test
+	public void testIsDateValid() {
+		LocalDate fechaFutura = LocalDate.now().plusDays(10);
+		try {
+			Assert.assertTrue(!this.beautyDateService.isDateValid(fechaFutura));
+		} catch (PastDateException e) {
+
+		}
+	}
+
+	// Caso negativo: la fecha es pasada
+
+	@Test
+	public void testIsDateNotValid() {
+		LocalDate fechaFutura = LocalDate.now().minusDays(10);
+		Assertions.assertThrows(PastDateException.class, () -> {
+			this.beautyDateService.isDateValid(fechaFutura);
+		});
+
+	}
+
 }

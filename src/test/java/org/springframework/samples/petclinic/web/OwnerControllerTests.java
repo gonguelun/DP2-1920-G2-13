@@ -326,7 +326,7 @@ class OwnerControllerTests {
 
 	// TESTS HISTORIA DE USUARIO 10
 
-	// SEARCH BEAUTY CENTER (Caso positivo)
+	// SHOW BEAUTY CENTER (Caso positivo)
 	@WithMockUser(username = "owner1", roles = {
 		"owner"
 	}, password = "owner1")
