@@ -96,7 +96,7 @@ public class PickUpRequestController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/pick-up-requests")
-	public String showPickUpRequests(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
+	public String showPickUpRequests(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) {
 		try {
 			this.authoritiesService.isAuthor(ownerUsername);
 			model.put("pickUpRequests", this.pickUpRequestService.findPickUpRequestsByOwnerUsername(ownerUsername));

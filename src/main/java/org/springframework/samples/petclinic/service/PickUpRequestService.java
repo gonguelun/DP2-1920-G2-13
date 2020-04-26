@@ -26,9 +26,10 @@ public class PickUpRequestService {
 	}
 
 	@Transactional
-	public void savePickUpRequest(@Valid final PickUpRequest pickUpRequest) throws NoPetTypeException {
+	public boolean savePickUpRequest(@Valid final PickUpRequest pickUpRequest) throws NoPetTypeException {
 		if (pickUpRequest.getPetType() != null) {
 			this.pickUpRequestRepository.save(pickUpRequest);
+			return true;
 		} else {
 			throw new NoPetTypeException();
 		}
@@ -59,5 +60,11 @@ public class PickUpRequestService {
 	@Transactional
 	public PickUpRequest findPickUpRequestByPickUpRequestId(final int pickUpRequestId) {
 		return this.pickUpRequestRepository.findPickUpRequestByPickUpRequestId(pickUpRequestId);
+	}
+	
+	@Transactional
+	public Integer countPickUps() {
+		return (int) this.pickUpRequestRepository.count();
+		
 	}
 }
