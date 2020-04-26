@@ -42,21 +42,25 @@ public class BeauticianController {
 
 	private static final String	VIEWS_BEAUTICIAN_UPDATE_FORM	= "beauticians/updateBeauticianForm";
 
-	@Autowired
 	private BeauticianService	beauticianService;
 
-	@Autowired
 	private PetService			petService;
 
-	@Autowired
 	private AuthoritiesService	authoritiesService;
 
-	@Autowired
 	private UserService			userService;
-	
-	@Autowired
-	private BeautyDateService			beautyDateService;
 
+	private BeautyDateService	beautyDateService;
+
+
+	@Autowired
+	public BeauticianController(final BeauticianService beauticianService, final PetService petService, final AuthoritiesService authoritiesService, final UserService userService, final BeautyDateService beautyDateService) {
+		this.authoritiesService = authoritiesService;
+		this.beauticianService = beauticianService;
+		this.beautyDateService = beautyDateService;
+		this.petService = petService;
+		this.userService = userService;
+	}
 
 	@InitBinder
 	public void setAllowedFields(final WebDataBinder dataBinder) {
@@ -78,7 +82,8 @@ public class BeauticianController {
 	}
 
 	@PostMapping(value = "/{beauticianId}/edit")
-	public String processUpdateBeauticianForm(@Valid final Beautician beautician, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) throws InvalidBeauticianException,InvalidSpecializationException, NullOrShortNameException{
+	public String processUpdateBeauticianForm(@Valid final Beautician beautician, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model)
+		throws InvalidBeauticianException, InvalidSpecializationException, NullOrShortNameException {
 		if (result.hasErrors()) {
 			model.put("beautician", beautician);
 			return BeauticianController.VIEWS_BEAUTICIAN_UPDATE_FORM;
@@ -90,7 +95,7 @@ public class BeauticianController {
 				this.beauticianService.isBeauticianGuardado(usuario, beautician, beauticianGuardado);
 				this.beauticianService.saveBeautician(beautician);
 
-			} catch(InvalidBeauticianException a) {
+			} catch (InvalidBeauticianException a) {
 				result.rejectValue("user.username", "duplicate", "already exists");
 				model.put("beautician", beautician);
 				return BeauticianController.VIEWS_BEAUTICIAN_UPDATE_FORM;
@@ -100,13 +105,13 @@ public class BeauticianController {
 	}
 
 	@GetMapping("/{beauticianId}")
-	public ModelAndView showBeautician(@PathVariable("beauticianId") final int beauticianId) throws Exception{
+	public ModelAndView showBeautician(@PathVariable("beauticianId") final int beauticianId) throws Exception {
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 
 		} catch (InvalidActivityException a) {
-			ModelAndView mv=new ModelAndView("exception");
+			ModelAndView mv = new ModelAndView("exception");
 			return mv;
 		}
 		ModelAndView mav = new ModelAndView("beauticians/beauticianDetails");
@@ -115,49 +120,49 @@ public class BeauticianController {
 	}
 
 	@GetMapping("/principal/{beauticianUsername}")
-	public String showBeauticianByUsername(@PathVariable("beauticianUsername") final String beauticianUsername,final Model model) throws Exception {
+	public String showBeauticianByUsername(@PathVariable("beauticianUsername") final String beauticianUsername, final Model model) throws Exception {
 
 		int beauticianId = this.beauticianService.findBeauticianByUsername(beauticianUsername).getId();
-		
+
 		return "redirect:/beauticians/" + beauticianId;
-		
+
 	}
-	
+
 	@GetMapping("/searchBeautyDates/{beauticianUsername}")
-	public String searchBeautyDates(@PathVariable("beauticianUsername") final String beauticianUsername,final Model model) throws Exception {
+	public String searchBeautyDates(@PathVariable("beauticianUsername") final String beauticianUsername, final Model model) throws Exception {
 		int beauticianId = this.beauticianService.findBeauticianByUsername(beauticianUsername).getId();
-	return "redirect:/beauticians/searchDates/" + beauticianId;
-		
+		return "redirect:/beauticians/searchDates/" + beauticianId;
+
 	}
-	
+
 	@GetMapping("/searchDates/{beauticianId}")
-	public ModelAndView searchBeautyDatesId(@PathVariable("beauticianId") final int beauticianId) throws Exception{
+	public ModelAndView searchBeautyDatesId(@PathVariable("beauticianId") final int beauticianId) throws Exception {
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 
 		} catch (InvalidActivityException a) {
-			ModelAndView mv=new ModelAndView("exception");
+			ModelAndView mv = new ModelAndView("exception");
 			return mv;
 		}
 		ModelAndView mav = new ModelAndView("beauticians/searchBeautyDates");
 		mav.addObject(this.beauticianService.findBeauticianById(beauticianId));
 		return mav;
 	}
-	
+
 	@GetMapping(value = "/{beauticianId}/beautyDates/{date}/{hour}")
-	public String showBeautyDates(@PathVariable("beauticianId") final int beauticianId,@PathVariable("hour") final int hour,@PathVariable("date") final String date, final Map<String, Object> model) throws Exception {
+	public String showBeautyDates(@PathVariable("beauticianId") final int beauticianId, @PathVariable("hour") final int hour, @PathVariable("date") final String date, final Map<String, Object> model) throws Exception {
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
-		LocalDate dateMax=LocalDate.parse(date);
-		LocalTime time=LocalTime.of(hour, 0);
-		LocalDateTime dateHourMax=LocalDateTime.of(dateMax, time);
+		LocalDate dateMax = LocalDate.parse(date);
+		LocalTime time = LocalTime.of(hour, 0);
+		LocalDateTime dateHourMax = LocalDateTime.of(dateMax, time);
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 			this.beautyDateService.isDateValid(dateMax);
-			model.put("beautyDates", this.beautyDateService.findBeautyDatesByBeauticianIdAndDate(beauticianId,dateHourMax));
+			model.put("beautyDates", this.beautyDateService.findBeautyDatesByBeauticianIdAndDate(beauticianId, dateHourMax));
 		} catch (PastDateException e) {
 			return "redirect:/oups";
-		}catch (InvalidActivityException a) {
+		} catch (InvalidActivityException a) {
 			return "redirect:/oups";
 		}
 		return "beauticians/beautyDatesList";

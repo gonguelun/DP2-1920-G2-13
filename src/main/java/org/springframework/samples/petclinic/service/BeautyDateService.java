@@ -136,14 +136,16 @@ public class BeautyDateService {
 		return this.beautyDateRepository.bringProductsFromBeauticianWithPetType(beautician.getId(), petType.getId());
 	}
 
-	public Collection<BeautyDate> findBeautyDatesByBeauticianIdAndDate(int beauticianId,LocalDateTime dateHourMax) {
-		return this.beautyDateRepository.findBeautyDatesByBeauticianIdAndDate(beauticianId,dateHourMax);
+	public Collection<BeautyDate> findBeautyDatesByBeauticianIdAndDate(final int beauticianId, final LocalDateTime dateHourMax) {
+		return this.beautyDateRepository.findBeautyDatesByBeauticianIdAndDate(beauticianId, dateHourMax);
 	}
 
-	public void isDateValid(LocalDate dateMax) throws PastDateException {
-		if(dateMax.isBefore(LocalDate.now())) {
+	public boolean isDateValid(final LocalDate dateMax) throws PastDateException {
+		Boolean res = dateMax.isBefore(LocalDate.now());
+		if (res) {
 			throw new PastDateException();
 		}
-		
+
+		return res;
 	}
 }
