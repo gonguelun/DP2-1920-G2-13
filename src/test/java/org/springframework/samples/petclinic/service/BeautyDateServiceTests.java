@@ -191,7 +191,7 @@ public class BeautyDateServiceTests {
 	}
 	//Caso negativo. Intento introducir un BeautyDate para un pet que ya tenia
 	@Test
-	public void testSavingBeautyDateIncorrectAlreadyDate() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
+	public void testSavingBeautyDateConcurrent() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
 
 		PetType cat = new PetType();
 		cat.setId(1);
@@ -266,7 +266,7 @@ public class BeautyDateServiceTests {
 		bc2.setBeautyCenter(beautyCenter);
 		bc2.setPet(peto);
 
-		bc2.setStartDate(LocalDateTime.of(LocalDate.of(2020, 4, 1), LocalTime.of(16, 0)));
+		bc2.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
 
 		Assertions.assertThrows(AlreadyDateException.class, () -> this.beautyDateService.saveBeautyDate(bc2));
 	}
@@ -452,4 +452,5 @@ public class BeautyDateServiceTests {
 		Assert.assertTrue(!dias.stream().anyMatch(d -> d.getHour() == 12));
 
 	}
+	
 }

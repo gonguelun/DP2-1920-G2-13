@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.activity.InvalidActivityException;
+
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -37,6 +40,7 @@ import org.springframework.samples.petclinic.service.exceptions.AlreadyDateExcep
 import org.springframework.samples.petclinic.service.exceptions.EmptyPetException;
 import org.springframework.samples.petclinic.service.exceptions.IsNotInTimeException;
 import org.springframework.samples.petclinic.service.exceptions.IsWeekendException;
+import org.springframework.samples.petclinic.service.exceptions.NoPetTypeException;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -51,6 +55,10 @@ public class BeautyDateControllerTests {
 	private static final int		TEST_BEAUTYCENTER_ID	= 1;
 
 	private static final int		TEST_PETTYPE_ID			= 1;
+	
+	private static final int TEST_BEAUTYDATE_ID=1;
+	
+	private static final int TEST_BEAUTICIAN_ID=1;
 
 	private static final String		TEST_OWNER_USERNAME		= "MicSker";
 
@@ -136,17 +144,31 @@ public class BeautyDateControllerTests {
 		owner.setUser(user2);
 
 		BeautyDate bc = new BeautyDate();
-		bc.setId(1);
+		bc.setId(BeautyDateControllerTests.TEST_BEAUTYDATE_ID);
 		bc.setDescription("jjjajaja");
 		bc.setBeautyCenter(beautyCenter);
 		bc.setPet(peto);
 
 		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
+		
+		BeautyDate bc2 = new BeautyDate();
+		bc2.setId(2);
+		bc2.setDescription("description 2");
+		bc2.setBeautyCenter(beautyCenter);
+		bc2.setPet(peto);
+
+		bc2.setStartDate(LocalDateTime.of(LocalDate.of(2020, 4, 4), LocalTime.of(16, 0)));
+		
+		List<BeautyDate> lista=new ArrayList<BeautyDate>();
+		lista.add(bc2);
 
 		BDDMockito.given(this.beautyService.findById(BeautyDateControllerTests.TEST_BEAUTYCENTER_ID)).willReturn(beautyCenter);
 		BDDMockito.given(this.beautyDateService.findPetsByOwnerAndType(BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_PETTYPE_ID)).willReturn(temp2);
 		BDDMockito.given(this.petService.findPetById(pet.getId())).willReturn(pet);
 		BDDMockito.given(this.beautyDateService.findBeautyDateByPetId(peto.getId())).willReturn(bc);
+		BDDMockito.given(this.beautyDateService.findById(TEST_BEAUTYDATE_ID)).willReturn(bc);
+		BDDMockito.given(this.beautyDateService.findBeautyDateById(TEST_BEAUTYDATE_ID)).willReturn(bc);
+		BDDMockito.given(this.beautyDateService.findBeautyDatesByBeauticianId(TEST_BEAUTICIAN_ID)).willReturn(lista);
 	}
 
 	//Tests historia de usuario 11
@@ -270,4 +292,158 @@ public class BeautyDateControllerTests {
 				.with(SecurityMockMvcRequestPostProcessors.csrf()).param("description", "descripcion").param("startDate", "2020/03/31 16:00").param("pet", "peto - 2"))
 			.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyDate")).andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
 	}
+	
+	//Historia de usuario 14
+	//Test  inicial de update
+	@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+		@Test
+		void testInitUpdateBeautyDateForm() throws Exception {
+		Pet pet = new Pet();
+		pet.setId(2);
+		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		PetType cat = new PetType();
+		cat.setId(BeautyDateControllerTests.TEST_PETTYPE_ID);
+		cat.setName("cat");
+		pet.setType(cat);
+		pet.setName("peto");
+		LocalDateTime date=LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYDATE_ID))
+		.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeExists("beautyDate"))
+		.andExpect(MockMvcResultMatchers.model().attribute("beautyDate", Matchers.hasProperty("description", Matchers.is("jjjajaja"))))
+		.andExpect(MockMvcResultMatchers.model().attribute("beautyDate", Matchers.hasProperty("startDate", Matchers.is(date))))
+		.andExpect(MockMvcResultMatchers.model().attribute("beautyDate", Matchers.hasProperty("pet", Matchers.is(pet)))).andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
+		}
+	
+	//Caso negativo not author
+	@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+		@Test
+		void testBeautyDateNoAuthorForm() throws Exception {
+		Mockito.when(this.authoritiesService.isAuthor(ArgumentMatchers.any())).thenThrow(new InvalidActivityException());
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit","Invalido", BeautyDateControllerTests.TEST_BEAUTYDATE_ID))
+		.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+		.andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
+		}
+	
+	//Caso positivo de update
+	@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+		@Test
+		void testProcessUpdateBeautyDateFormSuccess() throws Exception {
+			this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYDATE_ID)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+					.param("description", "modified")
+					.param("startDate", "2020/03/31 16:00")
+					.param("pet", "currupipi - 1"))
+				.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/owners/{ownerUsername}/beauty-dates"));
+		}
+	
+	//Caso positivo de update sin descripcion
+	@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+		@Test
+		void testProcessUpdateBeautyDateNoDescriptionFormSuccess() throws Exception {
+			this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYDATE_ID)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+					.param("description", "")
+					.param("startDate", "2020/03/31 16:00")
+					.param("pet", "currupipi - 1"))
+				.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/owners/{ownerUsername}/beauty-dates"));
+		}
+	//Caso negativo se deja la fecha vacia
+	@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+		@Test
+		void testProcessUpdateBeautyDateEmptyDateFormSuccess() throws Exception {
+			this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYDATE_ID)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+					.param("description", "")
+					.param("pet", "currupipi - 1"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyDate"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyDate", "startDate"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
+		}
+	//Caso negativo la fecha es fin de semana
+	@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+			"owner"
+		}, password = "123")
+		@Test
+		void testProcessUpdateBeautyDateWeekendDateFormSuccess() throws Exception {
+		Mockito.when(this.beautyDateService.saveBeautyDate(ArgumentMatchers.any())).thenThrow(new IsWeekendException());
+		this.mockMvc
+		.perform(MockMvcRequestBuilders.post("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYDATE_ID)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+					.param("description", "modified")
+					.param("startDate", "2020/04/18 16:00")
+					.param("pet", "currupipi - 1"))
+			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyDate"))
+			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyDate", "startDate"))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
+		}
+	//Caso negativo fecha concurrente
+		@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+				"owner"
+			}, password = "123")
+			@Test
+			void testProcessUpdateBeautyDateConcurrentDateFormSuccess() throws Exception {
+			Mockito.when(this.beautyDateService.saveBeautyDate(ArgumentMatchers.any())).thenThrow(new AlreadyDateException());
+			this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYDATE_ID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.param("description", "modified")
+						.param("startDate", "2020/04/04 16:00")
+						.param("pet", "currupipi - 1"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyDate"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyDate", "startDate"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
+			}
+	//Casi negativo hora incorrecta
+		@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+				"owner"
+			}, password = "123")
+			@Test
+			void testProcessUpdateBeautyDateIncorrectTimeFormSuccess() throws Exception {
+			Mockito.when(this.beautyDateService.saveBeautyDate(ArgumentMatchers.any())).thenThrow(new IsNotInTimeException());
+			this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYDATE_ID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.param("description", "modified")
+						.param("startDate", "2020/04/29 22:00")
+						.param("pet", "currupipi - 1"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyDate"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyDate", "startDate"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
+			}
+	//Caso negativo mascota vacia
+		@WithMockUser(username = BeautyDateControllerTests.TEST_OWNER_USERNAME, roles = {
+				"owner"
+			}, password = "123")
+			@Test
+			void testProcessUpdateBeautyDateEmptyPetFormSuccess() throws Exception {
+			Mockito.when(this.beautyDateService.saveBeautyDate(ArgumentMatchers.any())).thenThrow(new EmptyPetException());
+			this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerTests.TEST_OWNER_USERNAME, BeautyDateControllerTests.TEST_BEAUTYDATE_ID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.param("description", "modified")
+						.param("startDate", "2020/04/29 16:00")
+						.param("pet", ""))
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("beautyDate"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("beautyDate", "pet"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
+			}
 }
+
