@@ -41,7 +41,16 @@
                 </td>
                 <td>
                     <c:out value="${pickUpRequest.address} "/>
+                </td>
+                <c:if test="${pickUpRequest.isAccepted==false}"> 
+               <td>
+      				<spring:url value="/owners/{ownerUsername}/pick-up-requests/{pickUpId}/delete" var="deletePickUpUrl">
+      				<spring:param name="ownerUsername" value="${pickUpRequest.owner.user.username}"/>
+                    <spring:param name="pickUpId" value="${pickUpRequest.id}"/>
+                    </spring:url>
+                    <a href="${fn:escapeXml(deletePickUpUrl)}">Delete PickUp Request</a>
                 </td>           
+                </c:if>
             </tr>
         </c:forEach>
         </tbody>
