@@ -8,8 +8,6 @@ import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.model.Beautician;
-import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.PickUpRequest;
@@ -108,6 +106,21 @@ public class PickUpRequestController {
 		return "pick-up-requests/pickUpRequestsList";
 	}
 
+	@GetMapping(value = "/owners/{ownerUsername}/pick-up-requests/{pickUpId}/delete")
+	public String deletePickUpRequest(@PathVariable("pickUpId") final int pickUpId, @PathVariable("ownerUsername") final String ownerUsername) throws Exception {
+		try {
+			this.authoritiesService.isAuthor(ownerUsername);
+			PickUpRequest pur = this.pickUpRequestService.findPickUpRequestByPickUpRequestId(pickUpId);
+			pur.setOwner(null);
+			this.pickUpRequestService.remove(pickUpId);
+
+		} catch (InvalidActivityException a) {
+			return "redirect:/oups";
+		}
+
+		return "redirect:/";
+	}
+
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {
 		return this.petService.findPetTypes();
@@ -118,10 +131,11 @@ public class PickUpRequestController {
 		model.put("pickUpRequests", this.pickUpRequestService.findAllPickUpRequests());
 		return "pick-up-requests/allPickUpRequestsList";
 	}
-	
+
 	@GetMapping(value = "/vets/pick-up-requests/{pickUpId}/delete")
 	public String deletePickUpRequest(@PathVariable("pickUpId") final int pickUpId) throws Exception {
 		this.pickUpRequestService.remove(pickUpId);
 		return "redirect:/vets/pick-up-requests";
 	}
+
 }
