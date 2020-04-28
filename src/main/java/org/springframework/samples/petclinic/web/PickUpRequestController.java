@@ -118,7 +118,7 @@ public class PickUpRequestController {
 			return "redirect:/oups";
 		}
 
-		return "redirect:/";
+		return "redirect:/owners/{ownerUsername}/pick-up-requests";
 	}
 
 	@ModelAttribute("types")
