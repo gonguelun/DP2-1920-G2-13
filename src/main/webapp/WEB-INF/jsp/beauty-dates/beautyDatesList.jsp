@@ -21,13 +21,13 @@
         <tbody>
         <c:forEach items="${beautyDates}" var="beautyDate">
             <tr>
-                <td>
+                <td >
                    <c:out value="${beautyDate.pet.name}"/>
                 </td>
                 <td>
                     <c:out value="${beautyDate.beautyCenter.name}"/>
                 </td>
-                <td>
+                <td id="${beautyDate.description}">
                     <c:out value="${beautyDate.description}"/>
                 </td>
                 <td>

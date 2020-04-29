@@ -28,7 +28,7 @@
         </thead>
         <tbody>
         <c:forEach items="${pickUpRequests}" var="pickUpRequest">
-            <tr>
+            <tr id="${pickUpRequest.description}">
                 <td>
                    <c:out value="${pickUpRequest.description}"/>
                 </td>
