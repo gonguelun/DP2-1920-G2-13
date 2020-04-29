@@ -70,6 +70,7 @@ public class PickUpRequestControllerTests {
 		pickUp.setAddress("Calle 1");
 		pickUp.setDescription("descripcion");
 		pickUp.setIsAccepted(false);
+		pickUp.setIsClosed(false);
 		Owner owner = new Owner();
 		User user = new User();
 		user.setUsername("owner1");
@@ -95,12 +96,24 @@ public class PickUpRequestControllerTests {
 		dog.setName("dog");
 		temp2.add(dog);
 
+		PickUpRequest pickUp2 = new PickUpRequest();
+		pickUp2.setId(2);
+		pickUp2.setAddress("Calle 1");
+		pickUp2.setDescription("descripcion");
+		pickUp2.setIsAccepted(false);
+		pickUp2.setIsClosed(true);
+		pickUp2.setOwner(owner);
+		pickUp2.setPhysicalStatus("good");
+
+		pickUp2.setPetType(petType);
+
 		Collection<PickUpRequest> pickUps = new ArrayList<PickUpRequest>();
 		pickUps.add(pickUp);
 		BDDMockito.given(this.ownerService.findOwnerById(PickUpRequestControllerTests.TEST_OWNER_ID)).willReturn(owner);
 		BDDMockito.given(this.petService.findPetTypes()).willReturn(temp2);
 		BDDMockito.given(this.pickUpRequestService.findPickUpRequestsByOwnerUsername(PickUpRequestControllerTests.TEST_OWNER_USERNAME)).willReturn(pickUps);
 		BDDMockito.given(this.pickUpRequestService.findPickUpRequestByPickUpRequestId(PickUpRequestControllerTests.TEST_PICK_UP_REQUEST_ID)).willReturn(pickUp);
+		BDDMockito.given(this.pickUpRequestService.findPickUpRequestByPickUpRequestId(2)).willReturn(pickUp2);
 		BDDMockito.given(this.pickUpRequestService.findOwnerByUsername(PickUpRequestControllerTests.TEST_OWNER_USERNAME)).willReturn(owner);
 
 	}
@@ -257,5 +270,57 @@ public class PickUpRequestControllerTests {
 		Mockito.when(this.authoritiesService.isAuthor(ArgumentMatchers.any())).thenThrow(new InvalidActivityException());
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests/{pickUpId}/delete", "owner1", PickUpRequestControllerTests.TEST_PICK_UP_REQUEST_ID).with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
+	}
+
+	/*
+	 * Test de la historia de usuario 19
+	 */
+
+	// Get mapping de /vets/pick-up-requests/{pickUpId}/update
+
+	//Caso positivo accedo al formulario de una solicitud abierta
+	@WithMockUser(username = "vet1", roles = {
+		"vet"
+	}, password = "123")
+	@Test
+	void testProcessUpdatePickUpRequestAsVetSuccess() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/vets/pick-up-requests/{pickUpId}/update", PickUpRequestControllerTests.TEST_PICK_UP_REQUEST_ID).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("pick-up-requests/acceptOrDenyPickUpRequest"));
+	}
+
+	//Caso negativo accedo al formulario de una solicitud cerrada
+
+	@WithMockUser(username = "vet1", roles = {
+		"vet"
+	}, password = "123")
+	@Test
+	void testProcessUpdatePickUpRequestAsVetError() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/vets/pick-up-requests/{pickUpId}/update", 2).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
+	}
+
+	// Post mapping de /vets/pick-up-requests/{pickUpId}/update
+
+	//Caso positivo, deniego la solicitud que aun estaba abierta
+
+	@WithMockUser(username = "vet1", roles = {
+		"vet"
+	}, password = "123")
+	@Test
+	void testProcessUpdateFormSuccess() throws Exception {
+		this.mockMvc
+			.perform(MockMvcRequestBuilders.post("/vets/pick-up-requests/{pickUpId}/update", PickUpRequestControllerTests.TEST_PICK_UP_REQUEST_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("description", "descripcion")
+				.param("physicalStatus", "good").param("address", "Calle 1").param("isAccepted", "false").param("isClosed", "true").param("contact", " no te lo recojo"))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/vets/pick-up-requests"));
+	}
+
+	//Caso negativo, intento aceptar una solicitud cerrada
+	@WithMockUser(username = "vet1", roles = {
+		"vet"
+	}, password = "123")
+	@Test
+	void testProcessUpdateFormError() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/vets/pick-up-requests/{pickUpId}/update", 2).with(SecurityMockMvcRequestPostProcessors.csrf()).param("description", "descripcion").param("physicalStatus", "good").param("address", "Calle 1")
+			.param("isAccepted", "false").param("isClosed", "true").param("contact", " no te lo recojo")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 	}
 }
