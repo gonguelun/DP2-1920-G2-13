@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RegisterBeautyCenterErrorUI {
+public class UpdateBeautyCenterErrorUI {
 
 	@LocalServerPort
 	private int				port;
@@ -48,13 +48,13 @@ public class RegisterBeautyCenterErrorUI {
 		this.driver.findElement(By.id("password")).clear();
 		this.driver.findElement(By.id("password")).sendKeys("f");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Add Beauty Center")).click();
+		this.driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a/span[2]")).click();
+		this.driver.findElement(By.id("update1")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("TestErrorBeautyCenter");
+		this.driver.findElement(By.id("name")).sendKeys("");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		Assert.assertEquals("It's mandatory", this.driver.findElement(By.xpath("//form[@id='add-beautyCenter-form']/div/div[3]/div/div/span[2]")).getText());
+		Assert.assertEquals("Name length must be at least 3 characters long", this.driver.findElement(By.xpath("//form[@id='add-beautyCenter-form']/div/div/div/span[2]")).getText());
 	}
 
 	@AfterEach

@@ -67,7 +67,7 @@
         <tbody>
         <c:forEach items="${beautician.beautyCenters}" var="beautyCenters">
             <tr>
-                <td>
+                <td id="${beautyCenters.name}">
                    <c:out value="${beautyCenters.name}"/>
                 </td>
                 <td>
@@ -82,7 +82,7 @@
 				        <spring:param name="beauticianId" value="${beautician.id}"/>
 				        <spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
 				    </spring:url>
-				    <a href="${fn:escapeXml(updateBeautyCenterUrl)}" >Modify ${beautyCenters.name} Beauty Center</a>
+				    <a id="update${beautyCenters.id}" href="${fn:escapeXml(updateBeautyCenterUrl)}" >Modify ${beautyCenters.name} Beauty Center</a>
 				<td>
           
                 <td>
