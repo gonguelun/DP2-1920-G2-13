@@ -14,14 +14,13 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UpdateBeautyCenterSuccessUI {
+public class ModifyBeautyCenterErrorUITest {
 
 	@LocalServerPort
 	private int				port;
@@ -34,33 +33,29 @@ public class UpdateBeautyCenterSuccessUI {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		this.driver = new FirefoxDriver();
-		this.baseUrl = "https://www.google.com/";
-		this.driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		String pathtoChromeDriver="C:\\Users\\carsa\\OneDrive\\Escritorio";
+		System.setProperty("webdriver.gecko.driver", pathtoChromeDriver+"\\geckodriver.exe");
+	    driver = new FirefoxDriver();
+	    baseUrl = "https://www.google.com/";
+	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
 
 	@Test
 	public void testUntitledTestCase() throws Exception {
 		this.driver.get("http://localhost:" + this.port);
-		this.driver.findElement(By.linkText("LOGIN")).click();
-		this.driver.findElement(By.id("username")).clear();
-		this.driver.findElement(By.id("username")).sendKeys("f");
-		this.driver.findElement(By.id("password")).click();
-		this.driver.findElement(By.id("password")).clear();
-		this.driver.findElement(By.id("password")).sendKeys("f");
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.id("update1")).click();
+	    driver.findElement(By.linkText("LOGIN")).click();
+	    driver.findElement(By.id("username")).clear();
+	    driver.findElement(By.id("username")).sendKeys("f");
+	    driver.findElement(By.id("password")).clear();
+	    driver.findElement(By.id("password")).sendKeys("f");
+	    driver.findElement(By.xpath("//button[@type='submit']")).click();
+	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a/span[2]")).click();
+	    this.driver.findElement(By.id("update1")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("name1modificado");
-		this.driver.findElement(By.id("description")).click();
-		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("heymodificado");
-		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("bird");
-		this.driver.findElement(By.xpath("//option[@value='bird']")).click();
+		this.driver.findElement(By.id("name")).sendKeys("n");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		Assert.assertEquals("name1modificado", this.driver.findElement(By.id("name1modificado")).getText());
+		Assert.assertEquals("Name length must be at least 3 characters long", this.driver.findElement(By.xpath("//form[@id='add-beautyCenter-form']/div/div/div/span[2]")).getText());
 	}
 
 	@AfterEach

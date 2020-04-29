@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.Assert.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ModifyBeautyCenterSuccessUITest {
+public class RegisterPickUpRequestSuccessUITest {
 	@LocalServerPort
 	private int port;
   private WebDriver driver;
@@ -36,26 +36,32 @@ public class ModifyBeautyCenterSuccessUITest {
   }
 
   @Test
-  public void testModifyBeautyCenterSuccessUITest() throws Exception {
+  public void testRegisterPickUpRequestSuccessUITest() throws Exception {
 	    driver.get("http://localhost:"+port);
 	    driver.findElement(By.linkText("LOGIN")).click();
 	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("f");
+	    driver.findElement(By.id("username")).sendKeys("owner1");
 	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("f");
+	    driver.findElement(By.id("password")).sendKeys("0wn3r");
 	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a/span[2]")).click();
-	    this.driver.findElement(By.id("update1")).click();
-	    driver.findElement(By.id("name")).clear();
-	    driver.findElement(By.id("name")).sendKeys("name3");
+	    assertEquals("OWNER1", driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a/strong")).getText());
+	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[5]/a/span")).click();
+	    driver.findElement(By.linkText("New request")).click();
 	    driver.findElement(By.id("description")).clear();
-	    driver.findElement(By.id("description")).sendKeys("hey2");
-	    new Select(driver.findElement(By.id("petType"))).selectByVisibleText("bird");
-	    driver.findElement(By.xpath("//option[@value='bird']")).click();
+	    driver.findElement(By.id("description")).sendKeys("Peticion de recogida");
+	    new Select(driver.findElement(By.id("petType"))).selectByVisibleText("dog");
+	    driver.findElement(By.xpath("//option[@value='dog']")).click();
+	    driver.findElement(By.id("physicalStatus")).click();
+	    driver.findElement(By.id("physicalStatus")).clear();
+	    driver.findElement(By.id("physicalStatus")).sendKeys("Está herido en una pata");
+	    driver.findElement(By.id("address")).click();
+	    driver.findElement(By.id("address")).clear();
+	    driver.findElement(By.id("address")).sendKeys("Calle Arjona Número 23");
 	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    assertEquals("name3", driver.findElement(By.xpath("//table[@id='beautyTable']/tbody/tr/td")).getText());
-	    assertEquals("hey2", driver.findElement(By.xpath("//table[@id='beautyTable']/tbody/tr/td[2]")).getText());
-	    assertEquals("bird", driver.findElement(By.xpath("//table[@id='beautyTable']/tbody/tr/td[3]")).getText());
+	    driver.findElement(By.linkText("VIEW MY PICK UP REQUESTS")).click();
+	    assertEquals("Peticion de recogida", driver.findElement(By.xpath("//table[@id='pickUpRequestsTable']/tbody/tr/td")).getText());
+	    assertEquals("dog", driver.findElement(By.xpath("//table[@id='pickUpRequestsTable']/tbody/tr/td[2]")).getText());
+	    assertEquals("false", driver.findElement(By.xpath("//table[@id='pickUpRequestsTable']/tbody/tr/td[4]")).getText());
   }
 
   @AfterEach
