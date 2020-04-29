@@ -84,11 +84,16 @@ public class BeautyCenterController {
 
 			try {
 				this.beautyService.save(beautyCenter);
+				beautyCenter.setBeautician(bea);
 			} catch (NullOrShortNameException a) {
+				Beautician bea2 = this.beauticianService.findBeauticianById(beauticianId);
+				beautyCenter.setBeautician(bea2);
 				model.put("beautyCenter", beautyCenter);
 				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
 				return "beauty-centers/createOrUpdateBeautyCenterForm";
 			} catch (NoPetTypeException b) {
+				Beautician bea2 = this.beauticianService.findBeauticianById(beauticianId);
+				beautyCenter.setBeautician(bea2);
 				model.put("beautyCenter", beautyCenter);
 				result.rejectValue("petType", "notnull", "It's mandatory");
 				return "beauty-centers/createOrUpdateBeautyCenterForm";

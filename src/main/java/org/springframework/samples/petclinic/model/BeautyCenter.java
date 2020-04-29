@@ -13,9 +13,10 @@ public class BeautyCenter extends NamedEntity {
 
 	private String		description;
 
-	@ManyToOne(optional = false,cascade = CascadeType.ALL)
+	@ManyToOne
 	private PetType		petType;
 
-	@ManyToOne(cascade = CascadeType.ALL, optional = false)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Beautician	beautician;
+
 }

@@ -91,7 +91,7 @@
 
 			<ul class="nav navbar-nav navbar-right">
 				<sec:authorize access="!isAuthenticated()">
-					<li><a href="<c:url value="/login" />">Login</a></li>
+					<li id="login"><a href="<c:url value="/login" />">Login</a></li>
 					<li><a href="<c:url value="/users/new-owner" />">Owner Register</a></li>
 					<li><a href="<c:url value="/users/new-vet" />">Vet Register</a></li>
 					<li><a href="<c:url value="/users/new-beautician" />">Beautician register</a></li>
