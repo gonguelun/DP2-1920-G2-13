@@ -45,6 +45,7 @@ public class PickUpRequestServiceTests {
 		pickUp.setAddress("Calle 1");
 		pickUp.setDescription("descripcion");
 		pickUp.setIsAccepted(false);
+		pickUp.setIsClosed(false);
 		Owner owner=new Owner();
 		User user = new User();
 		user.setUsername("User1");
@@ -106,6 +107,7 @@ public class PickUpRequestServiceTests {
 		pickUp.setAddress("Calle 1");
 		pickUp.setDescription("");
 		pickUp.setIsAccepted(false);
+		pickUp.setIsClosed(true);
 		Owner owner=new Owner();
 		User user = new User();
 		user.setUsername("User1");
@@ -140,6 +142,7 @@ public class PickUpRequestServiceTests {
 		pickUp.setAddress("Calle 1");
 		pickUp.setDescription("descripcion");
 		pickUp.setIsAccepted(false);
+		pickUp.setIsClosed(true);
 		Owner owner=new Owner();
 		User user = new User();
 		user.setUsername("User1");
@@ -222,4 +225,6 @@ public class PickUpRequestServiceTests {
 		
 		assertThrows(ConstraintViolationException.class, () -> this.pickUpRequestService.savePickUpRequest(pickUp));
 	}
+	
+	
 }
