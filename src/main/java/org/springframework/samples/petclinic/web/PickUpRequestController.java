@@ -143,7 +143,12 @@ public class PickUpRequestController {
 	public String initUpdatePickUpRequest(@PathVariable("pickUpId") final int pickUpId, final ModelMap model) throws Exception {
 		PickUpRequest pur = this.pickUpRequestService.findPickUpRequestByPickUpRequestId(pickUpId);
 		model.put("pickUpRequest", pur);
-		return "pick-up-requests/acceptOrDenyPickUpRequest";
+		if (pur.getIsClosed()) {
+
+			return "redirect:/oups";
+		} else {
+			return "pick-up-requests/acceptOrDenyPickUpRequest";
+		}
 	}
 
 	@PostMapping(value = "/vets/pick-up-requests/{pickUpId}/update")
@@ -156,8 +161,13 @@ public class PickUpRequestController {
 			model.put("pickUpRequest", pur);
 			return "pick-up-requests/acceptOrDenyPickUpRequest";
 		} else {
-			String contact = pur.getContact();
-			this.pickUpRequestService.update(pur, contact, pickUpId);
+			if (aux.getIsClosed()) {
+
+				return "redirect:/oups";
+			} else {
+				String contact = pur.getContact();
+				this.pickUpRequestService.update(pur, contact, pickUpId);
+			}
 		}
 		return "redirect:/vets/pick-up-requests";
 	}

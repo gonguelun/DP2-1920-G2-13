@@ -52,9 +52,8 @@ public class PickUpRequestService {
 
 	@Transactional
 	public boolean update(@Valid final PickUpRequest pur, final String contact, final int pickUpId) {
-		Boolean isAccepted = pur.getIsAccepted();
-		Boolean isClosed = true;
-		this.pickUpRequestRepository.update(isAccepted, isClosed, contact, pickUpId);
+
+		this.pickUpRequestRepository.update(pur.getIsAccepted(), true, contact, pickUpId);
 		return true;
 	}
 
