@@ -1,21 +1,13 @@
 
 package org.springframework.samples.petclinic.web.e2e;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.samples.petclinic.model.Beautician;
-import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
-import org.springframework.samples.petclinic.model.User;
-import org.springframework.samples.petclinic.service.exceptions.NoPetTypeException;
-import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -55,62 +47,6 @@ public class BeautyCenterControllerE2ETests {
 	}
 
 	/* Test controlador hisoria de usuario 2 */
-
-	@BeforeEach
-	void setup() throws NullOrShortNameException, NoPetTypeException {
-		PetType cat = new PetType();
-		cat.setId(3);
-		cat.setName("hamster");
-		List<PetType> temp = new ArrayList<>();
-		temp.add(cat);
-		List<PetType> temp2 = new ArrayList<>();
-		PetType dog = new PetType();
-		dog.setId(4);
-		dog.setName("dog");
-		temp2.add(cat);
-		temp2.add(dog);
-
-		User user = new User();
-		user.setId(1);
-		user.setEnabled(true);
-		user.setUsername("beautician1");
-		user.setPassword("123");
-
-		Beautician beautician = new Beautician();
-		beautician.setId(1);
-		beautician.setFirstName("juan");
-		beautician.setLastName("aurora");
-		beautician.setSpecializations(temp);
-		beautician.setUser(user);
-
-		BeautyCenter beautyCenter = new BeautyCenter();
-		beautyCenter.setId(BeautyCenterControllerE2ETests.TEST_BEAUTYCENTER2_ID);
-		beautyCenter.setName("beautycenter1");
-		beautyCenter.setDescription("prueba1");
-		beautyCenter.setPetType(cat);
-		beautyCenter.setBeautician(beautician);
-
-		User user2;
-
-		user2 = new User();
-		user2.setId(2);
-		user2.setEnabled(true);
-		user2.setUsername("beautician2");
-		user2.setPassword("beautician2");
-
-		Beautician beautician2 = new Beautician();
-		beautician2.setId(BeautyCenterControllerE2ETests.TEST_BEAUTICIAN2_ID);
-		beautician2.setFirstName("x");
-		beautician2.setLastName("x");
-		beautician2.setUser(user2);
-
-		BeautyCenter beautyCenter2 = new BeautyCenter();
-		beautyCenter2.setId(BeautyCenterControllerE2ETests.TEST_BEAUTYCENTER3_ID);
-		beautyCenter2.setName("beautycenter2");
-		beautyCenter2.setDescription("prueba2");
-		beautyCenter2.setBeautician(beautician2);
-
-	}
 
 	/* GetMapping /beauticians/{beauticianId}/beauty-centers/new */
 
