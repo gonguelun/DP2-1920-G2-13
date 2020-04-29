@@ -1,16 +1,12 @@
 
 package org.springframework.samples.petclinic.web.e2e;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.web.UserController;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -45,21 +41,6 @@ class UserBeauticianControllerE2ETests {
 	public void setUp() {
 
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
-	}
-
-	@BeforeEach
-	void setup() {
-		Collection<PetType> specialization = new ArrayList<>();
-		PetType pet1 = new PetType();
-		pet1.setName("cat");
-		specialization.add(pet1);
-		PetType pet2 = new PetType();
-		pet2.setName("dog");
-		specialization.add(pet2);
-		PetType pet3 = new PetType();
-		pet3.setName("bird");
-		specialization.add(pet3);
-
 	}
 
 	@WithMockUser(value = "spring")
