@@ -144,3 +144,5 @@ INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES 
 INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (3, 'name1', 'hey', 4, 3);
 INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (4, 'name1', 'hey', 5, 4);
 INSERT INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (5, 'name1', 'hey', 2, 5);
+
+INSERT INTO beauty_date(id,description,start_date,pet_id,beauty_center_id) VALUES (1,'prueba','2020-04-01 16:00',1,1);
