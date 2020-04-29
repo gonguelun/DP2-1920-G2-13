@@ -90,7 +90,7 @@ public class BeautyCenterService {
 		String name = beauticianCenter.getName();
 		String description = beauticianCenter.getDescription();
 		PetType petType = beauticianCenter.getPetType();
-		if (beauticianCenter.getName().length() < 3 && beauticianCenter.getName().isEmpty()) {
+		if (beauticianCenter.getName().length() < 3 || beauticianCenter.getName().isEmpty()) {
 			throw new NullOrShortNameException();
 		}else if(petType == null || petType.getName()=="" || (!beauticianCenter.getPetType().getName().equals("bird") &&
 				!beauticianCenter.getPetType().getName().equals("cat") &&
