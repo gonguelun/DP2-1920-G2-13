@@ -11,7 +11,7 @@
 <jsp:body>
 
     <h2>
-        <c:if test="${pickUpRequest['new']}">New </c:if> Pick Up Request
+        Update Pick Up Request
     </h2>
     <form:form modelAttribute="pickUpRequest" class="form-horizontal" id="add-pickUpRequest-form">
         <div class="form-group has-feedback">
@@ -21,16 +21,13 @@
             </div>
             <petclinic:inputField label="PhysicalStatus" name="physicalStatus"/>
             <petclinic:inputField label="Address" name="address"/>
-            <input type="hidden" name="isAccepted" value="${pickUpRequest.isAccepted}" />
+            <form:checkbox label="Accepted" path="isAccepted" value="${pickUpRequest.isAccepted}"/>
+            <petclinic:inputField label="Contact" name="contact"/>
             <input type="hidden" name="isClosed" value="${pickUpRequest.isClosed}" />
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <c:choose>
-                    <c:when test="${pickUpRequest['new']}">
-                        <button class="btn btn-default" type="submit">Send pick up request</button>
-                    </c:when>
-                </c:choose>
+               <button class="btn btn-default" type="submit">Update pick up request</button>
             </div>
         </div>
     </form:form>

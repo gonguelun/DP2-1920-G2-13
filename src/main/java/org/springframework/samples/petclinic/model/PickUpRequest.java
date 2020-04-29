@@ -27,6 +27,11 @@ public class PickUpRequest extends BaseEntity {
 	@NotBlank
 	private String	address;
 
+	@NotNull
+	private Boolean	isClosed;
+
+	private String	contact;
+
 	@Valid
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Owner	owner;

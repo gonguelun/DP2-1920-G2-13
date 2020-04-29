@@ -65,6 +65,7 @@ public class PickUpRequestController {
 		}
 		PickUpRequest pickUpRequest = new PickUpRequest();
 		pickUpRequest.setIsAccepted(false);
+		pickUpRequest.setIsClosed(false);
 		pickUpRequest.setOwner(owner);
 
 		model.addAttribute(pickUpRequest);
@@ -135,6 +136,29 @@ public class PickUpRequestController {
 	@GetMapping(value = "/vets/pick-up-requests/{pickUpId}/delete")
 	public String deletePickUpRequest(@PathVariable("pickUpId") final int pickUpId) throws Exception {
 		this.pickUpRequestService.remove(pickUpId);
+		return "redirect:/vets/pick-up-requests";
+	}
+
+	@GetMapping(value = "/vets/pick-up-requests/{pickUpId}/update")
+	public String initUpdatePickUpRequest(@PathVariable("pickUpId") final int pickUpId, final ModelMap model) throws Exception {
+		PickUpRequest pur = this.pickUpRequestService.findPickUpRequestByPickUpRequestId(pickUpId);
+		model.put("pickUpRequest", pur);
+		return "pick-up-requests/acceptOrDenyPickUpRequest";
+	}
+
+	@PostMapping(value = "/vets/pick-up-requests/{pickUpId}/update")
+	public String processUpdatePickUpRequest(@Valid final PickUpRequest pur, final BindingResult result, @PathVariable("pickUpId") final int pickUpId, final ModelMap model) throws Exception {
+		PickUpRequest aux = this.pickUpRequestService.findPickUpRequestByPickUpRequestId(pickUpId);
+		Owner owner = aux.getOwner();
+		pur.setId(pickUpId);
+		pur.setOwner(owner);
+		if (result.hasErrors()) {
+			model.put("pickUpRequest", pur);
+			return "pick-up-requests/acceptOrDenyPickUpRequest";
+		} else {
+			String contact = pur.getContact();
+			this.pickUpRequestService.update(pur, contact, pickUpId);
+		}
 		return "redirect:/vets/pick-up-requests";
 	}
 

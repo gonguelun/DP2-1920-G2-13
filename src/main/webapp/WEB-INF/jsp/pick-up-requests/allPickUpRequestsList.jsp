@@ -11,12 +11,15 @@
     <table id="pickUpRequestsTable" class="table table-striped">
         <thead>
         <tr>
-            <th style="width: 25%;">Description</th>
+            <th style="width: 15%;">Description</th>
             <th style="width: 10%;">Pet type</th>
-            <th style="width: 20%">Physical status</th>
+            <th style="width: 10%">Physical status</th>
             <th style="width: 7%;">Is accepted</th>
             <th style="width: 15%">Location</th>
             <th style="width: 7%;">User reporter</th>
+            <th style="width: 10%;"> Contact</th>
+            <th></th>
+            <th></th>
       
         </tr>
         </thead>
@@ -41,8 +44,19 @@
                 
                 <td>
                     <c:out value="${pickUpRequest.owner.user.username} "/>
-                </td>  
-                <c:if test="${pickUpRequest.isAccepted==true}"> 
+                </td>
+                <td>
+                	<c:out value="${pickUpRequest.contact}"/>
+                </td>
+                  <c:if test="${pickUpRequest.isClosed==false}"> 
+                <td>
+                <spring:url value="/vets/pick-up-requests/{pickUpId}/update" var="updatePickUpUrl">
+                    <spring:param name="pickUpId" value="${pickUpRequest.id}"/>
+                    </spring:url>
+                    <a href="${fn:escapeXml(updatePickUpUrl)}">Update PickUp Request</a>
+                </td>
+                </c:if>
+                <c:if test="${pickUpRequest.isAccepted==false}"> 
                 <td>
                 	 
       				<spring:url value="/vets/pick-up-requests/{pickUpId}/delete" var="deletePickUpUrl">

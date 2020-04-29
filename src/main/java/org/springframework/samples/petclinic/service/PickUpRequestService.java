@@ -51,6 +51,14 @@ public class PickUpRequestService {
 	}
 
 	@Transactional
+	public boolean update(@Valid final PickUpRequest pur, final String contact, final int pickUpId) {
+		Boolean isAccepted = pur.getIsAccepted();
+		Boolean isClosed = true;
+		this.pickUpRequestRepository.update(isAccepted, isClosed, contact, pickUpId);
+		return true;
+	}
+
+	@Transactional
 	public void remove(final int pickUpRequestId) {
 
 		this.pickUpRequestRepository.remove(pickUpRequestId);
@@ -61,10 +69,10 @@ public class PickUpRequestService {
 	public PickUpRequest findPickUpRequestByPickUpRequestId(final int pickUpRequestId) {
 		return this.pickUpRequestRepository.findPickUpRequestByPickUpRequestId(pickUpRequestId);
 	}
-	
+
 	@Transactional
 	public Integer countPickUps() {
 		return (int) this.pickUpRequestRepository.count();
-		
+
 	}
 }

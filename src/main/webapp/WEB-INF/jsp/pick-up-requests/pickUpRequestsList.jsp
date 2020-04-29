@@ -22,6 +22,8 @@
             <th style="width: 20%">Physical status</th>
             <th style="width: 7%;">Is accepted</th>
             <th style="width: 15%">Location</th>
+            <th style="width: 10%">Contact</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -41,6 +43,9 @@
                 </td>
                 <td>
                     <c:out value="${pickUpRequest.address} "/>
+                </td>
+                <td>
+                	<c:out value="${pickUpRequest.contact}"/>
                 </td>
                 <c:if test="${pickUpRequest.isAccepted==false}"> 
                <td>
