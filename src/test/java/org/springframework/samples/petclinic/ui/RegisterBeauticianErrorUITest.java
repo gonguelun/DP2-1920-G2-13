@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.Assert.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RegisterBeauticianTest {
+public class RegisterBeauticianErrorUITest {
 	@LocalServerPort
 	private int port;
   private WebDriver driver;
@@ -29,8 +29,8 @@ public class RegisterBeauticianTest {
   @BeforeEach
   public void setUp() throws Exception {
 	String pathtoChromeDriver="C:\\Users\\carsa\\OneDrive\\Escritorio";
-	System.setProperty("webdriver.chrome.driver", pathtoChromeDriver+"\\chromedriver.exe");
-    driver = new ChromeDriver();
+	System.setProperty("webdriver.gecko.driver", pathtoChromeDriver+"\\geckodriver.exe");
+    driver = new FirefoxDriver();
     baseUrl = "https://www.google.com/";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
