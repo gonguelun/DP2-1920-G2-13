@@ -24,7 +24,7 @@ public class SpotifyController {
 		this.spotifyService = spotifyService;
 	}
 
-	// Mapping inicial, se hace la redirección a Spotify, y tras aceptar Spotify nos devuelve a /callback/
+	// Mapping inicial, aqui se hace la redirección a Spotify, y tras aceptar Spotify nos devuelve a /callback/
 
 	@RequestMapping("/api/spotify/access")
 	public String spotifyAccess() {
