@@ -84,11 +84,16 @@ public class BeautyCenterController {
 
 			try {
 				this.beautyService.save(beautyCenter);
+				beautyCenter.setBeautician(bea);
 			} catch (NullOrShortNameException a) {
+				Beautician bea2 = this.beauticianService.findBeauticianById(beauticianId);
+				beautyCenter.setBeautician(bea2);
 				model.put("beautyCenter", beautyCenter);
 				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
 				return "beauty-centers/createOrUpdateBeautyCenterForm";
 			} catch (NoPetTypeException b) {
+				Beautician bea2 = this.beauticianService.findBeauticianById(beauticianId);
+				beautyCenter.setBeautician(bea2);
 				model.put("beautyCenter", beautyCenter);
 				result.rejectValue("petType", "notnull", "It's mandatory");
 				return "beauty-centers/createOrUpdateBeautyCenterForm";
@@ -131,7 +136,8 @@ public class BeautyCenterController {
 	}
 
 	@PostMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
-	public String processUpdateBeauticianForm(@Valid final BeautyCenter beautyCenter, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId, final ModelMap model) throws NullOrShortNameException,NoPetTypeException{
+	public String processUpdateBeauticianForm(@Valid final BeautyCenter beautyCenter, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId, final ModelMap model)
+		throws NullOrShortNameException, NoPetTypeException {
 		Beautician bea = this.beauticianService.findBeauticianById(beauticianId);
 		beautyCenter.setBeautician(bea);
 
@@ -141,16 +147,15 @@ public class BeautyCenterController {
 		} else {
 
 			try {
-					beautyCenter.setId(beautyCenterId);
-					this.beautyService.update(beautyCenter, beautyCenterId);
+				beautyCenter.setId(beautyCenterId);
+				this.beautyService.update(beautyCenter, beautyCenterId);
 
-				} catch(NoPetTypeException a) {
-					result.rejectValue("petType", "notnull", "It's mandatory");
-					model.put("beautyCenter", beautyCenter);
-					return "beauty-centers/createOrUpdateBeautyCenterForm";
-				
+			} catch (NoPetTypeException a) {
+				result.rejectValue("petType", "notnull", "It's mandatory");
+				model.put("beautyCenter", beautyCenter);
+				return "beauty-centers/createOrUpdateBeautyCenterForm";
 
-			} catch(NullOrShortNameException b) {
+			} catch (NullOrShortNameException b) {
 				result.rejectValue("name", "length", "Name length must be at least 3 characters long");
 				model.put("beautyCenter", beautyCenter);
 				return "beauty-centers/createOrUpdateBeautyCenterForm";
