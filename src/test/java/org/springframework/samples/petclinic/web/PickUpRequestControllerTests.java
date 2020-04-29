@@ -147,7 +147,8 @@ public class PickUpRequestControllerTests {
 	@Test
 	void testProcessCreationFormSuccess() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/owners/{ownerId}/pick-up-requests/new", PickUpRequestControllerTests.TEST_OWNER_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("description", "descripcion")
-			.param("physicalStatus", "good").param("address", "Calle 1").param("petType", "dog").param("isAccepted", "true")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
+			.param("physicalStatus", "good").param("address", "Calle 1").param("petType", "dog").param("isAccepted", "true").param("isClosed", "false")).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.view().name("redirect:/"));
 	}
 
 	// Caso positivo creacion sin descripcion
@@ -157,7 +158,7 @@ public class PickUpRequestControllerTests {
 	@Test
 	void testProcessCreationFormNoDescriptionSuccess() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/owners/{ownerId}/pick-up-requests/new", PickUpRequestControllerTests.TEST_OWNER_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("physicalStatus", "good").param("address", "Calle 1")
-			.param("petType", "dog").param("isAccepted", "true")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
+			.param("petType", "dog").param("isAccepted", "true").param("isClosed", "false")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
 	}
 
 	// Caso positivo creacion sin descripcion ni estado fisico
@@ -166,9 +167,8 @@ public class PickUpRequestControllerTests {
 	}, password = "123")
 	@Test
 	void testProcessCreationFormNoDescriptionAndPhysicalStatusSuccess() throws Exception {
-		this.mockMvc.perform(
-			MockMvcRequestBuilders.post("/owners/{ownerId}/pick-up-requests/new", PickUpRequestControllerTests.TEST_OWNER_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("address", "Calle 1").param("petType", "dog").param("isAccepted", "true"))
-			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/owners/{ownerId}/pick-up-requests/new", PickUpRequestControllerTests.TEST_OWNER_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("address", "Calle 1").param("petType", "dog")
+			.param("isAccepted", "true").param("isClosed", "false")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/"));
 	}
 
 	// Caso negativo creacion sin direccion
@@ -193,7 +193,7 @@ public class PickUpRequestControllerTests {
 		Mockito.when(this.pickUpRequestService.savePickUpRequest(ArgumentMatchers.any())).thenThrow(new NoPetTypeException());
 		this.mockMvc
 			.perform(MockMvcRequestBuilders.post("/owners/{ownerId}/pick-up-requests/new", PickUpRequestControllerTests.TEST_OWNER_ID).with(SecurityMockMvcRequestPostProcessors.csrf()).param("description", "descripcion").param("physicalStatus", "good")
-				.param("address", "Calle 1").param("petType", "").param("isAccepted", "true"))
+				.param("address", "Calle 1").param("petType", "").param("isAccepted", "true").param("isClosed", "false"))
 			.andExpect(MockMvcResultMatchers.model().attributeHasErrors("pickUpRequest")).andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("pickUpRequest", "petType")).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pick-up-requests/createOrUpdatePickUpRequestForm"));
 	}
