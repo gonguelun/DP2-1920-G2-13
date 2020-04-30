@@ -80,6 +80,8 @@ public class ProductController {
 	@PostMapping(value = "/beauticians/{beauticianId}/products/new")
 	public String processCreationForm(@Valid final Product product, final BindingResult result, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) {
 		if (result.hasErrors()) {
+			Collection<PetType> spe = this.productService.findSpecializationsByBeauticianId(beauticianId);
+			model.put("specialization", spe);
 			model.put("product", product);
 			return "products/createOrUpdateProduct";
 		} else {
