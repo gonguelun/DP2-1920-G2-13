@@ -109,12 +109,17 @@ public class PickUpRequestControllerTests {
 
 		Collection<PickUpRequest> pickUps = new ArrayList<PickUpRequest>();
 		pickUps.add(pickUp);
+
+		List<PickUpRequest> pickUps2 = new ArrayList<>();
+		pickUps2.add(pickUp);
+		pickUps2.add(pickUp2);
 		BDDMockito.given(this.ownerService.findOwnerById(PickUpRequestControllerTests.TEST_OWNER_ID)).willReturn(owner);
 		BDDMockito.given(this.petService.findPetTypes()).willReturn(temp2);
 		BDDMockito.given(this.pickUpRequestService.findPickUpRequestsByOwnerUsername(PickUpRequestControllerTests.TEST_OWNER_USERNAME)).willReturn(pickUps);
 		BDDMockito.given(this.pickUpRequestService.findPickUpRequestByPickUpRequestId(PickUpRequestControllerTests.TEST_PICK_UP_REQUEST_ID)).willReturn(pickUp);
 		BDDMockito.given(this.pickUpRequestService.findPickUpRequestByPickUpRequestId(2)).willReturn(pickUp2);
 		BDDMockito.given(this.pickUpRequestService.findOwnerByUsername(PickUpRequestControllerTests.TEST_OWNER_USERNAME)).willReturn(owner);
+		BDDMockito.given(this.pickUpRequestService.findAllPickUpRequests()).willReturn(pickUps2);
 
 	}
 
@@ -322,5 +327,16 @@ public class PickUpRequestControllerTests {
 	void testProcessUpdateFormError() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/vets/pick-up-requests/{pickUpId}/update", 2).with(SecurityMockMvcRequestPostProcessors.csrf()).param("description", "descripcion").param("physicalStatus", "good").param("address", "Calle 1")
 			.param("isAccepted", "false").param("isClosed", "true").param("contact", " no te lo recojo")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
+	}
+
+	// Historia de usuario 18
+	// Caso positivo
+	@WithMockUser(username = "owner1", roles = {
+		"owner"
+	}, password = "123")
+	@Test
+	void testInitShowVetForm() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/vets/pick-up-requests")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeExists("pickUpRequests"))
+			.andExpect(MockMvcResultMatchers.view().name("pick-up-requests/allPickUpRequestsList"));
 	}
 }
