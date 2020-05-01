@@ -15,7 +15,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class CreateAndShowProductSuccess {
+public class DeleteProductSuccessUITest {
 
 	private WebDriver		driver;
 	private String			baseUrl;
@@ -33,27 +33,38 @@ public class CreateAndShowProductSuccess {
 	}
 
 	@Test
-	public void testPruebaCrearYMostrarProduct() throws Exception {
+	public void testUntitledTestCase() throws Exception {
 		this.driver.get("http://localhost:8080/");
-		this.driver.findElement(By.linkText("LOGIN")).click();
+		this.driver.findElement(By.linkText("Login")).click();
+		this.driver.findElement(By.id("username")).click();
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("f");
 		this.driver.findElement(By.id("password")).clear();
 		this.driver.findElement(By.id("password")).sendKeys("f");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
+		this.driver.findElement(By.linkText("Beautician")).click();
+		this.driver.findElement(By.linkText("Add Beauty Center")).click();
+		this.driver.findElement(By.id("name")).click();
+		this.driver.findElement(By.id("name")).clear();
+		this.driver.findElement(By.id("name")).sendKeys("test");
+		this.driver.findElement(By.id("description")).clear();
+		this.driver.findElement(By.id("description")).sendKeys("test");
+		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("cat");
+		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("Create Product")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("Producto");
+		this.driver.findElement(By.id("name")).sendKeys("test");
 		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("Descripcion");
+		this.driver.findElement(By.id("description")).sendKeys("test");
 		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("cat");
 		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
 		this.driver.findElement(By.name("avaliable")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a/span[2]")).click();
-		this.driver.findElement(By.linkText("Product List")).click();
+		this.driver.findElement(By.linkText("Beautician")).click();
+		this.driver.findElement(By.xpath("(//a[contains(text(),'Product List')])[2]")).click();
+		this.driver.findElement(By.linkText("Delete Product")).click();
 	}
 
 	@AfterEach
