@@ -34,7 +34,7 @@ public class ListOwnerBeautyDatesSuccess {
 
 	@Test
 	public void testListOwnerBeautyDatesSuccess() throws Exception {
-		this.driver.get("http://localhost:8080/");
+		this.driver.get("http://localhost:8080");
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("owner1");
