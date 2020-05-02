@@ -56,7 +56,7 @@
                     <a href="${fn:escapeXml(updatePickUpUrl)}">Update PickUp Request</a>
                 </td>
                 </c:if>
-                <c:if test="${pickUpRequest.isAccepted==false}"> 
+                <c:if test="${pickUpRequest.isAccepted==true}"> 
                 <td>
                 	 
       				<spring:url value="/vets/pick-up-requests/{pickUpId}/delete" var="deletePickUpUrl">

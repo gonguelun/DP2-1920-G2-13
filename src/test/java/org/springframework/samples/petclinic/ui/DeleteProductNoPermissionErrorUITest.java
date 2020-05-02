@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -21,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CreateAndShowProductSuccessUITest {
+public class DeleteProductNoPermissionErrorUITest {
 
 	@LocalServerPort
 	private int				port;
@@ -41,32 +42,49 @@ public class CreateAndShowProductSuccessUITest {
 	}
 
 	@Test
-	public void testPruebaCrearYMostrarProduct() throws Exception {
-		this.driver.get("http://localhost:" + this.port);
+	public void testUntitledTestCase() throws Exception {
+		this.driver.get("http://localhost:8080/");
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("f");
 		this.driver.findElement(By.id("password")).clear();
 		this.driver.findElement(By.id("password")).sendKeys("f");
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
+		this.driver.findElement(By.linkText("Add Beauty Center")).click();
+		this.driver.findElement(By.id("name")).click();
+		this.driver.findElement(By.id("name")).clear();
+		this.driver.findElement(By.id("name")).sendKeys("test");
+		this.driver.findElement(By.id("description")).clear();
+		this.driver.findElement(By.id("description")).sendKeys("test");
+		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("cat");
+		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("Create Product")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("Producto");
+		this.driver.findElement(By.id("name")).sendKeys("test");
 		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("Descripcion");
+		this.driver.findElement(By.id("description")).sendKeys("test");
 		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("cat");
 		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.xpath("//form[@id='product']/div")).click();
 		this.driver.findElement(By.name("avaliable")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a/span[2]")).click();
-		this.driver.findElement(By.linkText("Product List")).click();
-		try {
-			Assert.assertEquals("Producto", this.driver.findElement(By.id("Producto")).getText());
-		} catch (Error e) {
-			this.verificationErrors.append(e.toString());
-		}
+		this.driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a/span")).click();
+		this.driver.findElement(By.linkText("Logout")).click();
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+		this.driver.get("http://localhost:" + this.port + "/{beautyCenterId}/products/1/delete");
+
+		this.driver.findElement(By.id("username")).clear();
+		this.driver.findElement(By.id("username")).sendKeys("g");
+		this.driver.findElement(By.id("password")).click();
+		this.driver.findElement(By.id("password")).clear();
+		this.driver.findElement(By.id("password")).sendKeys("g");
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+		Assert.assertEquals("Something happened...", this.driver.findElement(By.xpath("//h2")).getText());
 	}
 
 	@AfterEach
