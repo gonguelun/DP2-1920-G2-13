@@ -66,12 +66,12 @@ public class PickUpRequestControllerE2ETests {
 	}
 
 	// Caso negativo acceder con id invalido
-	@WithMockUser(username = "owner1", roles = {
+	@WithMockUser(username = "owner2", roles = {
 		"owner"
 	}, password = "0wn3r")
 	@Test
 	void testInitCreationFormError() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerId}/pick-up-requests/new", 2)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("exception"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerId}/pick-up-requests/new", 1)).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 	}
 
 	// Caso positivo creacion con exito
@@ -159,7 +159,7 @@ public class PickUpRequestControllerE2ETests {
 	}, password = "0wn3r")
 	@Test
 	void testInitShowInvalidAccessForm() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests", "owner1")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("exception"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests", "owner1")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 	}
 
 	/*
