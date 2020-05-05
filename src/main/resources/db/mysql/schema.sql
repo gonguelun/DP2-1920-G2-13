@@ -79,3 +79,18 @@ CREATE TABLE IF NOT EXISTS beauty_center (
   description VARCHAR(255),
   FOREIGN KEY (pet_type_id) REFERENCES types(id)
 ) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS pick_up_request (
+	id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	description VARCHAR(30),
+	pet_type_id INT(4) UNSIGNED NOT NULL,
+	physical_status VARCHAR(30),
+	is_accepted BOOLEAN NOT NULL,
+	address VARCHAR(30),
+	is_closed BOOLEAN NOT NULL,
+	contact VARCHAR(30),
+	owner_id INT(4) UNSIGNED NOT NULL,
+	FOREIGN KEY (pet_type_id) REFERENCES types(id),
+	FOREIGN KEY (owner_id) REFERENCES owners(id),
+	UNIQUE (pet_type_id,owner_id)
+) engine=InnoDB;

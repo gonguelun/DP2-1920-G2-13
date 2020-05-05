@@ -100,3 +100,6 @@ INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) 
 INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (3, 'name1', 'hey', 4, 3);
 INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (4, 'name1', 'hey', 5, 4);
 INSERT IGNORE INTO beauty_center(id,name,description,pet_type_id,beautician_id) VALUES (5, 'name1', 'hey', 2, 5);
+
+INSERT IGNORE INTO pick_up_request(id,description,pet_type_id,physical_status,is_accepted,address,is_closed,contact,owner_id) VALUES (1, 'prueba1', 1, 'prueba2', TRUE, 'prueba3', FALSE, 'prueba4', 1);
+INSERT IGNORE INTO pick_up_request(id,description,pet_type_id,physical_status,is_accepted,address,is_closed,contact,owner_id) VALUES (2, 'prueba5', 2, 'prueba6', FALSE, 'prueba7', TRUE, 'prueba8', 2);

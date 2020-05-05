@@ -10,6 +10,7 @@ DROP TABLE authorities IF EXISTS;
 DROP TABLE beautician IF EXISTS;
 DROP TABLE beautician_specializations IF EXISTS;
 DROP TABLE beauty_center IF EXISTS;
+DROP TABLE pick_up_request IF EXISTS;
 
 CREATE TABLE vets (
   id         INTEGER IDENTITY PRIMARY KEY,
@@ -106,3 +107,17 @@ CREATE TABLE beauty_center (
 );
 ALTER TABLE beauty_center ADD CONSTRAINT fk_beauty_center_beautician FOREIGN KEY (beautician_id) REFERENCES beautician (id);
 ALTER TABLE beauty_center ADD CONSTRAINT fk_beauty_center_pet_type_id FOREIGN KEY (pet_type_id) REFERENCES types (id);
+
+CREATE TABLE pick_up_request (
+	id	INTEGER IDENTITY PRIMARY KEY,
+	description VARCHAR(30),
+	pet_type_id INTEGER NOT NULL,
+	physical_status VARCHAR(30),
+	is_accepted BOOLEAN NOT NULL,
+	address VARCHAR(30),
+	is_closed BOOLEAN NOT NULL,
+	contact VARCHAR(30),
+	owner_id INTEGER NOT NULL
+);
+ALTER TABLE pick_up_request ADD CONSTRAINT fk_pick_up_request_owner FOREIGN KEY (owner_id) REFERENCES owner (id);
+ALTER TABLE pick_up_request ADD CONSTRAINT fk_pick_up_request_pet_type_id FOREIGN KEY (pet_type_id) REFERENCES types (id);
