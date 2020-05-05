@@ -10,17 +10,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RegisterBeautyCenterErrorUI {
+public class UpdateProductSuccessUITest {
 
 	@LocalServerPort
 	private int				port;
@@ -44,17 +46,35 @@ public class RegisterBeautyCenterErrorUI {
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("f");
-		this.driver.findElement(By.id("password")).click();
 		this.driver.findElement(By.id("password")).clear();
 		this.driver.findElement(By.id("password")).sendKeys("f");
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Add Beauty Center")).click();
+		this.driver.findElement(By.linkText("Create Product")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("TestErrorBeautyCenter");
+		this.driver.findElement(By.id("name")).sendKeys("prueba");
+		this.driver.findElement(By.id("description")).click();
+		this.driver.findElement(By.id("description")).clear();
+		this.driver.findElement(By.id("description")).sendKeys("prueba");
+		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("cat");
+		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.name("avaliable")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		Assert.assertEquals("It's mandatory", this.driver.findElement(By.xpath("//form[@id='add-beautyCenter-form']/div/div[3]/div/div/span[2]")).getText());
+		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
+		this.driver.findElement(By.linkText("Product List")).click();
+		this.driver.findElement(By.id("update1")).click();
+		this.driver.findElement(By.id("name")).click();
+		this.driver.findElement(By.id("name")).clear();
+		this.driver.findElement(By.id("name")).sendKeys("pruebamodificado");
+		this.driver.findElement(By.id("description")).click();
+		this.driver.findElement(By.id("description")).clear();
+		this.driver.findElement(By.id("description")).sendKeys("pruebamod");
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
+		this.driver.findElement(By.linkText("Product List")).click();
+		Assert.assertEquals("pruebamodificado", this.driver.findElement(By.id("pruebamodificado")).getText());
+
 	}
 
 	@AfterEach

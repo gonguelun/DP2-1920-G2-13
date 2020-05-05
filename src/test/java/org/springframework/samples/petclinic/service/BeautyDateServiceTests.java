@@ -14,6 +14,8 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
@@ -33,6 +35,7 @@ import org.springframework.samples.petclinic.service.exceptions.PastDateExceptio
 import org.springframework.stereotype.Service;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 public class BeautyDateServiceTests {
 
 	@Autowired
@@ -249,7 +252,7 @@ public class BeautyDateServiceTests {
 		owner.setUser(user2);
 
 		owner.addPet(peto);
-		owner.addPet(peto);
+		owner.addPet(pet);
 
 		BeautyDate bc = new BeautyDate();
 		bc.setId(1);
@@ -257,7 +260,7 @@ public class BeautyDateServiceTests {
 		bc.setBeautyCenter(beautyCenter);
 		bc.setPet(peto);
 
-		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 4, 1), LocalTime.of(16, 0)));
+		bc.setStartDate(LocalDateTime.of(LocalDate.of(2021, 4, 1), LocalTime.of(16, 0)));
 
 		this.beautyDateService.saveBeautyDate(bc);
 
@@ -265,9 +268,9 @@ public class BeautyDateServiceTests {
 		bc2.setId(2);
 		bc2.setDescription("jjjajaja");
 		bc2.setBeautyCenter(beautyCenter);
-		bc2.setPet(peto);
+		bc2.setPet(pet);
 
-		bc2.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
+		bc2.setStartDate(LocalDateTime.of(LocalDate.of(2021, 4, 1), LocalTime.of(16, 0)));
 
 		Assertions.assertThrows(AlreadyDateException.class, () -> this.beautyDateService.saveBeautyDate(bc2));
 	}
@@ -454,7 +457,6 @@ public class BeautyDateServiceTests {
 
 	}
 
-
 	// TESTS HISTORIA DE USUARIO 9 (Métodos en BeautyDateService)
 
 	/* IS DATE VALID */
@@ -481,6 +483,5 @@ public class BeautyDateServiceTests {
 		});
 
 	}
-
 
 }
