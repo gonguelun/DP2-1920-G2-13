@@ -173,7 +173,7 @@ public class PickUpRequestServiceTests {
 	@Test
 	public void testSavingPickUpRequestNoAddressInCorrect() throws NoPetTypeException {
 		PickUpRequest pickUp=new PickUpRequest();
-		pickUp.setId(1);
+		pickUp.setId(92);
 		pickUp.setAddress("");
 		pickUp.setDescription("descripcion");
 		pickUp.setIsAccepted(false);
@@ -203,7 +203,7 @@ public class PickUpRequestServiceTests {
 	@Test
 	public void testSavingPickUpRequestNoAcceptedInCorrect() throws NoPetTypeException {
 		PickUpRequest pickUp=new PickUpRequest();
-		pickUp.setId(1);
+		pickUp.setId(92);
 		pickUp.setAddress("Calle 1");
 		pickUp.setDescription("descripcion");
 		pickUp.setIsAccepted(null);

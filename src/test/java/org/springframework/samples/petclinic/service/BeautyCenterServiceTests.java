@@ -36,6 +36,8 @@ public class BeautyCenterServiceTests {
 	private PetService			petService;
 
 
+	
+
 	@Test
 	public void testCountWithInitialData() {
 		int count = this.beautyService.beautyCount();
@@ -47,9 +49,9 @@ public class BeautyCenterServiceTests {
 		BeautyCenter bc = this.beautyService.findById(1);
 		bc.setName("name modified");
 		bc.setDescription("description modified");
-		PetType pet = new PetType();
-		pet.setName("bird");
-		bc.setPetType(pet);
+
+		List<PetType> pt = new ArrayList<>(this.petService.findPetTypes());
+		bc.setPetType(pt.get(0));
 		this.beautyService.update(bc, bc.getId());
 		assertEquals(this.beautyService.update(bc, bc.getId()), true);
 
