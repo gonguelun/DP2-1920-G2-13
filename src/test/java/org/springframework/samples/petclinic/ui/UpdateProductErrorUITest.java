@@ -21,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RegisterBeautyCenterSuccessUI {
+public class UpdateProductErrorUITest {
 
 	@LocalServerPort
 	private int				port;
@@ -43,23 +43,34 @@ public class RegisterBeautyCenterSuccessUI {
 	public void testUntitledTestCase() throws Exception {
 		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("LOGIN")).click();
-		this.driver.findElement(By.id("password")).clear();
-		this.driver.findElement(By.id("password")).sendKeys("f");
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("f");
+		this.driver.findElement(By.id("password")).click();
+		this.driver.findElement(By.id("password")).clear();
+		this.driver.findElement(By.id("password")).sendKeys("f");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Add Beauty Center")).click();
+		this.driver.findElement(By.linkText("Create Product")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("TestBeautyCenter");
+		this.driver.findElement(By.id("name")).sendKeys("pruebaerror");
+		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("this is a description");
-		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("cat");
+		this.driver.findElement(By.id("description")).sendKeys("pruebaerror");
+		this.driver.findElement(By.id("type")).click();
+		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("cat");
 		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.name("avaliable")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
+		this.driver.findElement(By.linkText("Product List")).click();
+		this.driver.findElement(By.id("update1")).click();
+		this.driver.findElement(By.id("description")).click();
+		this.driver.findElement(By.id("description")).clear();
+		this.driver.findElement(By.id("description")).sendKeys("");
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		Assert.assertEquals("no puede estar vacío", this.driver.findElement(By.xpath("//form[@id='product']/div/div[2]/div/span[2]")).getText());
 
-		Assert.assertEquals("TestBeautyCenter", this.driver.findElement(By.id("TestBeautyCenter")).getText());
 	}
 
 	@AfterEach

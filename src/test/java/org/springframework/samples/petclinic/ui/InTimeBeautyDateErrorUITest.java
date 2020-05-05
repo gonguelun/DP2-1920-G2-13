@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -21,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UpdateProductErrorUI {
+public class InTimeBeautyDateErrorUITest {
 
 	@LocalServerPort
 	private int				port;
@@ -43,33 +44,35 @@ public class UpdateProductErrorUI {
 	public void testUntitledTestCase() throws Exception {
 		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("LOGIN")).click();
+		this.driver.findElement(By.id("username")).click();
 		this.driver.findElement(By.id("username")).clear();
-		this.driver.findElement(By.id("username")).sendKeys("f");
+		this.driver.findElement(By.id("username")).sendKeys("owner1");
 		this.driver.findElement(By.id("password")).click();
 		this.driver.findElement(By.id("password")).clear();
-		this.driver.findElement(By.id("password")).sendKeys("f");
+		this.driver.findElement(By.id("password")).sendKeys("0wn3r");
+		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
+		this.driver.findElement(By.linkText("FIND OWNERS")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Create Product")).click();
+		this.driver.findElement(By.linkText("George Franklin")).click();
+		this.driver.findElement(By.linkText("Add New Pet")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("pruebaerror");
+		this.driver.findElement(By.id("name")).sendKeys("prueba");
+		this.driver.findElement(By.id("birthDate")).click();
+		this.driver.findElement(By.linkText("8")).click();
+		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("bird");
+		this.driver.findElement(By.xpath("//option[@value='bird']")).click();
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.linkText("SEARCH BEAUTY CENTERS")).click();
+		this.driver.findElement(By.xpath("(//button[@type='button'])[2]")).click();
+		this.driver.findElement(By.linkText("Book a date")).click();
+		new Select(this.driver.findElement(By.id("pet"))).selectByVisibleText("prueba - 14");
+		this.driver.findElement(By.xpath("//option[@value='prueba - 14']")).click();
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("pruebaerror");
-		this.driver.findElement(By.id("type")).click();
-		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("cat");
-		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
-		this.driver.findElement(By.name("avaliable")).click();
+		this.driver.findElement(By.id("description")).sendKeys("prueba");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Product List")).click();
-		this.driver.findElement(By.id("update1")).click();
-		this.driver.findElement(By.id("description")).click();
-		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("");
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		Assert.assertEquals("no puede estar vacío", this.driver.findElement(By.xpath("//form[@id='product']/div/div[2]/div/span[2]")).getText());
+		Assert.assertEquals("no puede ser null", this.driver.findElement(By.xpath("//form[@id='add-beautyDate-form']/div/div[2]/div/div/span[2]")).getText());
 
 	}
 

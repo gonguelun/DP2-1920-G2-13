@@ -12,6 +12,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.petclinic.model.Beautician;
@@ -24,6 +26,7 @@ import org.springframework.samples.petclinic.web.BeautyCenterControllerTests;
 import org.springframework.stereotype.Service;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 public class BeautyCenterServiceTests {
 
 	@Autowired
@@ -32,6 +35,8 @@ public class BeautyCenterServiceTests {
 	@Autowired
 	private PetService			petService;
 
+
+	
 
 	@Test
 	public void testCountWithInitialData() {
@@ -44,9 +49,9 @@ public class BeautyCenterServiceTests {
 		BeautyCenter bc = this.beautyService.findById(1);
 		bc.setName("name modified");
 		bc.setDescription("description modified");
-		PetType pet = new PetType();
-		pet.setName("bird");
-		bc.setPetType(pet);
+
+		List<PetType> pt = new ArrayList<>(this.petService.findPetTypes());
+		bc.setPetType(pt.get(0));
 		this.beautyService.update(bc, bc.getId());
 		assertEquals(this.beautyService.update(bc, bc.getId()), true);
 

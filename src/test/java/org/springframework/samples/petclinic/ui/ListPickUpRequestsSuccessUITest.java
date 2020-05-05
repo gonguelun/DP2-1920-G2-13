@@ -16,7 +16,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class ChooseProductsInBeautyDateSuccess {
+public class ListPickUpRequestsSuccessUITest {
 
 	private WebDriver		driver;
 	private String			baseUrl;
@@ -34,7 +34,7 @@ public class ChooseProductsInBeautyDateSuccess {
 	}
 
 	@Test
-	public void testChooseProductsInBeautyDateSuccess() throws Exception {
+	public void testListPickUpRequestsSuccess() throws Exception {
 		this.driver.get("http://localhost:8080/");
 		this.driver.findElement(By.linkText("OWNER REGISTER")).click();
 		this.driver.findElement(By.id("firstName")).click();
@@ -52,26 +52,6 @@ public class ChooseProductsInBeautyDateSuccess {
 		this.driver.findElement(By.id("user.username")).sendKeys("b");
 		this.driver.findElement(By.id("user.password")).clear();
 		this.driver.findElement(By.id("user.password")).sendKeys("b");
-		this.driver.findElement(By.id("add-owner-form")).submit();
-		this.driver.findElement(By.linkText("LOGIN")).click();
-		this.driver.findElement(By.id("username")).clear();
-		this.driver.findElement(By.id("username")).sendKeys("f");
-		this.driver.findElement(By.id("password")).clear();
-		this.driver.findElement(By.id("password")).sendKeys("f");
-		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Create Product")).click();
-		this.driver.findElement(By.id("name")).click();
-		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("yo");
-		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("yo");
-		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("cat");
-		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
-		this.driver.findElement(By.name("avaliable")).click();
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("F")).click();
-		this.driver.findElement(By.linkText("Logout")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).clear();
@@ -79,34 +59,51 @@ public class ChooseProductsInBeautyDateSuccess {
 		this.driver.findElement(By.id("password")).clear();
 		this.driver.findElement(By.id("password")).sendKeys("b");
 		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
-		this.driver.findElement(By.linkText("Find owners")).click();
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("b b")).click();
-		this.driver.findElement(By.linkText("Add New Pet")).click();
-		this.driver.findElement(By.id("name")).click();
-		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("yo2");
-		this.driver.findElement(By.id("birthDate")).clear();
-		this.driver.findElement(By.id("birthDate")).sendKeys("2020/02/10");
-		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("cat");
-		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[3]/a/span[2]")).click();
-		this.driver.findElement(By.id("typePet")).click();
-		new Select(this.driver.findElement(By.id("typePet"))).selectByVisibleText("cat");
-		this.driver.findElement(By.xpath("//option[@value='1']")).click();
-		this.driver.findElement(By.xpath("(//button[@type='button'])[2]")).click();
-		this.driver.findElement(By.linkText("Book a date")).click();
+		this.driver.findElement(By.linkText("VIEW MY PICK UP REQUESTS")).click();
+		this.driver.findElement(By.linkText("New request")).click();
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("yo3");
-		new Select(this.driver.findElement(By.id("startDate"))).selectByVisibleText("2020/06/02 16:00");
-		this.driver.findElement(By.xpath("//option[@value='2020/06/02 16:00']")).click();
-		new Select(this.driver.findElement(By.id("pet"))).selectByVisibleText("yo2 - 14");
-		this.driver.findElement(By.xpath("//option[@value='yo2 - 14']")).click();
-		// ERROR: Caught exception [ERROR: Unsupported command [addSelection | id=products | label=yo - 1]]
-		this.driver.findElement(By.xpath("//option[@value='yo - 1']")).click();
+		this.driver.findElement(By.id("description")).sendKeys("yo1");
+		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("cat");
+		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.id("physicalStatus")).click();
+		this.driver.findElement(By.id("physicalStatus")).clear();
+		this.driver.findElement(By.id("physicalStatus")).sendKeys("yo1");
+		this.driver.findElement(By.id("address")).click();
+		this.driver.findElement(By.id("address")).clear();
+		this.driver.findElement(By.id("address")).sendKeys("yo1");
+		this.driver.findElement(By.id("physicalStatus")).click();
+		this.driver.findElement(By.id("physicalStatus")).clear();
+		this.driver.findElement(By.id("physicalStatus")).sendKeys("yo2");
+		this.driver.findElement(By.id("address")).click();
+		this.driver.findElement(By.id("address")).clear();
+		this.driver.findElement(By.id("address")).sendKeys("yo3");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.linkText("B")).click();
+		this.driver.findElement(By.linkText("Logout")).click();
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.linkText("VET REGISTER")).click();
+		this.driver.findElement(By.id("firstName")).click();
+		this.driver.findElement(By.id("firstName")).click();
+		this.driver.findElement(By.id("firstName")).clear();
+		this.driver.findElement(By.id("firstName")).sendKeys("h");
+		this.driver.findElement(By.id("lastName")).clear();
+		this.driver.findElement(By.id("lastName")).sendKeys("h");
+		// ERROR: Caught exception [ERROR: Unsupported command [addSelection | id=specialties | label=radiology]]
+		this.driver.findElement(By.xpath("//option[@value='radiology']")).click();
+		this.driver.findElement(By.id("user.username")).click();
+		this.driver.findElement(By.id("user.username")).clear();
+		this.driver.findElement(By.id("user.username")).sendKeys("h");
+		this.driver.findElement(By.id("user.password")).clear();
+		this.driver.findElement(By.id("user.password")).sendKeys("h");
+		this.driver.findElement(By.id("add-vet-form")).submit();
+		this.driver.findElement(By.linkText("LOGIN")).click();
+		this.driver.findElement(By.id("username")).clear();
+		this.driver.findElement(By.id("username")).sendKeys("h");
+		this.driver.findElement(By.id("password")).clear();
+		this.driver.findElement(By.id("password")).sendKeys("h");
+		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
+		this.driver.findElement(By.linkText("PICK UP REQUESTS")).click();
 	}
 
 	@AfterEach
@@ -150,4 +147,5 @@ public class ChooseProductsInBeautyDateSuccess {
 			this.acceptNextAlert = true;
 		}
 	}
+
 }

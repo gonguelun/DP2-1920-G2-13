@@ -22,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class InTimeBeautyDateErrorUI {
+public class InTimeBeautyDateSuccessUITest {
 
 	@LocalServerPort
 	private int				port;
@@ -43,6 +43,7 @@ public class InTimeBeautyDateErrorUI {
 	@Test
 	public void testUntitledTestCase() throws Exception {
 		this.driver.get("http://localhost:" + this.port);
+
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).click();
 		this.driver.findElement(By.id("username")).clear();
@@ -58,22 +59,25 @@ public class InTimeBeautyDateErrorUI {
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
 		this.driver.findElement(By.id("name")).sendKeys("prueba");
-		this.driver.findElement(By.id("birthDate")).click();
-		this.driver.findElement(By.linkText("8")).click();
 		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("bird");
 		this.driver.findElement(By.xpath("//option[@value='bird']")).click();
+		this.driver.findElement(By.id("birthDate")).click();
+		this.driver.findElement(By.linkText("8")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("SEARCH BEAUTY CENTERS")).click();
 		this.driver.findElement(By.xpath("(//button[@type='button'])[2]")).click();
 		this.driver.findElement(By.linkText("Book a date")).click();
-		new Select(this.driver.findElement(By.id("pet"))).selectByVisibleText("prueba - 14");
-		this.driver.findElement(By.xpath("//option[@value='prueba - 14']")).click();
+		this.driver.findElement(By.xpath("//body/div/div")).click();
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("prueba");
+		this.driver.findElement(By.id("description")).sendKeys("pruebaui1");
+		new Select(this.driver.findElement(By.id("startDate"))).selectByVisibleText("2020/06/02 19:00");
+		this.driver.findElement(By.xpath("//option[@value='2020/06/02 19:00']")).click();
+		new Select(this.driver.findElement(By.id("pet"))).selectByVisibleText("prueba - 14");
+		this.driver.findElement(By.xpath("//option[@value='prueba - 14']")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		Assert.assertEquals("no puede ser null", this.driver.findElement(By.xpath("//form[@id='add-beautyDate-form']/div/div[2]/div/div/span[2]")).getText());
-
+		this.driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[4]/a/span")).click();
+		Assert.assertEquals("pruebaui1", this.driver.findElement(By.id("pruebaui1")).getText());
 	}
 
 	@AfterEach
