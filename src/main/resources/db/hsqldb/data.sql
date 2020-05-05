@@ -149,3 +149,6 @@ INSERT INTO beauty_date(id,description,start_date,pet_id,beauty_center_id) VALUE
 
 INSERT INTO pick_up_request(id,description,pet_type_id,physical_status,is_accepted,address,is_closed,contact,owner_id) VALUES (1, 'prueba1', 1, 'prueba2', TRUE, 'prueba3', FALSE, 'prueba4', 1);
 INSERT INTO pick_up_request(id,description,pet_type_id,physical_status,is_accepted,address,is_closed,contact,owner_id) VALUES (2, 'prueba5', 2, 'prueba6', FALSE, 'prueba7', TRUE, 'prueba8', 2);
+
+INSERT INTO products(id,name,type_id,description,avaliable,beautician_id) VALUES (1,'prueba1',1,'prueba2',TRUE,1);
+INSERT INTO products(id,name,type_id,description,avaliable,beautician_id) VALUES (2,'prueba3',2,'prueba4',TRUE,2);

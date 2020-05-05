@@ -94,3 +94,15 @@ CREATE TABLE IF NOT EXISTS pick_up_request (
 	FOREIGN KEY (owner_id) REFERENCES owners(id),
 	UNIQUE (pet_type_id,owner_id)
 ) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS products (
+	id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(30),
+	type_id INT(4) UNSIGNED NOT NULL,
+	description VARCHAR(30),
+	avaliable BOOLEAN,
+	beautician_id INT(4) UNSIGNED NOT NULL,
+	FOREIGN KEY (type_id) REFERENCES types(id),
+	FOREIGN KEY (beautician_id) REFERENCES beautician(id),
+	UNIQUE (type_id,beautician_id)
+) engine=InnoDB;
