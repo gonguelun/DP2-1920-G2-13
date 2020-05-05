@@ -269,7 +269,8 @@ public class ProductControllerTests {
 	}, password = "123")
 	@Test
 	void testProcessDeleteProductFormErrors() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products/{productId}/delete", 2, ProductControllerTests.TEST_BEAUTY_CENTER_ID)).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+		Mockito.when(this.authoritiesService.isAuthor(ArgumentMatchers.any())).thenThrow(new InvalidActivityException());
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/{beautyCenterId}/products/{productId}/delete", ProductControllerTests.TEST_BEAUTY_CENTER_ID, 1)).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 			.andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 
 	}
