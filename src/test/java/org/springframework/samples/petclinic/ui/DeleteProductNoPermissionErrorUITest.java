@@ -26,6 +26,7 @@ public class DeleteProductNoPermissionErrorUITest {
 
 	@LocalServerPort
 	private int				port;
+
 	private WebDriver		driver;
 	private String			baseUrl;
 	private boolean			acceptNextAlert		= true;
@@ -34,8 +35,7 @@ public class DeleteProductNoPermissionErrorUITest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		String pathToGeckoDriver = "C:\\Users\\Mario David\\Downloads";
-		System.setProperty("webdriver.gecko.driver", pathToGeckoDriver + "\\geckodriver.exe");
+		System.setProperty("webdriver.gecko.driver", System.getenv("webdriver.gecko.driver"));
 		this.driver = new FirefoxDriver();
 		this.baseUrl = "https://www.google.com/";
 		this.driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -43,7 +43,7 @@ public class DeleteProductNoPermissionErrorUITest {
 
 	@Test
 	public void testUntitledTestCase() throws Exception {
-		this.driver.get("http://localhost:8080/");
+		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("f");
