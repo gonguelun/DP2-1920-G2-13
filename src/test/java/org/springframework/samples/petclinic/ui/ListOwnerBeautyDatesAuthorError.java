@@ -52,13 +52,15 @@ public class ListOwnerBeautyDatesAuthorError {
 		this.driver.findElement(By.id("user.password")).clear();
 		this.driver.findElement(By.id("user.password")).sendKeys("b");
 		this.driver.findElement(By.id("add-owner-form")).submit();
+
+		this.driver.get("http://localhost:8080/owners/owner1/beauty-dates");
+
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("b");
 		this.driver.findElement(By.id("password")).clear();
 		this.driver.findElement(By.id("password")).sendKeys("b");
 		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
-		//		this.driver.get("http://localhost:8080/owners/owner1/beauty-dates");
 		//		Assert.assertEquals("Something happened...", this.driver.findElement(By.xpath("//h2")).getText());
 	}
 
