@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -14,8 +15,18 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ListOwnerBeautyDatesAuthorErrorUITest {
+
+	@LocalServerPort
+	private int				port;
 
 	private WebDriver		driver;
 	private String			baseUrl;
@@ -25,8 +36,7 @@ public class ListOwnerBeautyDatesAuthorErrorUITest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		String pathToGeckoDriver = "C:\\Users\\Gonzalo\\Desktop\\UNIVERSIDAD\\TERCERO\\DP2";
-		System.setProperty("webdriver.gecko.driver", pathToGeckoDriver + "\\geckodriver.exe");
+		System.setProperty("webdriver.gecko.driver", System.getenv("webdriver.gecko.driver"));
 		this.driver = new FirefoxDriver();
 		this.baseUrl = "https://www.google.com/";
 		this.driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -34,7 +44,7 @@ public class ListOwnerBeautyDatesAuthorErrorUITest {
 
 	@Test
 	public void testListOwnerBeautyDatesAuthorError() throws Exception {
-		this.driver.get("http://localhost:8080");
+		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("OWNER REGISTER")).click();
 		this.driver.findElement(By.id("firstName")).click();
 		this.driver.findElement(By.id("firstName")).clear();
@@ -52,14 +62,20 @@ public class ListOwnerBeautyDatesAuthorErrorUITest {
 		this.driver.findElement(By.id("user.password")).clear();
 		this.driver.findElement(By.id("user.password")).sendKeys("b");
 		this.driver.findElement(By.id("add-owner-form")).submit();
-		this.driver.findElement(By.linkText("LOGIN")).click();
+
+		this.driver.get("http://localhost:" + this.port + "/owners/owner1/beauty-dates");
+
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("b");
 		this.driver.findElement(By.id("password")).clear();
 		this.driver.findElement(By.id("password")).sendKeys("b");
 		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
-		//		this.driver.get("http://localhost:8080/owners/owner1/beauty-dates");
-		//		Assert.assertEquals("Something happened...", this.driver.findElement(By.xpath("//h2")).getText());
+
+		WebDriverWait aux = new WebDriverWait(this.driver, 6000);
+
+		aux.until(ExpectedConditions.urlContains("/oups"));
+
+		Assert.assertEquals("Something happened...", this.driver.findElement(By.xpath("//h2")).getText());
 	}
 
 	@AfterEach
