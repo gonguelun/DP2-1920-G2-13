@@ -4,35 +4,33 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
-<petclinic:layout pageName="tracksList">
-    <h2>Tracks</h2>
+<petclinic:layout pageName="albumList">
+    <h2>Albums</h2>
 
-    <table id="tracksTable" class="table table-striped">
+    <table id="albumsTable" class="table table-striped">
         <thead>
         <tr>
-            <th style="width: 15%;">Track name</th>
-            <th style="width: 25%;">Preview</th>
-            <th style="width: 25%;">Album</th>
+            <th style="width: 15%;">Album Name</th>
+            <th style="width: 25%;">Image</th>
             <th style="width: 25%;">Go to Spotify</th>
 
        
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${tracks}" var="track">
+        <c:forEach items="${albums}" var="album">
             <tr>
-                <td>
-                   <c:out value="${track.name}"/>
+                <td id="album.name">
+                   <c:out value="${album.name}"/>
                 </td>
+               
                 <td>
-                    <audio src="${track.previewUrl}" controls="controls" type="audio/mpeg" preload="preload">
-					</audio>
-                </td>
+                <c:forEach items="${album.images}" begin="0" end="0" var="image">
+                   <img src="${image.url}" width="160" height="160"/>
+                </c:forEach>
+                </td> 
                 <td>
-                   <c:out value="${track.album.name}"/>
-                </td>
-                <td>
-                	<a href="${track.externalUrls.spotify}">${track.uri}</a>            
+                	<a href="${album.externalUrls.spotify}">${album.uri}</a>            
                 </td>           
             </tr>
         </c:forEach>
