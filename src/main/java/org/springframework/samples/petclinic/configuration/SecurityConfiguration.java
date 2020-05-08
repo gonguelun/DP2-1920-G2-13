@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -38,7 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/admin/**").hasAnyAuthority("admin").antMatchers("/owners/**").hasAnyAuthority("owner").antMatchers("/{beauticianId}/products/**").hasAnyAuthority("beautician").antMatchers("/products/**").hasAnyAuthority("beautician")
 			.antMatchers("/beauticians/**").hasAnyAuthority("beautician").antMatchers("/vets/**").hasAnyAuthority("vet").antMatchers("/callback/**").permitAll().anyRequest().denyAll().and().formLogin()
 			/* .loginPage("/login") */
-			.failureUrl("/login-error").and().logout().logoutSuccessUrl("/").and().exceptionHandling().accessDeniedPage("/oups");
+			.failureUrl("/login-error").and().logout().logoutSuccessUrl("/").and().exceptionHandling().accessDeniedHandler(this.accessDeniedHandler());
 		// Configuración para que funcione la consola de administración
 		// de la BD H2 (deshabilitar las cabeceras de protección contra
 		// ataques de tipo csrf y habilitar los framesets si su contenido
@@ -58,6 +59,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder() {
 		PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
 		return encoder;
+	}
+
+	@Bean
+	public AccessDeniedHandler accessDeniedHandler() {
+		return new CustomAccessDeniedHandler();
 	}
 
 }

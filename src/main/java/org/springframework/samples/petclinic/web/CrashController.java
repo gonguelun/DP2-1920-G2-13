@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.samples.petclinic.web;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -22,17 +28,22 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Controller used to showcase what happens when an exception is thrown
  *
  * @author Michael Isvy
- * <p/>
- * Also see how the bean of type 'SimpleMappingExceptionResolver' has been declared inside
- * /WEB-INF/mvc-core-config.xml
+ *         <p/>
+ *         Also see how the bean of type 'SimpleMappingExceptionResolver' has been declared inside
+ *         /WEB-INF/mvc-core-config.xml
  */
 @Controller
 public class CrashController {
 
 	@GetMapping(value = "/oups")
 	public String triggerException() {
-		throw new RuntimeException(
-				"Expected: controller used to showcase what " + "happens when an exception is thrown");
+		throw new RuntimeException("Expected: controller used to showcase what " + "happens when an exception is thrown");
+	}
+
+	@GetMapping(value = "/accessDenied")
+	public String deniedException(final HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		throw new AccessDeniedException("User: " + auth.getName() + " attempted to access the protected URL: " + request.getRequestURI());
 	}
 
 }

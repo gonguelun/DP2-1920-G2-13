@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.activity.InvalidActivityException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ public class PickUpRequestController {
 	private OwnerService			ownerService;
 
 	private PetService				petService;
+
+	private HttpServletRequest		servlet;
 
 
 	@Autowired
