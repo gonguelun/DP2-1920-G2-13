@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.activity.InvalidActivityException;
@@ -83,26 +84,32 @@ public class BeauticianControllerE2ETests {
 		}, password = "f")
 		@Test
 		void testInitUpdateBeauticianForm() throws Exception {
-			Collection<PetType> specialization = new ArrayList<>();
-			PetType pet = new PetType();
-			pet.setName("cat");
-			PetType pet2 = new PetType();
-			pet2.setName("lizard");
-			PetType pet3 = new PetType();
-			pet3.setName("snake");
-			PetType pet4 = new PetType();
-			pet4.setName("bird");
-			PetType pet5 = new PetType();
-			pet5.setName("hamster");
-			specialization.add(pet);
-			specialization.add(pet2);
-			specialization.add(pet3);
-			specialization.add(pet4);
-			specialization.add(pet5);
+		Collection<PetType> specialization = new ArrayList<PetType>();
+		PetType pet = new PetType();
+		pet.setId(1);
+		pet.setName("cat");
+		PetType pet2 = new PetType();
+		pet2.setId(3);
+		pet2.setName("lizard");
+		PetType pet3 = new PetType();
+		pet3.setId(4);
+		pet3.setName("snake");
+		PetType pet4 = new PetType();
+		pet4.setId(6);
+		pet4.setName("bird");
+		PetType pet5 = new PetType();
+		pet5.setId(6);
+		pet5.setName("hamster");
+		specialization.add(pet);
+		specialization.add(pet2);
+		specialization.add(pet3);
+		specialization.add(pet4);
+		specialization.add(pet5);
 			this.mockMvc.perform(MockMvcRequestBuilders.get("/beauticians/{beauticianId}/edit", BeauticianControllerE2ETests.TEST_BEAUTICIAN_ID)).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeExists("beautician")).andExpect(MockMvcResultMatchers.model().attribute("beautician", Matchers.hasProperty("lastName", Matchers.is("f"))))
 				.andExpect(MockMvcResultMatchers.model().attribute("beautician", Matchers.hasProperty("firstName", Matchers.is("f"))))
-				.andExpect(MockMvcResultMatchers.model().attribute("beautician", Matchers.hasProperty("specializations",Matchers.equalTo(specialization)))).andExpect(MockMvcResultMatchers.view().name("beauticians/updateBeauticianForm"));
+				.andExpect(MockMvcResultMatchers.model().attribute("beautician", Matchers.hasProperty("specializations",Matchers.hasSize(specialization.size()))))
+				.andExpect(MockMvcResultMatchers.view().name("beauticians/updateBeauticianForm"));
 		}
 
 		@WithMockUser(username = "f", roles = {
@@ -143,16 +150,21 @@ public class BeauticianControllerE2ETests {
 		}, password = "f")
 		@Test
 		void testShowBeautician() throws Exception {
-			Collection<PetType> specialization = new ArrayList<>();
+			Collection<PetType> specialization = new ArrayList<PetType>();
 			PetType pet = new PetType();
+			pet.setId(1);
 			pet.setName("cat");
 			PetType pet2 = new PetType();
+			pet2.setId(3);
 			pet2.setName("lizard");
 			PetType pet3 = new PetType();
+			pet3.setId(4);
 			pet3.setName("snake");
 			PetType pet4 = new PetType();
+			pet4.setId(6);
 			pet4.setName("bird");
 			PetType pet5 = new PetType();
+			pet5.setId(6);
 			pet5.setName("hamster");
 			specialization.add(pet);
 			specialization.add(pet2);
@@ -163,7 +175,8 @@ public class BeauticianControllerE2ETests {
 			this.mockMvc.perform(MockMvcRequestBuilders.get("/beauticians/{beauticianId}", BeauticianControllerE2ETests.TEST_BEAUTICIAN_ID)).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attribute("beautician", Matchers.hasProperty("firstName", Matchers.is("f"))))
 				.andExpect(MockMvcResultMatchers.model().attribute("beautician", Matchers.hasProperty("lastName", Matchers.is("f"))))
-				.andExpect(MockMvcResultMatchers.model().attribute("beautician", Matchers.hasProperty("specializations", Matchers.is(specialization)))).andExpect(MockMvcResultMatchers.view().name("beauticians/beauticianDetails"));
+				.andExpect(MockMvcResultMatchers.model().attribute("beautician", Matchers.hasProperty("specializations", Matchers.hasSize(specialization.size()))))
+				.andExpect(MockMvcResultMatchers.view().name("beauticians/beauticianDetails"));
 		}
 
 		@WithMockUser(username = "LolIn", roles = {
