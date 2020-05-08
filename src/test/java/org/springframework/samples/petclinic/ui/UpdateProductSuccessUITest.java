@@ -83,7 +83,7 @@ public class UpdateProductSuccessUITest {
 		this.driver.findElement(By.id("description")).sendKeys("pruebamod");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("updatepruebaand")).click();
+		this.driver.findElement(By.id("idtestand")).click();
 		Assert.assertEquals("pruebamodificado", this.driver.findElement(By.id("pruebamodificado")).getText());
 
 	}
