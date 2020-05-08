@@ -51,6 +51,16 @@ public class UpdateProductErrorUITest {
 		this.driver.findElement(By.id("password")).sendKeys("f");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
+		this.driver.findElement(By.linkText("Add Beauty Center")).click();
+		this.driver.findElement(By.id("name")).click();
+		this.driver.findElement(By.id("name")).clear();
+		this.driver.findElement(By.id("name")).sendKeys("testanderr");
+		this.driver.findElement(By.id("description")).clear();
+		this.driver.findElement(By.id("description")).sendKeys("testanderr");
+		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("cat");
+		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
 		this.driver.findElement(By.linkText("Create Product")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
@@ -64,14 +74,13 @@ public class UpdateProductErrorUITest {
 		this.driver.findElement(By.name("avaliable")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Product List")).click();
-		this.driver.findElement(By.id("update1")).click();
+		this.driver.findElement(By.id("idtestanderr")).click();
+		this.driver.findElement(By.id("updatepruebaerror")).click();
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
 		this.driver.findElement(By.id("description")).sendKeys("");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		Assert.assertEquals("no puede estar vacío", this.driver.findElement(By.xpath("//form[@id='product']/div/div[2]/div/span[2]")).getText());
-
 	}
 
 	@AfterEach

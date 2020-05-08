@@ -43,7 +43,7 @@ public class ChooseProductsInBeautyDateSuccessUITest {
 
 	@Test
 	public void testChooseProductsInBeautyDateSuccess() throws Exception {
-		this.driver.get("http://localhost:8080/");
+		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("OWNER REGISTER")).click();
 		this.driver.findElement(By.id("firstName")).click();
 		this.driver.findElement(By.id("firstName")).clear();
@@ -108,12 +108,9 @@ public class ChooseProductsInBeautyDateSuccessUITest {
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
 		this.driver.findElement(By.id("description")).sendKeys("yo3");
-		new Select(this.driver.findElement(By.id("startDate"))).selectByVisibleText("2020/06/02 16:00");
-		this.driver.findElement(By.xpath("//option[@value='2020/06/02 16:00']")).click();
-		new Select(this.driver.findElement(By.id("pet"))).selectByVisibleText("yo2 - 14");
-		this.driver.findElement(By.xpath("//option[@value='yo2 - 14']")).click();
-		// ERROR: Caught exception [ERROR: Unsupported command [addSelection | id=products | label=yo - 1]]
-		this.driver.findElement(By.xpath("//option[@value='yo - 1']")).click();
+		new Select(this.driver.findElement(By.id("startDate"))).selectByIndex(0);
+		new Select(this.driver.findElement(By.id("pet"))).selectByIndex(0);
+		new Select(this.driver.findElement(By.id("products"))).selectByIndex(0);
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 	}
 

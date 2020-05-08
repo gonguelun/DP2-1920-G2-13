@@ -96,7 +96,7 @@
 	               	<spring:url value="/{beautyCenterId}/products" var="productUrl">
 	                     <spring:param name="beautyCenterId" value="${beautyCenters.id}"/>
 	                 </spring:url>
-	                 <a href="${fn:escapeXml(productUrl)}">Product List</a>
+	                 <a id="id${beautyCenters.name}" href="${fn:escapeXml(productUrl)}">Product List</a>
                 </td>
             </tr>
         </c:forEach>

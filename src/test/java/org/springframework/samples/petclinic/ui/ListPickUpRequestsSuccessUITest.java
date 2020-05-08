@@ -15,7 +15,9 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -43,7 +45,7 @@ public class ListPickUpRequestsSuccessUITest {
 
 	@Test
 	public void testListPickUpRequestsSuccess() throws Exception {
-		this.driver.get("http://localhost:8080/");
+		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("OWNER REGISTER")).click();
 		this.driver.findElement(By.id("firstName")).click();
 		this.driver.findElement(By.id("firstName")).clear();
@@ -97,15 +99,19 @@ public class ListPickUpRequestsSuccessUITest {
 		this.driver.findElement(By.id("firstName")).sendKeys("h");
 		this.driver.findElement(By.id("lastName")).clear();
 		this.driver.findElement(By.id("lastName")).sendKeys("h");
-		// ERROR: Caught exception [ERROR: Unsupported command [addSelection | id=specialties | label=radiology]]
-		this.driver.findElement(By.xpath("//option[@value='radiology']")).click();
+		new Select(this.driver.findElement(By.id("specialties"))).selectByIndex(0);
 		this.driver.findElement(By.id("user.username")).click();
 		this.driver.findElement(By.id("user.username")).clear();
 		this.driver.findElement(By.id("user.username")).sendKeys("h");
 		this.driver.findElement(By.id("user.password")).clear();
 		this.driver.findElement(By.id("user.password")).sendKeys("h");
 		this.driver.findElement(By.id("add-vet-form")).submit();
+
 		this.driver.findElement(By.linkText("LOGIN")).click();
+
+		WebDriverWait aux = new WebDriverWait(this.driver, 6000);
+		aux.until(ExpectedConditions.urlContains("/login"));
+
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("h");
 		this.driver.findElement(By.id("password")).clear();

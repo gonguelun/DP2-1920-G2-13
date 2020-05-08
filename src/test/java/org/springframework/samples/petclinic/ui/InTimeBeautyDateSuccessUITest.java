@@ -72,8 +72,7 @@ public class InTimeBeautyDateSuccessUITest {
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
 		this.driver.findElement(By.id("description")).sendKeys("pruebaui1");
-		new Select(this.driver.findElement(By.id("startDate"))).selectByVisibleText("2020/06/02 19:00");
-		this.driver.findElement(By.xpath("//option[@value='2020/06/02 19:00']")).click();
+		new Select(this.driver.findElement(By.id("startDate"))).selectByIndex(0);
 		new Select(this.driver.findElement(By.id("pet"))).selectByVisibleText("prueba - 14");
 		this.driver.findElement(By.xpath("//option[@value='prueba - 14']")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();

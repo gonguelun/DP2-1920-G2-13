@@ -51,10 +51,20 @@ public class UpdateProductSuccessUITest {
 		this.driver.findElement(By.id("password")).sendKeys("f");
 		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
+		this.driver.findElement(By.linkText("Add Beauty Center")).click();
+		this.driver.findElement(By.id("name")).click();
+		this.driver.findElement(By.id("name")).clear();
+		this.driver.findElement(By.id("name")).sendKeys("testand");
+		this.driver.findElement(By.id("description")).clear();
+		this.driver.findElement(By.id("description")).sendKeys("testand");
+		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("cat");
+		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
 		this.driver.findElement(By.linkText("Create Product")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("prueba");
+		this.driver.findElement(By.id("name")).sendKeys("pruebaand");
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
 		this.driver.findElement(By.id("description")).sendKeys("prueba");
@@ -63,8 +73,8 @@ public class UpdateProductSuccessUITest {
 		this.driver.findElement(By.name("avaliable")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Product List")).click();
-		this.driver.findElement(By.id("update1")).click();
+		this.driver.findElement(By.id("idtestand")).click();
+		this.driver.findElement(By.id("updatepruebaand")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
 		this.driver.findElement(By.id("name")).sendKeys("pruebamodificado");
@@ -73,7 +83,7 @@ public class UpdateProductSuccessUITest {
 		this.driver.findElement(By.id("description")).sendKeys("pruebamod");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Product List")).click();
+		this.driver.findElement(By.linkText("updatepruebaand")).click();
 		Assert.assertEquals("pruebamodificado", this.driver.findElement(By.id("pruebamodificado")).getText());
 
 	}

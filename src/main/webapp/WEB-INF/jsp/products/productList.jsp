@@ -42,7 +42,7 @@
                 <spring:url value=" /{beautyCenterId}/products/{productId}/edit" var="editProductUrl">
                     <spring:param name="productId" value="${product.id}"/>
                     </spring:url>
-                    <a id="update${product.id}" href="${fn:escapeXml(editProductUrl)}">Modify Product</a>
+                    <a id="update${product.name}" href="${fn:escapeXml(editProductUrl)}">Modify Product</a>
                     </td>
                     
                 <td>

@@ -57,15 +57,17 @@ public class RegisterPickUpRequestSuccessUITest {
 		this.driver.findElement(By.xpath("//option[@value='dog']")).click();
 		this.driver.findElement(By.id("physicalStatus")).click();
 		this.driver.findElement(By.id("physicalStatus")).clear();
-		this.driver.findElement(By.id("physicalStatus")).sendKeys("Está herido en una pata");
+		this.driver.findElement(By.id("physicalStatus")).sendKeys("Esta herido en una pata");
 		this.driver.findElement(By.id("address")).click();
 		this.driver.findElement(By.id("address")).clear();
-		this.driver.findElement(By.id("address")).sendKeys("Calle Arjona Número 23");
+		this.driver.findElement(By.id("address")).sendKeys("Calle Arjona Numero 23");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("VIEW MY PICK UP REQUESTS")).click();
-		Assert.assertEquals("Peticion de recogida", this.driver.findElement(By.xpath("//table[@id='pickUpRequestsTable']/tbody/tr/td")).getText());
-		Assert.assertEquals("dog", this.driver.findElement(By.xpath("//table[@id='pickUpRequestsTable']/tbody/tr/td[2]")).getText());
-		Assert.assertEquals("false", this.driver.findElement(By.xpath("//table[@id='pickUpRequestsTable']/tbody/tr/td[4]")).getText());
+		Assert.assertEquals("Peticion de recogida", this.driver.findElement(By.xpath("//tr[@id='Peticion de recogida']/td")).getText());
+		Assert.assertEquals("dog", this.driver.findElement(By.xpath("//tr[@id='Peticion de recogida']/td[2]")).getText());
+		Assert.assertEquals("Esta herido en una pata", this.driver.findElement(By.xpath("//tr[@id='Peticion de recogida']/td[3]")).getText());
+		Assert.assertEquals("false", this.driver.findElement(By.xpath("//tr[@id='Peticion de recogida']/td[4]")).getText());
+		Assert.assertEquals("Calle Arjona Numero 23", this.driver.findElement(By.xpath("//tr[@id='Peticion de recogida']/td[5]")).getText());
 	}
 
 	@AfterEach
