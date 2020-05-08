@@ -18,9 +18,6 @@ package org.springframework.samples.petclinic.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -42,8 +39,7 @@ public class CrashController {
 
 	@GetMapping(value = "/accessDenied")
 	public String deniedException(final HttpServletRequest request) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		throw new AccessDeniedException("User: " + auth.getName() + " attempted to access the protected URL: " + request.getRequestURI());
+		return "accessDenied";
 	}
 
 }

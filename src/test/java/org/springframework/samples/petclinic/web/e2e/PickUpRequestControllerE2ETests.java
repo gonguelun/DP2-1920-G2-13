@@ -253,13 +253,4 @@ public class PickUpRequestControllerE2ETests {
 			.andExpect(MockMvcResultMatchers.view().name("pick-up-requests/allPickUpRequestsList"));
 	}
 
-	//Caso negativo acceso invalido
-	@WithMockUser(username = "owner1", roles = {
-		"owner"
-	}, password = "0wn3r")
-	@Test
-	void testInitShowVetInvalidAccessForm() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/vets/pick-up-requests")).andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
-	}
-
 }

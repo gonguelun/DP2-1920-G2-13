@@ -37,7 +37,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(final HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/resources/**", "/webjars/**", "/h2-console/**").permitAll().antMatchers(HttpMethod.GET, "/", "/oups").permitAll().antMatchers("/users/**").permitAll().antMatchers("/api/**").permitAll()
 			.antMatchers("/admin/**").hasAnyAuthority("admin").antMatchers("/owners/**").hasAnyAuthority("owner").antMatchers("/{beauticianId}/products/**").hasAnyAuthority("beautician").antMatchers("/products/**").hasAnyAuthority("beautician")
-			.antMatchers("/beauticians/**").hasAnyAuthority("beautician").antMatchers("/vets/**").hasAnyAuthority("vet").antMatchers("/callback/**").permitAll().anyRequest().denyAll().and().formLogin()
+			.antMatchers("/beauticians/**").hasAnyAuthority("beautician").antMatchers("/vets/**").hasAnyAuthority("vet").antMatchers("/accessDenied").permitAll().antMatchers("/callback/**").permitAll().anyRequest().denyAll().and().formLogin()
 			/* .loginPage("/login") */
 			.failureUrl("/login-error").and().logout().logoutSuccessUrl("/").and().exceptionHandling().accessDeniedHandler(this.accessDeniedHandler());
 		// Configuración para que funcione la consola de administración

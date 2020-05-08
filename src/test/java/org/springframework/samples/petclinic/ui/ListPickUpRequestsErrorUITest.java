@@ -52,8 +52,8 @@ public class ListPickUpRequestsErrorUITest {
 		this.driver.findElement(By.id("password")).sendKeys("0wn3r");
 		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
 		WebDriverWait aux = new WebDriverWait(this.driver, 6000);
-		aux.until(ExpectedConditions.urlContains("/oups"));
-		Assert.assertEquals("Something happened...", this.driver.findElement(By.xpath("//h2")).getText());
+		aux.until(ExpectedConditions.urlContains("/accessDenied"));
+		Assert.assertEquals("You don't have permission to see this page.", this.driver.findElement(By.xpath("//h2")).getText());
 	}
 
 	@AfterEach

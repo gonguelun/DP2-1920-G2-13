@@ -9,6 +9,4 @@
 
     <h2>You don't have permission to see this page.</h2>
 
-    <p>${exception.message}</p>
-
 </petclinic:layout>
