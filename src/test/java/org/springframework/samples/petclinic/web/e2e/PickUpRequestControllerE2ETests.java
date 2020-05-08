@@ -244,9 +244,9 @@ public class PickUpRequestControllerE2ETests {
 
 	// Historia de usuario 18
 	// Caso positivo
-	@WithMockUser(username = "owner1", roles = {
-		"owner"
-	}, password = "0wn3r")
+	@WithMockUser(username = "vet1", roles = {
+		"vet"
+	}, password = "v3t")
 	@Test
 	void testInitShowVetForm() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/vets/pick-up-requests")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeExists("pickUpRequests"))
