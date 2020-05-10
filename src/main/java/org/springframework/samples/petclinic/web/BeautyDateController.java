@@ -64,7 +64,7 @@ public class BeautyDateController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new")
-	public String initCreationFormOwner(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
+	public String initCreationFormBeautyDate(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
 		BeautyCenter beautyCenter = this.beautyCenterService.findById(beautyCenterId);
 
 		try {
@@ -82,7 +82,7 @@ public class BeautyDateController {
 	}
 
 	@PostMapping(value = "/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new")
-	public String processCreationFormOwner(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, @Valid final BeautyDate beautyDate, final BindingResult result, final ModelMap model)
+	public String processCreationFormBeautyDate(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, @Valid final BeautyDate beautyDate, final BindingResult result, final ModelMap model)
 		throws DataAccessException, DuplicatedPetNameException {
 		BeautyCenter beautyCenter = this.beautyCenterService.findById(beautyCenterId);
 		beautyDate.setBeautyCenter(beautyCenter);
