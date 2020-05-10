@@ -33,7 +33,7 @@
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>
                     <c:when test="${beautyDate['new']}">
-                        <button class="btn btn-default" type="submit">Ask for a date</button>
+                        <button id= "letsgo" class="btn btn-default" type="submit">Ask for a date</button>
                     </c:when>
                     <c:when test="${!beautyDate['new']}">
                         <button class="btn btn-default" type="submit">Modify Beauty Date</button>

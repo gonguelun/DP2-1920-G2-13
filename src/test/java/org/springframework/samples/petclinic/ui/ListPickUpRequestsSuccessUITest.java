@@ -109,7 +109,7 @@ public class ListPickUpRequestsSuccessUITest {
 
 		WebDriverWait aux1 = new WebDriverWait(this.driver, 3);
 		aux1.until(f -> true);
-		this.driver.findElement(By.linkText("LOGIN")).click();
+		this.driver.findElement(By.id("login")).click();
 
 		WebDriverWait aux = new WebDriverWait(this.driver, 6);
 		aux.until(ExpectedConditions.urlContains("/login"));
