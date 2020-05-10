@@ -89,13 +89,15 @@ public class InTimeBeautyDateSuccessUITest {
 		this.driver.findElement(By.linkText("SEARCH BEAUTY CENTERS")).click();
 		this.driver.findElement(By.xpath("(//button[@type='button'])[2]")).click();
 		this.driver.findElement(By.id("testand2book")).click();
-		this.driver.findElement(By.xpath("//body/div/div")).click();
+
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
 		this.driver.findElement(By.id("description")).sendKeys("pruebaui1");
-		new Select(this.driver.findElement(By.id("startDate"))).selectByIndex(0);
+		new Select(this.driver.findElement(By.id("startDate"))).selectByIndex(1);
 		new Select(this.driver.findElement(By.id("pet"))).selectByIndex(0);
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+		this.driver.findElement(By.id("letsgo")).click();
+
 		this.driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[4]/a/span")).click();
 		Assert.assertEquals("pruebaui1", this.driver.findElement(By.id("pruebaui1")).getText());
 	}
