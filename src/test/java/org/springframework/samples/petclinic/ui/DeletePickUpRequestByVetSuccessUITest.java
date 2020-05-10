@@ -83,7 +83,8 @@ public class DeletePickUpRequestByVetSuccessUITest {
 		int rowsInitialCount = rowsInitialTable.size();
 
 		this.driver.findElement(By.linkText("Update PickUp Request")).click();
-		this.driver.findElement(By.id("isAccepted1")).click();
+
+		this.driver.findElement(By.id("isAccepted1")).isEnabled();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 		this.driver.findElement(By.linkText("Delete PickUp Request")).click();
 

@@ -107,9 +107,11 @@ public class ListPickUpRequestsSuccessUITest {
 		this.driver.findElement(By.id("user.password")).sendKeys("h");
 		this.driver.findElement(By.id("add-vet-form")).submit();
 
+		WebDriverWait aux1 = new WebDriverWait(this.driver, 3);
+		aux1.until(f -> true);
 		this.driver.findElement(By.linkText("LOGIN")).click();
 
-		WebDriverWait aux = new WebDriverWait(this.driver, 6000);
+		WebDriverWait aux = new WebDriverWait(this.driver, 6);
 		aux.until(ExpectedConditions.urlContains("/login"));
 
 		this.driver.findElement(By.id("username")).clear();

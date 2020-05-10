@@ -42,7 +42,7 @@
                          <spring:param name="beautyCenterId" value="${beautyCenter.id}"/>
                          <spring:param name="petTypeId" value="${beautyCenter.petType.id}"/>
                      </spring:url>
-                     <a href="${fn:escapeXml(dateUrl)}">Book a date</a>
+                     <a id="${beautyCenter.name}book" href="${fn:escapeXml(dateUrl)}">Book a date</a>
                 
                 
                 

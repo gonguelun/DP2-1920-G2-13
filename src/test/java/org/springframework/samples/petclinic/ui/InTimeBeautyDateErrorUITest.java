@@ -67,8 +67,7 @@ public class InTimeBeautyDateErrorUITest {
 		this.driver.findElement(By.linkText("SEARCH BEAUTY CENTERS")).click();
 		this.driver.findElement(By.xpath("(//button[@type='button'])[2]")).click();
 		this.driver.findElement(By.linkText("Book a date")).click();
-		new Select(this.driver.findElement(By.id("pet"))).selectByVisibleText("prueba - 14");
-		this.driver.findElement(By.xpath("//option[@value='prueba - 14']")).click();
+		new Select(this.driver.findElement(By.id("pet"))).selectByIndex(0);
 		this.driver.findElement(By.id("description")).click();
 		this.driver.findElement(By.id("description")).clear();
 		this.driver.findElement(By.id("description")).sendKeys("prueba");
