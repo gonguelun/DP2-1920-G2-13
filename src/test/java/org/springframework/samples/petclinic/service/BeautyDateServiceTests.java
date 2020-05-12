@@ -121,6 +121,76 @@ public class BeautyDateServiceTests {
 		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
 		Assert.assertTrue(this.beautyDateService.saveBeautyDate(bc));
 	}
+	
+	//Caso positivo.No descripcion
+	@Test
+	public void testSavingBeautyDateCorrectNoDescription() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
+		PetType cat = new PetType();
+		cat.setId(1);
+		cat.setName("cat");
+		List<PetType> temp = new ArrayList<>();
+		temp.add(cat);
+		Collection<Pet> temp2 = new ArrayList<>();
+		Pet pet = new Pet();
+		pet.setId(1);
+		pet.setName("currupipi");
+		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		pet.setType(cat);
+		temp2.add(pet);
+
+		Pet peto = new Pet();
+		peto.setId(2);
+		peto.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		peto.setType(cat);
+		peto.setName("peto");
+		temp2.add(pet);
+
+		User user = new User();
+		user.setId(1);
+		user.setEnabled(true);
+		user.setUsername("beautician1");
+		user.setPassword("123");
+
+		Beautician beautician = new Beautician();
+		beautician.setId(1);
+		beautician.setFirstName("juan");
+		beautician.setLastName("aurora");
+		beautician.setSpecializations(temp);
+		beautician.setUser(user);
+
+		BeautyCenter beautyCenter = new BeautyCenter();
+		beautyCenter.setId(1);
+		beautyCenter.setName("beautycenter1");
+		beautyCenter.setDescription("prueba1");
+		beautyCenter.setPetType(cat);
+		beautyCenter.setBeautician(beautician);
+
+		Owner owner = new Owner();
+		owner.setId(1);
+		owner.setFirstName("Michael");
+		owner.setLastName("Skere");
+		owner.setCity("Badajoz");
+		owner.setAddress("Calle 1");
+		owner.setTelephone("666777888");
+		User user2 = new User();
+		user2.setId(2);
+		user2.setEnabled(true);
+		user2.setUsername("owner");
+		user2.setPassword("123");
+		owner.setUser(user2);
+
+		owner.addPet(peto);
+		owner.addPet(peto);
+
+		BeautyDate bc = new BeautyDate();
+		bc.setId(1);
+		bc.setDescription("");
+		bc.setBeautyCenter(beautyCenter);
+		bc.setPet(peto);
+
+		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
+		Assert.assertTrue(this.beautyDateService.saveBeautyDate(bc));
+	}
 	// Caso negativo. La fecha está vacia
 
 	@Test
@@ -416,6 +486,76 @@ public class BeautyDateServiceTests {
 
 		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(12, 0)));
 		Assertions.assertThrows(IsNotInTimeException.class, () -> this.beautyDateService.saveBeautyDate(bc));
+	}
+	
+	@Test
+	public void testSavingBeautyDateEmptyPet () throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
+
+		PetType cat = new PetType();
+		cat.setId(1);
+		cat.setName("cat");
+		List<PetType> temp = new ArrayList<>();
+		temp.add(cat);
+		Collection<Pet> temp2 = new ArrayList<>();
+		Pet pet = new Pet();
+		pet.setId(1);
+		pet.setName("currupipi");
+		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		pet.setType(cat);
+		temp2.add(pet);
+
+		Pet peto = new Pet();
+		peto.setId(2);
+		peto.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		peto.setType(cat);
+		peto.setName("peto");
+		temp2.add(pet);
+
+		User user = new User();
+		user.setId(1);
+		user.setEnabled(true);
+		user.setUsername("beautician1");
+		user.setPassword("123");
+
+		Beautician beautician = new Beautician();
+		beautician.setId(1);
+		beautician.setFirstName("juan");
+		beautician.setLastName("aurora");
+		beautician.setSpecializations(temp);
+		beautician.setUser(user);
+
+		BeautyCenter beautyCenter = new BeautyCenter();
+		beautyCenter.setId(1);
+		beautyCenter.setName("beautycenter1");
+		beautyCenter.setDescription("prueba1");
+		beautyCenter.setPetType(cat);
+		beautyCenter.setBeautician(beautician);
+
+		Owner owner = new Owner();
+		owner.setId(1);
+		owner.setFirstName("Michael");
+		owner.setLastName("Skere");
+		owner.setCity("Badajoz");
+		owner.setAddress("Calle 1");
+		owner.setTelephone("666777888");
+		User user2 = new User();
+		user2.setId(2);
+		user2.setEnabled(true);
+		user2.setUsername("owner");
+		user2.setPassword("123");
+		owner.setUser(user2);
+
+		owner.addPet(peto);
+		owner.addPet(peto);
+
+		BeautyDate bc = new BeautyDate();
+		bc.setId(1);
+		bc.setDescription("jjjajaja");
+		bc.setBeautyCenter(beautyCenter);
+		bc.setPet(null);
+
+		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
+		Assertions.assertThrows(EmptyPetException.class, () -> this.beautyDateService.saveBeautyDate(bc));
 	}
 
 	// Test para el metodo datesInAWeek

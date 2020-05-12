@@ -56,6 +56,17 @@ public class BeautyCenterServiceTests {
 		assertEquals(this.beautyService.update(bc, bc.getId()), true);
 
 	}
+	@Test
+	public void testUpdateBeautyCenterSuccessNoDescription() throws NullOrShortNameException,NoPetTypeException{
+		BeautyCenter bc = this.beautyService.findById(1);
+		bc.setName("name modified");
+		bc.setDescription("");
+
+		List<PetType> pt = new ArrayList<>(this.petService.findPetTypes());
+		bc.setPetType(pt.get(0));
+		this.beautyService.update(bc, bc.getId());
+		assertEquals(this.beautyService.update(bc, bc.getId()), true);
+	}
 
 	@Test
 	public void testUpdateBeautyCenterErrorPetType() {
