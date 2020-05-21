@@ -97,32 +97,7 @@ class PetServiceTests {
 		Assertions.assertThat(petType4.getName()).isEqualTo("snake");
 	}
 
-	@Test
-	@Transactional
-	public void shouldInsertPetIntoDatabaseAndGenerateId() {
-		Owner owner6 = this.ownerService.findOwnerById(6);
-		int found = owner6.getPets().size();
 
-		Pet pet = new Pet();
-		pet.setName("bowser");
-		Collection<PetType> types = this.petService.findPetTypes();
-		pet.setType(EntityUtils.getById(types, PetType.class, 2));
-		pet.setBirthDate(LocalDate.now());
-		owner6.addPet(pet);
-		Assertions.assertThat(owner6.getPets().size()).isEqualTo(found + 1);
-
-		try {
-			this.petService.savePet(pet);
-		} catch (DuplicatedPetNameException ex) {
-			Logger.getLogger(PetServiceTests.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		this.ownerService.saveOwner(owner6);
-
-		owner6 = this.ownerService.findOwnerById(6);
-		Assertions.assertThat(owner6.getPets().size()).isEqualTo(found + 1);
-		// checks that id has been generated
-		Assertions.assertThat(pet.getId()).isNotNull();
-	}
 
 	@Test
 	@Transactional
@@ -217,14 +192,6 @@ class PetServiceTests {
 		Assertions.assertThat(visit.getId()).isNotNull();
 	}
 
-	@Test
-	void shouldFindVisitsByPetId() throws Exception {
-		Collection<Visit> visits = this.petService.findVisitsByPetId(7);
-		Assertions.assertThat(visits.size()).isEqualTo(2);
-		Visit[] visitArr = visits.toArray(new Visit[visits.size()]);
-		Assertions.assertThat(visitArr[0].getPet()).isNotNull();
-		Assertions.assertThat(visitArr[0].getDate()).isNotNull();
-		Assertions.assertThat(visitArr[0].getPet().getId()).isEqualTo(7);
-	}
+
 
 }

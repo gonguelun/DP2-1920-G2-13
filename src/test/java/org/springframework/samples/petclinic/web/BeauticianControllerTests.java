@@ -134,12 +134,13 @@ class BeauticianControllerTests {
 		BeautyDate date1 = new BeautyDate();
 		BeautyDate date2 = new BeautyDate();
 		List<BeautyDate> beautyDatesByBeauticianAndDate = Lists.list(date1, date2);
+		LocalDateTime actual = LocalDateTime.now();
 
 		BDDMockito.given(this.beauticianService.findBeauticianById(BeauticianControllerTests.TEST_BEAUTICIAN_ID)).willReturn(this.michael);
 		BDDMockito.given(this.beauticianService.findBeauticianById(BeauticianControllerTests.TEST_BEAUTICIAN_ID2)).willReturn(this.lola);
 		BDDMockito.given(this.petService.findPetTypes()).willReturn(specialization);
 		BDDMockito.given(this.beauticianService.findBeauticianByUsername(this.michael.getUser().getUsername())).willReturn(this.michael);
-		BDDMockito.given(this.beautyDateService.findBeautyDatesByBeauticianIdAndDate(BeauticianControllerTests.TEST_BEAUTICIAN_ID, dateHourMax)).willReturn(beautyDatesByBeauticianAndDate);
+		BDDMockito.given(this.beautyDateService.findBeautyDatesByBeauticianIdAndDate(BeauticianControllerTests.TEST_BEAUTICIAN_ID, actual, dateHourMax)).willReturn(beautyDatesByBeauticianAndDate);
 
 	}
 

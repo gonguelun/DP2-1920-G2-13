@@ -136,8 +136,8 @@ public class BeautyDateService {
 		return this.beautyDateRepository.bringProductsFromBeauticianWithPetType(beautician.getId(), petType.getId());
 	}
 
-	public Collection<BeautyDate> findBeautyDatesByBeauticianIdAndDate(final int beauticianId, final LocalDateTime dateHourMax) {
-		return this.beautyDateRepository.findBeautyDatesByBeauticianIdAndDate(beauticianId, dateHourMax);
+	public Collection<BeautyDate> findBeautyDatesByBeauticianIdAndDate(final int beauticianId, final LocalDateTime actual, final LocalDateTime dateHourMax) {
+		return this.beautyDateRepository.findBeautyDatesByBeauticianIdAndDate(beauticianId, actual, dateHourMax);
 	}
 
 	public boolean isDateValid(final LocalDate dateMax) throws PastDateException {

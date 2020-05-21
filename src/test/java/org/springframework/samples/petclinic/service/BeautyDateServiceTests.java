@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.BeautyDate;
@@ -31,6 +32,8 @@ import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNam
 import org.springframework.samples.petclinic.service.exceptions.EmptyPetException;
 import org.springframework.samples.petclinic.service.exceptions.IsNotInTimeException;
 import org.springframework.samples.petclinic.service.exceptions.IsWeekendException;
+import org.springframework.samples.petclinic.service.exceptions.NoPetTypeException;
+import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.samples.petclinic.service.exceptions.PastDateException;
 import org.springframework.stereotype.Service;
 
@@ -50,145 +53,162 @@ public class BeautyDateServiceTests {
 	@Autowired
 	BeautyCenterService	beautyService;
 
+	@Autowired
+	UserService			userService;
+
+	@Autowired
+	OwnerService		ownerService;
+
 
 	//Caso positivo. Se introduce un BeautyDate correcto
 	@Test
-	public void testSavingBeautyDateCorrect() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
+	public void testSavingBeautyDateCorrect() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException, NullOrShortNameException, NoPetTypeException {
 
 		PetType cat = new PetType();
-		cat.setId(1);
 		cat.setName("cat");
-		List<PetType> temp = new ArrayList<>();
-		temp.add(cat);
-		Collection<Pet> temp2 = new ArrayList<>();
-		Pet pet = new Pet();
-		pet.setId(1);
-		pet.setName("currupipi");
-		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
-		pet.setType(cat);
-		temp2.add(pet);
+		this.petService.savePetType(cat);
 
-		Pet peto = new Pet();
-		peto.setId(2);
-		peto.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
-		peto.setType(cat);
-		peto.setName("peto");
-		temp2.add(pet);
-
-		User user = new User();
-		user.setId(1);
-		user.setEnabled(true);
-		user.setUsername("beautician1");
-		user.setPassword("123");
-
-		Beautician beautician = new Beautician();
-		beautician.setId(1);
-		beautician.setFirstName("juan");
-		beautician.setLastName("aurora");
-		beautician.setSpecializations(temp);
-		beautician.setUser(user);
-
-		BeautyCenter beautyCenter = new BeautyCenter();
-		beautyCenter.setId(1);
-		beautyCenter.setName("beautycenter1");
-		beautyCenter.setDescription("prueba1");
-		beautyCenter.setPetType(cat);
-		beautyCenter.setBeautician(beautician);
+		User user2 = new User();
+		user2.setEnabled(true);
+		user2.setUsername("ghghghg");
+		user2.setPassword("123");
+		this.userService.saveUser(user2);
 
 		Owner owner = new Owner();
-		owner.setId(1);
 		owner.setFirstName("Michael");
 		owner.setLastName("Skere");
 		owner.setCity("Badajoz");
 		owner.setAddress("Calle 1");
 		owner.setTelephone("666777888");
-		User user2 = new User();
-		user2.setId(2);
-		user2.setEnabled(true);
-		user2.setUsername("owner");
-		user2.setPassword("123");
 		owner.setUser(user2);
+		this.ownerService.saveOwner(owner);
+
+		List<PetType> temp = new ArrayList<>();
+		temp.add(cat);
+
+		Collection<Pet> temp2 = new ArrayList<>();
+		Pet pet = new Pet();
+		pet.setName("currupipi");
+		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		pet.setType(cat);
+		temp2.add(pet);
+		pet.setOwner(owner);
+		this.petService.savePet(pet);
+
+		Pet peto = new Pet();
+		peto.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		peto.setType(cat);
+		peto.setName("peto");
+		temp2.add(pet);
+		peto.setOwner(owner);
+		this.petService.savePet(peto);
 
 		owner.addPet(peto);
-		owner.addPet(peto);
+		owner.addPet(pet);
+
+		User user = new User();
+		user.setEnabled(true);
+		user.setUsername("beautician1hj4554afhj");
+		user.setPassword("123");
+		this.userService.saveUser(user);
+
+		Beautician beautician = new Beautician();
+		beautician.setFirstName("juanerwer");
+		beautician.setLastName("aurorrwerwera");
+		beautician.setSpecializations(temp);
+		beautician.setUser(user);
+		this.beauticianService.saveBeautician(beautician);
+
+		BeautyCenter beautyCenter = new BeautyCenter();
+		beautyCenter.setName("beautycenter1");
+		beautyCenter.setDescription("prueba1");
+		beautyCenter.setPetType(cat);
+		beautyCenter.setBeautician(beautician);
+		this.beautyService.save(beautyCenter);
 
 		BeautyDate bc = new BeautyDate();
-		bc.setId(1);
 		bc.setDescription("jjjajaja");
 		bc.setBeautyCenter(beautyCenter);
 		bc.setPet(peto);
 
+		
+
 		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
 		Assert.assertTrue(this.beautyDateService.saveBeautyDate(bc));
 	}
-	
+
 	//Caso positivo.No descripcion
 	@Test
-	public void testSavingBeautyDateCorrectNoDescription() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
+	public void testSavingBeautyDateCorrectNoDescription() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException, NullOrShortNameException, NoPetTypeException {
 		PetType cat = new PetType();
-		cat.setId(1);
 		cat.setName("cat");
-		List<PetType> temp = new ArrayList<>();
-		temp.add(cat);
-		Collection<Pet> temp2 = new ArrayList<>();
-		Pet pet = new Pet();
-		pet.setId(1);
-		pet.setName("currupipi");
-		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
-		pet.setType(cat);
-		temp2.add(pet);
+		this.petService.savePetType(cat);
 
-		Pet peto = new Pet();
-		peto.setId(2);
-		peto.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
-		peto.setType(cat);
-		peto.setName("peto");
-		temp2.add(pet);
-
-		User user = new User();
-		user.setId(1);
-		user.setEnabled(true);
-		user.setUsername("beautician1");
-		user.setPassword("123");
-
-		Beautician beautician = new Beautician();
-		beautician.setId(1);
-		beautician.setFirstName("juan");
-		beautician.setLastName("aurora");
-		beautician.setSpecializations(temp);
-		beautician.setUser(user);
-
-		BeautyCenter beautyCenter = new BeautyCenter();
-		beautyCenter.setId(1);
-		beautyCenter.setName("beautycenter1");
-		beautyCenter.setDescription("prueba1");
-		beautyCenter.setPetType(cat);
-		beautyCenter.setBeautician(beautician);
+		User user2 = new User();
+		user2.setEnabled(true);
+		user2.setUsername("rrrtrttrt");
+		user2.setPassword("123");
+		this.userService.saveUser(user2);
 
 		Owner owner = new Owner();
-		owner.setId(1);
 		owner.setFirstName("Michael");
 		owner.setLastName("Skere");
 		owner.setCity("Badajoz");
 		owner.setAddress("Calle 1");
 		owner.setTelephone("666777888");
-		User user2 = new User();
-		user2.setId(2);
-		user2.setEnabled(true);
-		user2.setUsername("owner");
-		user2.setPassword("123");
 		owner.setUser(user2);
+		this.ownerService.saveOwner(owner);
+
+		List<PetType> temp = new ArrayList<>();
+		temp.add(cat);
+
+		Collection<Pet> temp2 = new ArrayList<>();
+		Pet pet = new Pet();
+		pet.setName("currupipi");
+		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		pet.setType(cat);
+		temp2.add(pet);
+		pet.setOwner(owner);
+		this.petService.savePet(pet);
+
+		Pet peto = new Pet();
+		peto.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		peto.setType(cat);
+		peto.setName("peto");
+		temp2.add(pet);
+		peto.setOwner(owner);
+		this.petService.savePet(peto);
 
 		owner.addPet(peto);
-		owner.addPet(peto);
+		owner.addPet(pet);
+
+		User user = new User();
+		user.setEnabled(true);
+		user.setUsername("beautician1h999afhj");
+		user.setPassword("123");
+		this.userService.saveUser(user);
+
+		Beautician beautician = new Beautician();
+		beautician.setFirstName("jua43432n");
+		beautician.setLastName("auro353535ra");
+		beautician.setSpecializations(temp);
+		beautician.setUser(user);
+		this.beauticianService.saveBeautician(beautician);
+
+		BeautyCenter beautyCenter = new BeautyCenter();
+		beautyCenter.setName("beautycenter1");
+		beautyCenter.setDescription("prueba1");
+		beautyCenter.setPetType(cat);
+		beautyCenter.setBeautician(beautician);
+		this.beautyService.save(beautyCenter);
 
 		BeautyDate bc = new BeautyDate();
-		bc.setId(1);
-		bc.setDescription("");
+		bc.setDescription("jjjajaja");
 		bc.setBeautyCenter(beautyCenter);
 		bc.setPet(peto);
 
-		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(16, 0)));
+		bc.setStartDate(LocalDateTime.of(LocalDate.of(2021, 4, 1), LocalTime.of(16, 0)));
+		
 		Assert.assertTrue(this.beautyDateService.saveBeautyDate(bc));
 	}
 	// Caso negativo. La fecha está vacia
@@ -265,67 +285,74 @@ public class BeautyDateServiceTests {
 	}
 	//Caso negativo. Intento introducir un BeautyDate para un pet que ya tenia
 	@Test
-	public void testSavingBeautyDateConcurrent() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
+	public void testSavingBeautyDateConcurrent() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException, NullOrShortNameException, NoPetTypeException {
 
 		PetType cat = new PetType();
-		cat.setId(1);
 		cat.setName("cat");
-		List<PetType> temp = new ArrayList<>();
-		temp.add(cat);
-		Collection<Pet> temp2 = new ArrayList<>();
-		Pet pet = new Pet();
-		pet.setId(1);
-		pet.setName("currupipi");
-		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
-		pet.setType(cat);
-		temp2.add(pet);
+		this.petService.savePetType(cat);
 
-		Pet peto = new Pet();
-		peto.setId(2);
-		peto.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
-		peto.setType(cat);
-		peto.setName("peto");
-		temp2.add(pet);
-
-		User user = new User();
-		user.setId(1);
-		user.setEnabled(true);
-		user.setUsername("beautician1");
-		user.setPassword("123");
-
-		Beautician beautician = new Beautician();
-		beautician.setId(1);
-		beautician.setFirstName("juan");
-		beautician.setLastName("aurora");
-		beautician.setSpecializations(temp);
-		beautician.setUser(user);
-
-		BeautyCenter beautyCenter = new BeautyCenter();
-		beautyCenter.setId(1);
-		beautyCenter.setName("beautycenter1");
-		beautyCenter.setDescription("prueba1");
-		beautyCenter.setPetType(cat);
-		beautyCenter.setBeautician(beautician);
+		User user2 = new User();
+		user2.setEnabled(true);
+		user2.setUsername("ownerssdadd");
+		user2.setPassword("123");
+		this.userService.saveUser(user2);
 
 		Owner owner = new Owner();
-		owner.setId(1);
 		owner.setFirstName("Michael");
 		owner.setLastName("Skere");
 		owner.setCity("Badajoz");
 		owner.setAddress("Calle 1");
 		owner.setTelephone("666777888");
-		User user2 = new User();
-		user2.setId(2);
-		user2.setEnabled(true);
-		user2.setUsername("owner");
-		user2.setPassword("123");
 		owner.setUser(user2);
+		this.ownerService.saveOwner(owner);
+
+		List<PetType> temp = new ArrayList<>();
+		temp.add(cat);
+
+		Collection<Pet> temp2 = new ArrayList<>();
+		Pet pet = new Pet();
+		pet.setName("currupipi");
+		pet.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		pet.setType(cat);
+		temp2.add(pet);
+		pet.setOwner(owner);
+		this.petService.savePet(pet);
+
+		Pet peto = new Pet();
+		peto.setBirthDate(LocalDate.of(2020, Month.JANUARY, 5));
+		peto.setType(cat);
+		peto.setName("peto");
+		temp2.add(pet);
+		peto.setOwner(owner);
+		this.petService.savePet(peto);
 
 		owner.addPet(peto);
 		owner.addPet(pet);
 
+		User user = new User();
+		user.setEnabled(true);
+		user.setUsername("beautician1hjafhj");
+		user.setPassword("123");
+		this.userService.saveUser(user);
+
+		Beautician beautician = new Beautician();
+		beautician.setId(133);
+		beautician.setFirstName("juan");
+		beautician.setLastName("aurora");
+		beautician.setSpecializations(temp);
+		beautician.setUser(user);
+		this.beauticianService.saveBeautician(beautician);
+
+		BeautyCenter beautyCenter = new BeautyCenter();
+		beautyCenter.setId(181);
+		beautyCenter.setName("beautycenter1");
+		beautyCenter.setDescription("prueba1");
+		beautyCenter.setPetType(cat);
+		beautyCenter.setBeautician(beautician);
+		this.beautyService.save(beautyCenter);
+
 		BeautyDate bc = new BeautyDate();
-		bc.setId(1);
+		bc.setId(390);
 		bc.setDescription("jjjajaja");
 		bc.setBeautyCenter(beautyCenter);
 		bc.setPet(peto);
@@ -335,14 +362,21 @@ public class BeautyDateServiceTests {
 		this.beautyDateService.saveBeautyDate(bc);
 
 		BeautyDate bc2 = new BeautyDate();
-		bc2.setId(2);
+		bc2.setId(260);
 		bc2.setDescription("jjjajaja");
 		bc2.setBeautyCenter(beautyCenter);
 		bc2.setPet(pet);
 
 		bc2.setStartDate(LocalDateTime.of(LocalDate.of(2021, 4, 1), LocalTime.of(16, 0)));
 
-		Assertions.assertThrows(AlreadyDateException.class, () -> this.beautyDateService.saveBeautyDate(bc2));
+		try {
+			this.beautyDateService.saveBeautyDate(bc2);
+		} catch (DataIntegrityViolationException e) {
+			Assertions.assertThrows(DataIntegrityViolationException.class, () -> this.beautyDateService.saveBeautyDate(bc2));
+		} catch (AlreadyDateException d) {
+			Assertions.assertThrows(DataIntegrityViolationException.class, () -> this.beautyDateService.saveBeautyDate(bc2));
+		}
+
 	}
 
 	//Caso negativo. Intento introducir un BeautyDate un domingo
@@ -487,9 +521,9 @@ public class BeautyDateServiceTests {
 		bc.setStartDate(LocalDateTime.of(LocalDate.of(2020, 3, 31), LocalTime.of(12, 0)));
 		Assertions.assertThrows(IsNotInTimeException.class, () -> this.beautyDateService.saveBeautyDate(bc));
 	}
-	
+
 	@Test
-	public void testSavingBeautyDateEmptyPet () throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
+	public void testSavingBeautyDateEmptyPet() throws DataAccessException, DuplicatedPetNameException, IsWeekendException, IsNotInTimeException, AlreadyDateException, EmptyPetException {
 
 		PetType cat = new PetType();
 		cat.setId(1);

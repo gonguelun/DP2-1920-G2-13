@@ -150,8 +150,7 @@ public class PickUpRequestControllerE2ETests {
 	}, password = "0wn3r")
 	@Test
 	void testInitShowForm() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests", "owner1")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeExists("pickUpRequests"))
-			.andExpect(MockMvcResultMatchers.view().name("pick-up-requests/pickUpRequestsList"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests", "owner1")).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("pick-up-requests/pickUpRequestsList"));
 	}
 	//Caso negativo acceso invalido
 	@WithMockUser(username = "owner2", roles = {
@@ -175,8 +174,8 @@ public class PickUpRequestControllerE2ETests {
 	}, password = "0wn3r")
 	@Test
 	void testProcessDeleteOwnerPickUpRequestSuccess() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests/{pickUpId}/delete", "owner1", PickUpRequestControllerE2ETests.TEST_PICK_UP_REQUEST_ID).with(SecurityMockMvcRequestPostProcessors.csrf()))
-			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/owners/{ownerUsername}/pick-up-requests"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests/{pickUpId}/delete", "owner1", 4).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.view().name("redirect:/owners/{ownerUsername}/pick-up-requests"));
 	}
 
 	//Caso negativo, no es el autor de la petición
@@ -186,8 +185,8 @@ public class PickUpRequestControllerE2ETests {
 	}, password = "owner")
 	@Test
 	void testProcessDeleteOwnerPickUpRequestError() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests/{pickUpId}/delete", "owner1", PickUpRequestControllerE2ETests.TEST_PICK_UP_REQUEST_ID).with(SecurityMockMvcRequestPostProcessors.csrf()))
-			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/pick-up-requests/{pickUpId}/delete", "owner1", 4).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.view().name("redirect:/oups"));
 	}
 
 	/*
@@ -202,7 +201,7 @@ public class PickUpRequestControllerE2ETests {
 	}, password = "v3t")
 	@Test
 	void testProcessUpdatePickUpRequestAsVetSuccess() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/vets/pick-up-requests/{pickUpId}/update", PickUpRequestControllerE2ETests.TEST_PICK_UP_REQUEST_ID).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk())
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/vets/pick-up-requests/{pickUpId}/update", 3).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pick-up-requests/acceptOrDenyPickUpRequest"));
 	}
 

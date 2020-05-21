@@ -24,6 +24,7 @@ import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.repository.PetRepository;
+import org.springframework.samples.petclinic.repository.PetTypeRepository;
 import org.springframework.samples.petclinic.repository.VisitRepository;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
@@ -39,15 +40,18 @@ import org.springframework.util.StringUtils;
 @Service
 public class PetService {
 
-	private PetRepository	petRepository;
+	private PetRepository		petRepository;
 
-	private VisitRepository	visitRepository;
+	private VisitRepository		visitRepository;
+
+	private PetTypeRepository	petTypeRepository;
 
 
 	@Autowired
-	public PetService(final PetRepository petRepository, final VisitRepository visitRepository) {
+	public PetService(final PetRepository petRepository, final VisitRepository visitRepository, final PetTypeRepository petTypeRepository) {
 		this.petRepository = petRepository;
 		this.visitRepository = visitRepository;
+		this.petTypeRepository = petTypeRepository;
 	}
 
 	@Transactional(readOnly = true)
@@ -83,4 +87,8 @@ public class PetService {
 		return this.petRepository.findPetByName(text);
 	}
 
+	@Transactional
+	public void savePetType(final PetType petType) {
+		this.petTypeRepository.save(petType);
+	}
 }

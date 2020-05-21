@@ -34,6 +34,16 @@ public class BeautyCenterServiceTests {
 
 	@Autowired
 	private PetService			petService;
+	
+	@Autowired
+	UserService				userService;
+
+	@Autowired
+	OwnerService			ownerService;
+
+	@Autowired
+	BeauticianService beauticianService;
+
 
 
 	
@@ -102,27 +112,27 @@ public class BeautyCenterServiceTests {
 	@Test
 	public void testSaveBeautyCenterCorrect() throws NullOrShortNameException, NoPetTypeException{
 		PetType cat = new PetType();
-		cat.setId(3);
+
 		cat.setName("hamster");
+		this.petService.savePetType(cat);
 		List<PetType> temp = new ArrayList<>();
 		temp.add(cat);
 
 
 		User user = new User();
-		user.setId(1);
 		user.setEnabled(true);
-		user.setUsername("beautician1");
+		user.setUsername("beautician1dsada");
 		user.setPassword("123");
+		this.userService.saveUser(user);
 
 		Beautician beautician = new Beautician();
-		beautician.setId(1);
 		beautician.setFirstName("juan");
 		beautician.setLastName("aurora");
 		beautician.setSpecializations(temp);
 		beautician.setUser(user);
+		this.beauticianService.saveBeautician(beautician);
 
 		BeautyCenter beautyCenter = new BeautyCenter();
-		beautyCenter.setId(1);
 		beautyCenter.setName("beautycenter1");
 		beautyCenter.setDescription("prueba1");
 		beautyCenter.setPetType(cat);

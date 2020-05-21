@@ -2,8 +2,6 @@
 package org.springframework.samples.petclinic.web.e2e;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 
 import org.hamcrest.Matchers;
@@ -186,11 +184,11 @@ public class BeautyDateControllerE2ETests {
 		cat.setName("cat");
 		pet.setType(cat);
 		pet.setName("Leo");
-		LocalDateTime date = LocalDateTime.of(LocalDate.of(2020, 4, 1), LocalTime.of(16, 0));
+
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit", BeautyDateControllerE2ETests.TEST_OWNER_USERNAME, BeautyDateControllerE2ETests.TEST_BEAUTYDATE_ID))
 			.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeExists("beautyDate"))
-			.andExpect(MockMvcResultMatchers.model().attribute("beautyDate", Matchers.hasProperty("description", Matchers.is("prueba")))).andExpect(MockMvcResultMatchers.model().attribute("beautyDate", Matchers.hasProperty("startDate", Matchers.is(date))))
-			.andExpect(MockMvcResultMatchers.model().attribute("beautyDate", Matchers.hasProperty("pet", Matchers.is(pet)))).andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
+			.andExpect(MockMvcResultMatchers.model().attribute("beautyDate", Matchers.hasProperty("description", Matchers.is("prueba")))).andExpect(MockMvcResultMatchers.model().attribute("beautyDate", Matchers.hasProperty("pet", Matchers.is(pet))))
+			.andExpect(MockMvcResultMatchers.view().name("beauty-dates/createOrUpdateBeautyDateForm"));
 	}
 
 	//Caso negativo not author

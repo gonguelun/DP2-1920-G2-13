@@ -156,10 +156,11 @@ public class BeauticianController {
 		LocalDate dateMax = LocalDate.parse(date);
 		LocalTime time = LocalTime.of(hour, 0);
 		LocalDateTime dateHourMax = LocalDateTime.of(dateMax, time);
+		LocalDateTime actual = LocalDateTime.now();
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
 			this.beautyDateService.isDateValid(dateMax);
-			model.put("beautyDates", this.beautyDateService.findBeautyDatesByBeauticianIdAndDate(beauticianId, dateHourMax));
+			model.put("beautyDates", this.beautyDateService.findBeautyDatesByBeauticianIdAndDate(beauticianId, actual, dateHourMax));
 		} catch (PastDateException e) {
 			return "redirect:/oups";
 		} catch (InvalidActivityException a) {
