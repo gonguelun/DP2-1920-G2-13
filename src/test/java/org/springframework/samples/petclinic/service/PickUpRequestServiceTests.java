@@ -74,7 +74,7 @@ public class PickUpRequestServiceTests {
 
 		this.pickUpRequestService.savePickUpRequest(pickUp);
 		Integer countAfter = this.pickUpRequestService.countPickUps();
-		Assertions.assertThat(countBefore == countAfter);
+		Assertions.assertThat(countBefore).isEqualTo(countAfter);
 	}
 
 	//Caso negativo PetType no valido
@@ -112,7 +112,6 @@ public class PickUpRequestServiceTests {
 		countBefore++;
 
 		PickUpRequest pickUp = new PickUpRequest();
-		pickUp.setId(1);
 		pickUp.setAddress("Calle 1");
 		pickUp.setDescription("");
 		pickUp.setIsAccepted(false);
@@ -126,19 +125,17 @@ public class PickUpRequestServiceTests {
 		owner.setLastName("Gonzalez");
 		owner.setCity("Sevilla");
 		owner.setAddress("Calle 1");
-		owner.setId(1);
 		owner.setTelephone("666777888");
 		owner.setUser(user);
 		pickUp.setOwner(owner);
 		pickUp.setPhysicalStatus("good");
 		PetType pet = new PetType();
 		pet.setName("dog");
-		pet.setId(1);
 		pickUp.setPetType(pet);
 
 		this.pickUpRequestService.savePickUpRequest(pickUp);
 		Integer countAfter = this.pickUpRequestService.countPickUps();
-		Assertions.assertThat(countBefore == countAfter);
+		Assertions.assertThat(countBefore).isEqualTo(countAfter);
 	}
 	//Caso positivo no estado fisico
 	@Test
@@ -179,7 +176,7 @@ public class PickUpRequestServiceTests {
 
 		this.pickUpRequestService.savePickUpRequest(pickUp);
 		Integer countAfter = this.pickUpRequestService.countPickUps();
-		Assertions.assertThat(countBefore == countAfter);
+		Assertions.assertThat(countBefore).isEqualTo(countAfter);
 	}
 	//Caso negativo no direccion
 	@Test
