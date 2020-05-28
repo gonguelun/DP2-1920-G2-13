@@ -83,35 +83,7 @@ class VetServiceTests {
 	void bringSpecialties() {
 		Collection<Specialty> specialties = this.vetService.findSpecialties();
 		specialties = specialties.stream().collect(Collectors.toList());
-		Assertions.assertThat(specialties.size() == 3);
+		Assertions.assertThat(specialties.size()).isEqualTo(3);
 	}
 
-	//	@Test
-	//	@Transactional
-	//	public void testSavingVet() {
-	//		Integer countBefore = this.vetService.countVets();
-	//		countBefore++;
-	//
-	//		Vet vet = new Vet();
-	//		vet.setFirstName("Sam");
-	//		vet.setLastName("Schultz");
-	//
-	//		Set<Specialty> specialties = new HashSet<>();
-	//		Specialty specialty1 = new Specialty();
-	//		specialty1.setName("espe1");
-	//		specialties.add(specialty1);
-	//		Specialty specialty2 = new Specialty();
-	//		specialty2.setName("espe2");
-	//		specialties.add(specialty2);
-	//
-	//		User user = new User();
-	//		user.setUsername("Sam");
-	//		user.setPassword("supersecretpassword");
-	//		user.setEnabled(true);
-	//		vet.setUser(user);
-	//
-	//		this.vetService.saveVet(vet);
-	//		Integer countAfter = this.vetService.countVets();
-	//		Assertions.assertThat(vet.getSpecialties().size() == 2);
-	//	}
 }
