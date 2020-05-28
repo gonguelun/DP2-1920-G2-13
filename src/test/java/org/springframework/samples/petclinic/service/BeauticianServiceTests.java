@@ -5,13 +5,10 @@ package org.springframework.samples.petclinic.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +19,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.service.exceptions.InvalidSpecializationException;
 import org.springframework.samples.petclinic.service.exceptions.NullOrShortNameException;
 import org.springframework.stereotype.Service;
@@ -57,7 +53,7 @@ public class BeauticianServiceTests {
 		beautician.setSpecializations(specializations);
 		this.beauticianService.saveBeautician(beautician);
 		Integer countAfter = this.beauticianService.countBeauticians();
-		Assertions.assertThat(countBefore == countAfter);
+		Assertions.assertThat(countBefore).isEqualTo(countAfter);
 	}
 
 	@Test

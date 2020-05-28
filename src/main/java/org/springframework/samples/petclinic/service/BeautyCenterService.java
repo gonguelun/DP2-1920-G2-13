@@ -6,7 +6,6 @@ import java.util.Collection;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
@@ -26,17 +25,13 @@ public class BeautyCenterService {
 	private BeauticianRepository	beauticianRepository;
 
 	private PetRepository			petRepository;
-	
-	private PetService petService;
 
 
 	@Autowired
-	public BeautyCenterService(final BeautyCenterRepository beautyCenterRepository, final BeauticianRepository beauticianRepository, final PetRepository petRepository,final PetService petService) {
+	public BeautyCenterService(final BeautyCenterRepository beautyCenterRepository, final BeauticianRepository beauticianRepository, final PetRepository petRepository, final PetService petService) {
 		this.beauticianRepository = beauticianRepository;
 		this.beautyRepository = beautyCenterRepository;
 		this.petRepository = petRepository;
-		this.petService=petService;
-		
 
 	}
 
@@ -66,18 +61,18 @@ public class BeautyCenterService {
 	}
 
 	@Transactional
-	public Collection<PetType> findPetTypesByBeauticianId(final int beauticianId) throws DataAccessException {
+	public Collection<PetType> findPetTypesByBeauticianId(final int beauticianId) {
 		return this.beautyRepository.findPetTypesByBeauticianId(beauticianId);
 	}
 
 	@Transactional
-	public Beautician findBeauticianById(final int beauticianId) throws DataAccessException {
-		return this.beauticianRepository.findById(beauticianId).get();
+	public Beautician findBeauticianById(final int beauticianId) {
+		return this.beauticianRepository.findById(beauticianId).orElse(null);
 	}
 
 	@Transactional
-	public BeautyCenter findById(final int beautyCenterId) throws DataAccessException {
-		return this.beautyRepository.findById(beautyCenterId).get();
+	public BeautyCenter findById(final int beautyCenterId) {
+		return this.beautyRepository.findById(beautyCenterId).orElse(null);
 	}
 
 	@Transactional
@@ -92,16 +87,12 @@ public class BeautyCenterService {
 		PetType petType = beauticianCenter.getPetType();
 		if (beauticianCenter.getName().length() < 3 || beauticianCenter.getName().isEmpty()) {
 			throw new NullOrShortNameException();
-		}else if(petType == null || petType.getName()=="" || (!beauticianCenter.getPetType().getName().equals("bird") &&
-				!beauticianCenter.getPetType().getName().equals("cat") &&
-				!beauticianCenter.getPetType().getName().equals("dog") &&
-				!beauticianCenter.getPetType().getName().equals("hamster") &&
-				!beauticianCenter.getPetType().getName().equals("lizard") &&
-				!beauticianCenter.getPetType().getName().equals("snake"))){
+		} else if (petType == null || petType.getName().equals("") || !beauticianCenter.getPetType().getName().equals("bird") && !beauticianCenter.getPetType().getName().equals("cat") && !beauticianCenter.getPetType().getName().equals("dog")
+			&& !beauticianCenter.getPetType().getName().equals("hamster") && !beauticianCenter.getPetType().getName().equals("lizard") && !beauticianCenter.getPetType().getName().equals("snake")) {
 			throw new NoPetTypeException();
-		}else {
-		this.beautyRepository.update(name, description, petType, beauticianId);
-		return true;
+		} else {
+			this.beautyRepository.update(name, description, petType, beauticianId);
+			return true;
 		}
 	}
 
@@ -118,7 +109,7 @@ public class BeautyCenterService {
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<PetType> findPetTypes() throws DataAccessException {
+	public Collection<PetType> findPetTypes() {
 		return this.petRepository.findPetTypes();
 	}
 
