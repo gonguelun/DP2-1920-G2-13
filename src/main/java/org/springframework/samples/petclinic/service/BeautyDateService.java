@@ -41,7 +41,7 @@ public class BeautyDateService {
 
 	@Transactional(readOnly = true)
 	public BeautyDate findBeautyDateById(final int id) throws DataAccessException {
-		return this.beautyDateRepository.findById(id).get();
+		return this.beautyDateRepository.findById(id).orElse(null);
 	}
 
 	@Transactional
@@ -84,7 +84,7 @@ public class BeautyDateService {
 	}
 
 	public BeautyDate findById(final int beautyDateId) {
-		return this.beautyDateRepository.findById(beautyDateId).get();
+		return this.beautyDateRepository.findById(beautyDateId).orElse(null);
 	}
 
 	public void remove(final int beautyDateId) {
