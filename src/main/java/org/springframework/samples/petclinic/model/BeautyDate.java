@@ -28,7 +28,7 @@ public class BeautyDate extends BaseEntity {
 	private LocalDateTime		startDate;
 
 	@Valid
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	private Pet					pet;
 
 	@Valid

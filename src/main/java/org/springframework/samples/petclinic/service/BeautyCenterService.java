@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
@@ -45,6 +46,7 @@ public class BeautyCenterService {
 		return this.beautyRepository.findAll();
 	}
 
+	@CacheEvict(cacheNames="beautyCenters",allEntries=true)
 	@Transactional(rollbackFor = {
 		NoPetTypeException.class, NullOrShortNameException.class
 	})

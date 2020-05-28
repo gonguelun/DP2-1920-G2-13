@@ -162,7 +162,8 @@ public class OwnerController {
 		mav.addObject(this.ownerService.findOwnerById(ownerId));
 		return mav;
 	}
-
+	
+	
 	@GetMapping(value = "/owners/beauty-centers/{petTypeId}")
 	public String showBeautyCenter(final Map<String, Object> model, @PathVariable("petTypeId") final int petTypeId) {
 		Collection<BeautyCenter> bc = this.ownerService.findAllBeautyCentersByPetType(petTypeId);
