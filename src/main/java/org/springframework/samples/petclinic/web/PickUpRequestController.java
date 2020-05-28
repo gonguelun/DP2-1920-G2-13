@@ -58,7 +58,7 @@ public class PickUpRequestController {
 	}
 
 	@GetMapping(value = "/owners/{ownerId}/pick-up-requests/new")
-	public String initCreatePickUpRequestForm(@PathVariable("ownerId") final int ownerId, final Model model) throws Exception {
+	public String initCreatePickUpRequestForm(@PathVariable("ownerId") final int ownerId, final Model model) throws InvalidActivityException {
 		Owner owner = this.ownerService.findOwnerById(ownerId);
 		try {
 			this.authoritiesService.isAuthor(owner.getUser().getUsername());
@@ -111,7 +111,7 @@ public class PickUpRequestController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/pick-up-requests/{pickUpId}/delete")
-	public String deletePickUpRequest(@PathVariable("pickUpId") final int pickUpId, @PathVariable("ownerUsername") final String ownerUsername) throws Exception {
+	public String deletePickUpRequest(@PathVariable("pickUpId") final int pickUpId, @PathVariable("ownerUsername") final String ownerUsername) throws InvalidActivityException {
 		try {
 			this.authoritiesService.isAuthor(ownerUsername);
 			PickUpRequest pur = this.pickUpRequestService.findPickUpRequestByPickUpRequestId(pickUpId);
@@ -137,13 +137,13 @@ public class PickUpRequestController {
 	}
 
 	@GetMapping(value = "/vets/pick-up-requests/{pickUpId}/delete")
-	public String deletePickUpRequest(@PathVariable("pickUpId") final int pickUpId) throws Exception {
+	public String deletePickUpRequest(@PathVariable("pickUpId") final int pickUpId) {
 		this.pickUpRequestService.remove(pickUpId);
 		return "redirect:/vets/pick-up-requests";
 	}
 
 	@GetMapping(value = "/vets/pick-up-requests/{pickUpId}/update")
-	public String initUpdatePickUpRequest(@PathVariable("pickUpId") final int pickUpId, final ModelMap model) throws Exception {
+	public String initUpdatePickUpRequest(@PathVariable("pickUpId") final int pickUpId, final ModelMap model) {
 		PickUpRequest pur = this.pickUpRequestService.findPickUpRequestByPickUpRequestId(pickUpId);
 		model.put("pickUpRequest", pur);
 		if (pur.getIsClosed()) {
@@ -155,7 +155,7 @@ public class PickUpRequestController {
 	}
 
 	@PostMapping(value = "/vets/pick-up-requests/{pickUpId}/update")
-	public String processUpdatePickUpRequest(@Valid final PickUpRequest pur, final BindingResult result, @PathVariable("pickUpId") final int pickUpId, final ModelMap model) throws Exception {
+	public String processUpdatePickUpRequest(@Valid final PickUpRequest pur, final BindingResult result, @PathVariable("pickUpId") final int pickUpId, final ModelMap model) {
 		PickUpRequest aux = this.pickUpRequestService.findPickUpRequestByPickUpRequestId(pickUpId);
 		Owner owner = aux.getOwner();
 		pur.setId(pickUpId);

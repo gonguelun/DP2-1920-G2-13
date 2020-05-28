@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.web;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.BeautyCenter;
@@ -19,7 +21,6 @@ import org.springframework.samples.petclinic.model.Product;
 import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.BeautyCenterService;
 import org.springframework.samples.petclinic.service.BeautyDateService;
-import org.springframework.samples.petclinic.service.PetService;
 import org.springframework.samples.petclinic.service.exceptions.AlreadyDateException;
 import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.service.exceptions.EmptyPetException;
@@ -47,15 +48,12 @@ public class BeautyDateController {
 
 	private AuthoritiesService	authoritiesService;
 
-	private PetService			petService;
-
 
 	@Autowired
-	public BeautyDateController(final BeautyDateService beautyDateService, final BeautyCenterService beautyCenterService, final AuthoritiesService authoritiesService, final PetService petService) {
+	public BeautyDateController(final BeautyDateService beautyDateService, final BeautyCenterService beautyCenterService, final AuthoritiesService authoritiesService) {
 		this.beautyDateService = beautyDateService;
 		this.beautyCenterService = beautyCenterService;
 		this.authoritiesService = authoritiesService;
-		this.petService = petService;
 	}
 
 	@InitBinder
@@ -64,7 +62,7 @@ public class BeautyDateController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new")
-	public String initCreationFormBeautyDate(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
+	public String initCreationFormBeautyDate(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws InvalidActivityException {
 		BeautyCenter beautyCenter = this.beautyCenterService.findById(beautyCenterId);
 
 		try {
@@ -83,7 +81,7 @@ public class BeautyDateController {
 
 	@PostMapping(value = "/owners/{ownerUsername}/beauty-centers/{beautyCenterId}/{petTypeId}/beauty-dates/new")
 	public String processCreationFormBeautyDate(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("ownerUsername") final String ownerUsername, @Valid final BeautyDate beautyDate, final BindingResult result, final ModelMap model)
-		throws DataAccessException, DuplicatedPetNameException {
+		throws DataAccessException, DuplicatedPetNameException, AlreadyDateException, IsWeekendException, IsNotInTimeException, EmptyPetException {
 		BeautyCenter beautyCenter = this.beautyCenterService.findById(beautyCenterId);
 		beautyDate.setBeautyCenter(beautyCenter);
 
@@ -116,7 +114,7 @@ public class BeautyDateController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit")
-	public String initUpdateBeautyDateForm(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Model model) throws Exception {
+	public String initUpdateBeautyDateForm(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Model model) throws InvalidActivityException {
 		try {
 			this.authoritiesService.isAuthor(ownerUsername);
 		} catch (InvalidActivityException a) {
@@ -131,7 +129,7 @@ public class BeautyDateController {
 
 	@PostMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/edit")
 	public String processUpdateBeautyDateForm(@Valid final BeautyDate beautyDate, final BindingResult result, @PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final ModelMap model)
-		throws Exception {
+		throws DataAccessException, BeansException, DuplicatedPetNameException, AlreadyDateException, IsWeekendException, IsNotInTimeException, EmptyPetException {
 		BeautyDate guardado = this.beautyDateService.findBeautyDateById(beautyDateId);
 		BeanUtils.copyProperties(guardado, beautyDate, "startDate");
 
@@ -164,7 +162,7 @@ public class BeautyDateController {
 		try {
 			return this.beautyDateService.findPetsByOwnerAndType(ownerUsername, petTypeId);
 		} catch (Exception e) {
-			return null;
+			return Collections.emptyList();
 		}
 	}
 

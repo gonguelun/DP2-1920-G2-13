@@ -178,7 +178,7 @@ public class OwnerController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates")
-	public String showBeautyDates(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws Exception {
+	public String showBeautyDates(@PathVariable("ownerUsername") final String ownerUsername, final Map<String, Object> model) throws InvalidActivityException {
 		try {
 			this.authoritiesService.isAuthor(ownerUsername);
 			model.put("beautyDates", this.beautyDateService.findBeautyDatesByOwnerUsername(ownerUsername));
@@ -189,7 +189,7 @@ public class OwnerController {
 	}
 
 	@GetMapping(value = "/owners/{ownerUsername}/beauty-dates/{beautyDateId}/delete")
-	public String deleteBeautyDate(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Map<String, Object> model) throws Exception {
+	public String deleteBeautyDate(@PathVariable("ownerUsername") final String ownerUsername, @PathVariable("beautyDateId") final int beautyDateId, final Map<String, Object> model) throws InvalidActivityException {
 		try {
 			this.authoritiesService.isAuthor(ownerUsername);
 			BeautyDate aux = this.beautyDateService.findById(beautyDateId);
