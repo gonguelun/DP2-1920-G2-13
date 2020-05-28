@@ -1,7 +1,6 @@
 
 package org.springframework.samples.petclinic.web;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -52,15 +51,14 @@ public class ProductController {
 		"{beautyCenterId}/products"
 	})
 	public String showProductList(final Map<String, Object> model, @PathVariable("beautyCenterId") final int beautyCenterId) {
-		Collection<Product> product = new ArrayList<>();
 		BeautyCenter beautyCenter = this.beautyCenterService.findBeautyCenterByBeautyCenterId(beautyCenterId);
-		product = this.productService.findProductsByPet(beautyCenter.getPetType().getId());
+		Collection<Product> product = this.productService.findProductsByPet(beautyCenter.getPetType().getId());
 		model.put("products", product);
 		return "products/productList";
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/products/new")
-	public String initCreationForm(final ModelMap model, @PathVariable("beauticianId") final int beauticianId) throws Exception {
+	public String initCreationForm(final ModelMap model, @PathVariable("beauticianId") final int beauticianId) throws InvalidActivityException {
 
 		Beautician beautician = this.productService.findBeauticianById(beauticianId);
 
@@ -93,7 +91,7 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/{beautyCenterId}/products/{productId}/edit")
-	public String initUpdateForm(@PathVariable("productId") final int productId, final ModelMap model) throws Exception {
+	public String initUpdateForm(@PathVariable("productId") final int productId, final ModelMap model) throws InvalidActivityException {
 
 		Product product = this.productService.findProductById(productId);
 		try {
@@ -111,7 +109,7 @@ public class ProductController {
 	}
 
 	@PostMapping(value = "/{beautyCenterId}/products/{productId}/edit")
-	public String processUpdateForm(@Valid final Product product, final BindingResult result, @PathVariable("productId") final int productId, final ModelMap model) throws Exception {
+	public String processUpdateForm(@Valid final Product product, final BindingResult result, @PathVariable("productId") final int productId, final ModelMap model) throws InvalidActivityException {
 		product.setId(productId);
 		Beautician beautician = this.productService.findBeauticianByProductId(productId);
 		product.setBeautician(beautician);
@@ -137,7 +135,7 @@ public class ProductController {
 	}
 
 	@RequestMapping(value = "/{beautyCenterId}/products/{productId}/delete", method = RequestMethod.GET)
-	public String delete(@PathVariable("productId") final int productId, final Model model) throws Exception {
+	public String delete(@PathVariable("productId") final int productId, final Model model) throws InvalidActivityException {
 		Product product = this.productService.findProductById(productId);
 
 		try {

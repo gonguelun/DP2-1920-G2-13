@@ -11,6 +11,7 @@ import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.User;
@@ -68,7 +69,7 @@ public class BeauticianController {
 	}
 
 	@GetMapping(value = "/{beauticianId}/edit")
-	public String initUpdateOwnerForm(@PathVariable("beauticianId") final int beauticianId, final Model model) throws Exception {
+	public String initUpdateOwnerForm(@PathVariable("beauticianId") final int beauticianId, final Model model) throws InvalidActivityException {
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
@@ -105,7 +106,7 @@ public class BeauticianController {
 	}
 
 	@GetMapping("/{beauticianId}")
-	public ModelAndView showBeautician(@PathVariable("beauticianId") final int beauticianId) throws Exception {
+	public ModelAndView showBeautician(@PathVariable("beauticianId") final int beauticianId) throws InvalidActivityException {
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
@@ -120,7 +121,7 @@ public class BeauticianController {
 	}
 
 	@GetMapping("/principal/{beauticianUsername}")
-	public String showBeauticianByUsername(@PathVariable("beauticianUsername") final String beauticianUsername, final Model model) throws Exception {
+	public String showBeauticianByUsername(@PathVariable("beauticianUsername") final String beauticianUsername, final Model model) throws DataAccessException {
 
 		int beauticianId = this.beauticianService.findBeauticianByUsername(beauticianUsername).getId();
 
@@ -129,14 +130,14 @@ public class BeauticianController {
 	}
 
 	@GetMapping("/searchBeautyDates/{beauticianUsername}")
-	public String searchBeautyDates(@PathVariable("beauticianUsername") final String beauticianUsername, final Model model) throws Exception {
+	public String searchBeautyDates(@PathVariable("beauticianUsername") final String beauticianUsername, final Model model) throws DataAccessException {
 		int beauticianId = this.beauticianService.findBeauticianByUsername(beauticianUsername).getId();
 		return "redirect:/beauticians/searchDates/" + beauticianId;
 
 	}
 
 	@GetMapping("/searchDates/{beauticianId}")
-	public ModelAndView searchBeautyDatesId(@PathVariable("beauticianId") final int beauticianId) throws Exception {
+	public ModelAndView searchBeautyDatesId(@PathVariable("beauticianId") final int beauticianId) throws InvalidActivityException, DataAccessException {
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
 			this.authoritiesService.isAuthor(beautician.getUser().getUsername());
@@ -151,7 +152,7 @@ public class BeauticianController {
 	}
 
 	@GetMapping(value = "/{beauticianId}/beautyDates/{date}/{hour}")
-	public String showBeautyDates(@PathVariable("beauticianId") final int beauticianId, @PathVariable("hour") final int hour, @PathVariable("date") final String date, final Map<String, Object> model) throws Exception {
+	public String showBeautyDates(@PathVariable("beauticianId") final int beauticianId, @PathVariable("hour") final int hour, @PathVariable("date") final String date, final Map<String, Object> model) throws InvalidActivityException, PastDateException {
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		LocalDate dateMax = LocalDate.parse(date);
 		LocalTime time = LocalTime.of(hour, 0);

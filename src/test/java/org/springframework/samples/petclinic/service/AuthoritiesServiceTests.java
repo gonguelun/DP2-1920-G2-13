@@ -37,7 +37,7 @@ public class AuthoritiesServiceTests {
 		user.setPassword("usuario");
 		user.setEnabled(true);
 
-		Assert.assertEquals(this.authoritiesService.isAuthor(user.getUsername()), true);
+		Assert.assertEquals(true, this.authoritiesService.isAuthor(user.getUsername()));
 	}
 
 	// CASO NEGATIVO: EL NOMBRE DE USUARIO EN LA URL NO ES EL DEL USUARIO AUTENTICADO

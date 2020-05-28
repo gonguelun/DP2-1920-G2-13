@@ -8,6 +8,7 @@ import javax.activity.InvalidActivityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Beautician;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.PetType;
@@ -55,7 +56,7 @@ public class BeautyCenterController {
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/new")
-	public String initCreationFormBeautyCenter(@PathVariable("beauticianId") final int beauticianId, final Map<String, Object> model) throws Exception {
+	public String initCreationFormBeautyCenter(@PathVariable("beauticianId") final int beauticianId, final Map<String, Object> model) throws InvalidActivityException {
 
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
@@ -106,7 +107,7 @@ public class BeautyCenterController {
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers")
-	public String showBeautyCenter(@PathVariable("beauticianId") final int beauticianId, final Map<String, Object> model) throws Exception {
+	public String showBeautyCenter(@PathVariable("beauticianId") final int beauticianId, final Map<String, Object> model) throws InvalidActivityException {
 
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
@@ -121,7 +122,7 @@ public class BeautyCenterController {
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/edit")
-	public String initUpdateOwnerForm(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) throws Exception {
+	public String initUpdateOwnerForm(@PathVariable("beautyCenterId") final int beautyCenterId, @PathVariable("beauticianId") final int beauticianId, final ModelMap model) throws InvalidActivityException {
 		BeautyCenter beautyCenter = this.beautyService.findById(beautyCenterId);
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
@@ -166,7 +167,7 @@ public class BeautyCenterController {
 	}
 
 	@GetMapping(value = "/beauticians/{beauticianId}/beauty-centers/{beautyCenterId}/delete")
-	public String deleteBeautyCenter(@PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId) throws Exception {
+	public String deleteBeautyCenter(@PathVariable("beauticianId") final int beauticianId, @PathVariable("beautyCenterId") final int beautyCenterId) throws InvalidActivityException, DataAccessException {
 
 		Beautician beautician = this.beauticianService.findBeauticianById(beauticianId);
 		try {
