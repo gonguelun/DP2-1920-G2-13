@@ -19,6 +19,8 @@ package org.springframework.samples.petclinic.service;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.BeautyCenter;
 import org.springframework.samples.petclinic.model.Owner;
@@ -59,17 +61,21 @@ public class OwnerService {
 	}
 
 	@Transactional(readOnly = true)
+	@Cacheable("ownerByLastName")
 	public Collection<Owner> findOwnerByLastName(final String lastName) throws DataAccessException {
 		return this.ownerRepository.findByLastName(lastName);
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames="ownerByLastName",allEntries=true)
 	public void saveOwner(final Owner owner) throws DataAccessException {
 		this.userService.saveUser(owner.getUser());
 		this.ownerRepository.save(owner);
 		this.authoritiesService.saveAuthorities(owner.getUser().getUsername(), "owner");
 	}
-	@Transactional
+	
+	@Transactional(readOnly=true)
+	@Cacheable("beautyCenters")
 	public Collection<BeautyCenter> findAllBeautyCentersByPetType(final int petTypeId) {
 		return this.beautyCenterRepository.findAllBeautyCentersByPetType(petTypeId);
 	}
