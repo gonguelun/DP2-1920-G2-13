@@ -31,14 +31,14 @@ public class BeauticianService {
 
 	private PetService				petService;
 
+
 	@Autowired
-	public BeauticianService(BeauticianRepository beauticianRepository,PetRepository petRepository,
-			UserService userService,AuthoritiesService authoritiesService,PetService petService) {
-		this.beauticianRepository=beauticianRepository;
-		this.petRepository=petRepository;
-		this.userService=userService;
-		this.authoritiesService=authoritiesService;
-		this.petService=petService;
+	public BeauticianService(final BeauticianRepository beauticianRepository, final PetRepository petRepository, final UserService userService, final AuthoritiesService authoritiesService, final PetService petService) {
+		this.beauticianRepository = beauticianRepository;
+		this.petRepository = petRepository;
+		this.userService = userService;
+		this.authoritiesService = authoritiesService;
+		this.petService = petService;
 	}
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {
@@ -47,7 +47,7 @@ public class BeauticianService {
 
 	@Transactional(readOnly = true)
 	public Beautician findBeauticianById(final int id) throws DataAccessException {
-		return this.beauticianRepository.findById(id).get();
+		return this.beauticianRepository.findById(id).orElse(null);
 	}
 
 	@Transactional
@@ -60,7 +60,7 @@ public class BeauticianService {
 	@Transactional
 	public Integer countBeauticians() {
 		return (int) this.beauticianRepository.count();
-		
+
 	}
 
 	@Transactional
@@ -72,27 +72,24 @@ public class BeauticianService {
 	public Beautician findBeauticianByUsername(final String beauticianUsername) throws DataAccessException {
 		return this.beauticianRepository.findByUsername(beauticianUsername);
 	}
-	
+
 	@Transactional
-	public void isBeauticianGuardado(User usuario,Beautician beautician,Beautician beauticianGuardado) throws InvalidBeauticianException,InvalidSpecializationException, NullOrShortNameException {
-		boolean aux= beautician.getUser().getUsername().equals(beauticianGuardado.getUser().getUsername()) || usuario == null;
+	public void isBeauticianGuardado(final User usuario, final Beautician beautician, final Beautician beauticianGuardado) throws InvalidBeauticianException, InvalidSpecializationException, NullOrShortNameException {
+		boolean aux = beautician.getUser().getUsername().equals(beauticianGuardado.getUser().getUsername()) || usuario == null;
 		if (!aux) {
 			throw new InvalidBeauticianException();
-		}else if (!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("bird")) && 
-				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("cat")) && 
-				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("dog")) && 
-				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("hamster")) && 
-				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("lizard")) && 
-				!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("snake"))) {
+		} else if (!beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("bird")) && !beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("cat"))
+			&& !beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("dog")) && !beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("hamster"))
+			&& !beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("lizard")) && !beautician.getSpecializations().stream().anyMatch(i -> i.getName().equals("snake"))) {
 			throw new InvalidSpecializationException();
-			
-		}else if(beautician.getFirstName()==null || beautician.getFirstName()=="") {
+
+		} else if (beautician.getFirstName() == null || beautician.getFirstName().equals("")) {
 			throw new NullOrShortNameException();
-		}else {
+		} else {
 			beautician.getUser().setId(beauticianGuardado.getUser().getId());
 			beautician.getUser().setEnabled(true);
 		}
-		
+
 	}
 
 }
