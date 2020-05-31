@@ -43,16 +43,17 @@ public class RegisterBeauticianErrorUITest {
 		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("BEAUTICIAN REGISTER")).click();
 		this.driver.findElement(By.id("firstName")).clear();
-		this.driver.findElement(By.id("firstName")).sendKeys("Beautician");
+		this.driver.findElement(By.id("firstName")).sendKeys("f");
 		this.driver.findElement(By.id("lastName")).clear();
-		this.driver.findElement(By.id("lastName")).sendKeys("One");
+		this.driver.findElement(By.id("lastName")).sendKeys("f");
 		this.driver.findElement(By.id("user.username")).clear();
-		this.driver.findElement(By.id("user.username")).sendKeys("beautician");
+		this.driver.findElement(By.id("user.username")).sendKeys("f");
 		this.driver.findElement(By.id("user.password")).clear();
-		this.driver.findElement(By.id("user.password")).sendKeys("beautician");
+		this.driver.findElement(By.id("user.password")).sendKeys("f");
 		// ERROR: Caught exception [ERROR: Unsupported command [addSelection | id=Specializations | label=cat]]
 		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
+		Assert.assertEquals("is already in use", this.driver.findElement(By.xpath("//form[@id='add-beautician-form']/div/div[3]/div/span[2]")).getText());
 	}
 
 	@AfterEach
