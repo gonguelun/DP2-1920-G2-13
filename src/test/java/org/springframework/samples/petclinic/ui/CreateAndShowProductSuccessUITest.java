@@ -40,7 +40,7 @@ public class CreateAndShowProductSuccessUITest {
 	}
 
 	@Test
-	public void testPruebaCrearYMostrarProduct() throws Exception {
+	public void testCrearYMostrarProducto() throws Exception {
 		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).clear();

@@ -42,7 +42,7 @@ public class DeletePickUpRequestByVetSuccessUITest {
 	}
 
 	@Test
-	public void testUntitledTestCase() throws Exception {
+	public void testEliminarSolicitudRecogida() throws Exception {
 		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).clear();

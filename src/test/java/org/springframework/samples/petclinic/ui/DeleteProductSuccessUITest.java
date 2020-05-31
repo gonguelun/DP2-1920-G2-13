@@ -42,7 +42,7 @@ public class DeleteProductSuccessUITest {
 	}
 
 	@Test
-	public void testUntitledTestCase() throws Exception {
+	public void testEliminarProducto() throws Exception {
 		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("LOGIN")).click();
 		this.driver.findElement(By.id("username")).click();

@@ -39,7 +39,7 @@ public class DeletePickUpRequestByVetNoPermissionUITest {
 	}
 
 	@Test
-	public void testUntitledTestCase() throws Exception {
+	public void testEliminarSolicitudRecogidaSinPermiso() throws Exception {
 		this.driver.get("http://localhost:" + this.port + "/vets/pick-up-requests/1/delete");
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("owner1");
