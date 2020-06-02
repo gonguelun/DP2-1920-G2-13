@@ -78,10 +78,6 @@
 					</petclinic:menuItem>
 				</sec:authorize>
 
-				<petclinic:menuItem active="${name eq 'spotify'}" url="/api/spotify/access"
-					title="Spotify tracks">
-					<span>Spotify tracks</span>
-				</petclinic:menuItem>
 				<petclinic:menuItem active="${name eq 'spotify'}" url="/api/spotify/query"
 					title="Spotify search">
 					<span>Spotify search</span>
