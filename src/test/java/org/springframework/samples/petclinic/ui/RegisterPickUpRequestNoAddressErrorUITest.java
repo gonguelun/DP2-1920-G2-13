@@ -1,6 +1,6 @@
+
 package org.springframework.samples.petclinic.ui;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
@@ -13,7 +13,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DeleteProductSuccessUITest {
+public class RegisterPickUpRequestNoAddressErrorUITest {
 
 	@LocalServerPort
 	private int				port;
@@ -41,60 +40,26 @@ public class DeleteProductSuccessUITest {
 	}
 
 	@Test
-	public void testEliminarProducto() throws Exception {
+	public void testRegisterPickUpRequestSuccessUITest() throws Exception {
 		this.driver.get("http://localhost:" + this.port);
 		this.driver.findElement(By.linkText("LOGIN")).click();
-		this.driver.findElement(By.id("username")).click();
 		this.driver.findElement(By.id("username")).clear();
-		this.driver.findElement(By.id("username")).sendKeys("f");
+		this.driver.findElement(By.id("username")).sendKeys("owner1");
 		this.driver.findElement(By.id("password")).clear();
-		this.driver.findElement(By.id("password")).sendKeys("f");
+		this.driver.findElement(By.id("password")).sendKeys("0wn3r");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.linkText("Add Beauty Center")).click();
-		this.driver.findElement(By.id("name")).click();
-		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("test");
+		Assert.assertEquals("OWNER1", this.driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a/strong")).getText());
+		this.driver.findElement(By.linkText("VIEW MY PICK UP REQUESTS")).click();
+		this.driver.findElement(By.linkText("New request")).click();
+		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("dog");
+		this.driver.findElement(By.xpath("//option[@value='dog']")).click();
 		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("test");
-		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("cat");
-		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
+		this.driver.findElement(By.id("description")).sendKeys("Peticion de recogida");
+		this.driver.findElement(By.id("physicalStatus")).click();
+		this.driver.findElement(By.id("physicalStatus")).clear();
+		this.driver.findElement(By.id("physicalStatus")).sendKeys("Está herido en una pata");
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("Create Product")).click();
-		this.driver.findElement(By.id("name")).click();
-		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("test");
-		this.driver.findElement(By.id("description")).clear();
-		this.driver.findElement(By.id("description")).sendKeys("test");
-		new Select(this.driver.findElement(By.id("type"))).selectByVisibleText("cat");
-		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
-		this.driver.findElement(By.name("avaliable")).click();
-		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-
-		WebElement beautyTable = this.driver.findElement(By.xpath("//table/tbody"));
-		List<WebElement> rowsBeautyTable = beautyTable.findElements(By.tagName("tr"));
-		int rowsBeautyCount = rowsBeautyTable.size();
-		rowsBeautyCount = rowsBeautyCount - 1;
-
-		this.driver.findElement(By.xpath("(//a[contains(text(),'Product List')])[" + rowsBeautyCount + "]")).click();
-
-		WebElement initialTable = this.driver.findElement(By.xpath("//table/tbody"));
-		List<WebElement> rowsInitialTable = initialTable.findElements(By.tagName("tr"));
-		int rowsInitialCount = rowsInitialTable.size();
-
-		this.driver.findElement(By.linkText("Delete Product")).click();
-		this.driver.findElement(By.linkText("BEAUTICIAN")).click();
-		this.driver.findElement(By.xpath("(//a[contains(text(),'Product List')])[" + rowsBeautyCount + "]")).click();
-
-		WebElement table = this.driver.findElement(By.xpath("//table/tbody"));
-		List<WebElement> rowsTable = table.findElements(By.tagName("tr"));
-		int rowsCount = rowsTable.size();
-		try {
-			Assert.assertEquals(rowsInitialCount, rowsCount);
-		} catch (Error e) {
-			this.verificationErrors.append(e.toString());
-		}
+		Assert.assertEquals("no puede estar vacío", driver.findElement(By.xpath("//form[@id='add-pickUpRequest-form']/div/div[4]/div/span[2]")).getText());
 	}
 
 	@AfterEach
