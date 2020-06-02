@@ -330,6 +330,7 @@
 					<excludes>
 						<exclude>**/*UITest.java</exclude>
 						<exclude>**/*APITest.java</exclude>
+						<exclude>**/BeautyDateControllerE2ETests.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
