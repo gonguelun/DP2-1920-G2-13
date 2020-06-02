@@ -68,7 +68,10 @@ public class RegisterPickUpRequestNoDescriptionNoPhysicalStatusSuccessUITest {
 		Assert.assertEquals("", this.driver.findElement(By.xpath("//tr[@id='']/td[3]")).getText());
 		Assert.assertEquals("false", this.driver.findElement(By.xpath("//tr[@id='']/td[4]")).getText());
 		Assert.assertEquals("Calle Arjona Numero 23", this.driver.findElement(By.xpath("//tr[@id='']/td[5]")).getText());
-		this.driver.findElement(By.linkText("Delete PickUp Request")).click();
+		
+		Assert.assertEquals("Delete PickUp Request", driver.findElement(By.xpath("(//a[contains(text(),'Delete PickUp Request')])[3]")).getText());
+		
+		driver.findElement(By.xpath("(//a[contains(text(),'Delete PickUp Request')])[3]")).click();
 	}
 
 	@AfterEach

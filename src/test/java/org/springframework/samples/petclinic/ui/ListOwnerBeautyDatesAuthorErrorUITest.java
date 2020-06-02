@@ -62,6 +62,9 @@ public class ListOwnerBeautyDatesAuthorErrorUITest {
 		this.driver.findElement(By.id("user.password")).clear();
 		this.driver.findElement(By.id("user.password")).sendKeys("b");
 		this.driver.findElement(By.id("add-owner-form")).submit();
+		
+		WebDriverWait aux = new WebDriverWait(this.driver, 6);
+		aux.until(ExpectedConditions.urlContains("http://localhost:" + this.port));
 
 		this.driver.get("http://localhost:" + this.port + "/owners/owner1/beauty-dates");
 
@@ -69,11 +72,11 @@ public class ListOwnerBeautyDatesAuthorErrorUITest {
 		this.driver.findElement(By.id("username")).sendKeys("b");
 		this.driver.findElement(By.id("password")).clear();
 		this.driver.findElement(By.id("password")).sendKeys("b");
-		this.driver.findElement(By.id("password")).sendKeys(Keys.ENTER);
+		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
 
-		WebDriverWait aux = new WebDriverWait(this.driver, 6000);
+		WebDriverWait aux2 = new WebDriverWait(this.driver, 6);
 
-		aux.until(ExpectedConditions.urlContains("/oups"));
+		aux2.until(ExpectedConditions.urlContains("/oups"));
 
 		Assert.assertEquals("Something happened...", this.driver.findElement(By.xpath("//h2")).getText());
 	}

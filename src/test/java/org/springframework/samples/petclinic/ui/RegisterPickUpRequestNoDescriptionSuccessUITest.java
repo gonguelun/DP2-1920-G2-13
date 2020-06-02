@@ -1,6 +1,7 @@
 
 package org.springframework.samples.petclinic.ui;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
@@ -13,6 +14,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -68,6 +70,11 @@ public class RegisterPickUpRequestNoDescriptionSuccessUITest {
 		Assert.assertEquals("Esta herido en una oreja", this.driver.findElement(By.xpath("//tr[@id='']/td[3]")).getText());
 		Assert.assertEquals("false", this.driver.findElement(By.xpath("//tr[@id='']/td[4]")).getText());
 		Assert.assertEquals("Calle Arjona Numero 23", this.driver.findElement(By.xpath("//tr[@id='']/td[5]")).getText());
+		
+		
+		
+		
+	
 	}
 
 	@AfterEach
