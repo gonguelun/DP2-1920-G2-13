@@ -61,7 +61,7 @@ public class ChooseProductsInBeautyDateSuccessUITest {
 		this.driver.findElement(By.id("user.password")).clear();
 		this.driver.findElement(By.id("user.password")).sendKeys("b2");
 		this.driver.findElement(By.id("add-owner-form")).submit();
-		this.driver.findElement(By.linkText("LOGIN")).click();
+		this.driver.findElement(By.xpath("//a[contains(@href, '/login')]")).click();
 
 		this.driver.findElement(By.id("username")).clear();
 		this.driver.findElement(By.id("username")).sendKeys("f");

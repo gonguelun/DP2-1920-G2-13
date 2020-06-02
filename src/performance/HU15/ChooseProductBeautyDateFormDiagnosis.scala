@@ -36,8 +36,8 @@ class ChooseProductBeautyDateFormDiagnosis extends Simulation {
 		.pause(8)
 	}
 
-	object Login {
-    val login = exec(
+	object LoginOwner {
+    val loginOwner = exec(
       http("Login")
         .get("/login")
         .headers(headers_0)
@@ -49,6 +49,23 @@ class ChooseProductBeautyDateFormDiagnosis extends Simulation {
         .headers(headers_3)
         .formParam("username", "owner1")
         .formParam("password", "0wn3r")        
+        .formParam("_csrf", "${stoken}")
+    ).pause(12)
+  }
+
+  object LoginVet {
+    val loginVet = exec(
+      http("Login")
+        .get("/login")
+        .headers(headers_0)
+        .check(css("input[name=_csrf]", "value").saveAs("stoken"))
+    ).pause(9)
+    .exec(
+      http("Logged")
+        .post("/login")
+        .headers(headers_3)
+        .formParam("username", "vet1")
+        .formParam("password", "v3t")        
         .formParam("_csrf", "${stoken}")
     ).pause(12)
   }
@@ -85,14 +102,26 @@ class ChooseProductBeautyDateFormDiagnosis extends Simulation {
 		.pause(8)
 	}
 
+	object CreateBeautyDateError {
+		val createBeautyDateError = exec(http("CreateBeautyDateError")
+			.get("/owners/owner1/beauty-centers/1/1/beauty-dates/new")
+			.headers(headers_0))
+		.pause(10)
+	}
+
 	val ownersSuccessScn = scenario("OwnersSuccess").exec(Home.home,
-													  Login.login,
+													  LoginOwner.loginOwner,
 													  ChoosePetTypeForm.choosePetTypeForm,
 													  ShowBeautyCenterForm.showBeautyCenterForm,
 													  CreateBeautyDateForm.createBeautyDateForm)
 
+	val vetsErrorScn = scenario("VetError").exec(Home.home,
+													  LoginVet.loginVet,
+													  CreateBeautyDateError.createBeautyDateError)
+
 	setUp(
-		ownersSuccessScn.inject(rampUsers(5500) during (100 seconds))
+		ownersSuccessScn.inject(rampUsers(5500) during (100 seconds)),
+		vetsErrorScn.inject(rampUsers(5500) during (100 seconds))
 	).protocols(httpProtocol)
      .assertions(
         global.responseTime.max.lt(5000),    
