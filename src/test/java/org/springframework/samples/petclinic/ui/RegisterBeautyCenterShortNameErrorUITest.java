@@ -14,13 +14,14 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RegisterBeautyCenterErrorUITest {
+public class RegisterBeautyCenterShortNameErrorUITest {
 
 	@LocalServerPort
 	private int				port;
@@ -53,9 +54,12 @@ public class RegisterBeautyCenterErrorUITest {
 		this.driver.findElement(By.linkText("Add Beauty Center")).click();
 		this.driver.findElement(By.id("name")).click();
 		this.driver.findElement(By.id("name")).clear();
-		this.driver.findElement(By.id("name")).sendKeys("TestErrorBeautyCenter");
+		this.driver.findElement(By.id("name")).sendKeys("co");
+		new Select(this.driver.findElement(By.id("petType"))).selectByVisibleText("cat");
+		this.driver.findElement(By.xpath("//option[@value='cat']")).click();
 		this.driver.findElement(By.xpath("//button[@type='submit']")).click();
-		Assert.assertEquals("It's mandatory", this.driver.findElement(By.xpath("//form[@id='add-beautyCenter-form']/div/div[3]/div/div/span[2]")).getText());
+		Assert.assertEquals("Name length must be at least 3 characters long", this.driver.findElement(By.xpath("//form[@id='add-beautyCenter-form']/div/div/div/span[2]")).getText());
+
 	}
 
 	@AfterEach
